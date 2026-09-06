@@ -1,0 +1,79 @@
+{
+  "document_version": "1.0.0",
+  "benchmark_phase": "Phase 2 \u2014 Graph Database Benchmark",
+  "benchmark_execution_metadata": {
+    "timestamp_utc": "2026-09-06T11:14:38Z",
+    "environment": {
+      "os": "Windows 10 Home Single Language (10.0.26200)",
+      "cpu": "AMD Ryzen 7 7445HS (6C/12T)",
+      "ram_total_gb": 16.0
+    },
+    "workload_fixture": {
+      "total_nodes": 21500,
+      "total_edges": 40000,
+      "dataset_sha256_checksum": "5ee84a55eeb7c27f6e7c7fedfa83c211609b620ba46566cf09db78ada9f14588",
+      "seed": 20260905
+    }
+  },
+  "evaluations": {
+    "NetworkX In-Memory Repository": {
+      "avg_ingestion_time_sec": 0.3155,
+      "avg_1hop_ms": 0.012,
+      "avg_2hop_ms": 0.036,
+      "avg_3hop_ms": 0.103,
+      "avg_shortest_path_ms": 0.418,
+      "avg_degree_centrality_ms": 67.462,
+      "avg_pagerank_ms": 356.94,
+      "avg_evidence_lookup_ms": 0.011,
+      "peak_ram_mb": 125.56
+    },
+    "K\u00f9zu Embedded Cypher (C++)": {
+      "avg_ingestion_time_sec": 106.293,
+      "avg_1hop_ms": 6.188,
+      "avg_2hop_ms": 11.785,
+      "avg_3hop_ms": 15.15,
+      "avg_shortest_path_ms": 2.494,
+      "avg_degree_centrality_ms": 34.4,
+      "avg_pagerank_ms": 31.766,
+      "avg_evidence_lookup_ms": 0.01,
+      "peak_ram_mb": 275.91
+    }
+  },
+  "candidate_matrix": {
+    "memgraph": {
+      "exact_version": "2.14.0 (Docker)",
+      "operational_status": "UNAVAILABLE_ON_DEV_HOST",
+      "deployment_method": "Container (Docker Desktop required)",
+      "reason": "Docker Desktop daemon not active on Windows host without GUI authorization.",
+      "licensing": "Business Source License 1.1 (BSL 1.1) / Apache 2.0"
+    },
+    "neo4j": {
+      "exact_version": "5.26.0 (Community)",
+      "operational_status": "UNAVAILABLE_ON_DEV_HOST",
+      "deployment_method": "JVM / Docker Container",
+      "reason": "Docker Desktop daemon not active; standalone server requires JDK 17+ / manual Windows service wrapper.",
+      "licensing": "GPLv3 (Community) / Commercial (Enterprise)"
+    },
+    "falkordb": {
+      "exact_version": "1.7.1 (PyPI Client)",
+      "operational_status": "UNAVAILABLE_ON_DEV_HOST",
+      "deployment_method": "Redis Container / Module",
+      "reason": "Requires Redis server compiled with GraphBLAS module (Linux/Docker container).",
+      "licensing": "Server Side Public License (SSPL) v1"
+    },
+    "kuzu": {
+      "exact_version": "0.11.3",
+      "operational_status": "OPERATIONAL / BENCHMARKED",
+      "deployment_method": "In-Process Embedded C++ Extension",
+      "reason": "Zero-dependency, direct Cypher execution on local filesystem.",
+      "licensing": "MIT License"
+    },
+    "networkx": {
+      "exact_version": "3.6.1",
+      "operational_status": "OPERATIONAL / BENCHMARKED",
+      "deployment_method": "In-Memory Python Graph",
+      "reason": "Pure Python baseline for graph algorithms and centrality calculations.",
+      "licensing": "3-Clause BSD License"
+    }
+  }
+}

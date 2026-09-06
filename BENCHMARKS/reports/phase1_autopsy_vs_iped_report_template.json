@@ -1,0 +1,116 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Phase 1 Benchmark Execution Report: Autopsy vs IPED",
+  "document_version": "1.0.0",
+  "benchmark_phase": "Phase 1 — Forensic Observation Layer",
+  "benchmark_execution_metadata": {
+    "timestamp_utc": "YYYY-MM-DDTHH:MM:SSZ",
+    "environment": {
+      "os_name": "Windows 11 Pro / Ubuntu 22.04 LTS",
+      "os_version_build": "10.0.22631",
+      "cpu_model": "Intel Core i7 / AMD Ryzen",
+      "cpu_cores_physical": 8,
+      "cpu_threads_logical": 16,
+      "cpu_base_frequency_ghz": 3.2,
+      "ram_total_physical_gb": 32.0,
+      "ram_allocated_limit_gb": 16.0,
+      "gpu_model": "NVIDIA RTX / None (CPU-Only)",
+      "gpu_vram_gb": 8.0,
+      "gpu_driver_cuda_version": "N/A"
+    },
+    "workload_fixture": {
+      "dataset_name": "SYN-IMAGE-01.E01",
+      "dataset_format": "E01 / RAW",
+      "dataset_size_gb": 5.0,
+      "dataset_sha256_checksum": "7f83b1657ff1fc53b92dc18148a1d65dfc2d4b1fa3d677284addd200126d9069",
+      "ground_truth_manifest": "SYN-FORENSIC-GROUND-TRUTH-V1",
+      "random_seed": 20260905,
+      "fixture_is_immutable": true
+    },
+    "execution_protocol": {
+      "warmup_runs": 1,
+      "measured_runs_sample_size": 3,
+      "measurement_classification": "Exploratory Feasibility Sample (N=3)",
+      "statistical_significance_claimed": false,
+      "benchmark_script_version": "scripts/run_phase1_observation_benchmark.py (v1.0.0)"
+    }
+  },
+  "candidate_evaluations": {
+    "autopsy": {
+      "software_under_test": {
+        "candidate_name": "Autopsy CLI",
+        "exact_version": "4.21.0+",
+        "runtime_environment": "autopsy64.exe (Windows x64)",
+        "configuration_flags": ["--runFromCommandLine=true"]
+      },
+      "discovered_output_formats": {
+        "has_sqlite_db": null,
+        "has_case_uco_json": null,
+        "has_xml_html_reports": null,
+        "has_carved_module_output": null,
+        "discovered_files_count": 0
+      },
+      "raw_observations": [
+        {"run_index": 1, "duration_sec": 0.0, "peak_ram_mb": 0.0, "avg_cpu_percent": 0.0},
+        {"run_index": 2, "duration_sec": 0.0, "peak_ram_mb": 0.0, "avg_cpu_percent": 0.0},
+        {"run_index": 3, "duration_sec": 0.0, "peak_ram_mb": 0.0, "avg_cpu_percent": 0.0}
+      ],
+      "summary_metrics": {
+        "processing_time_p50_sec": 0.0,
+        "processing_time_p95_sec": 0.0,
+        "peak_ram_rss_mb": 0.0,
+        "avg_cpu_utilization_percent": 0.0,
+        "output_size_mb": 0.0,
+        "headless_cli_reliability": "PASS / FAIL",
+        "contract_mapping_coverage_percent": 0.0,
+        "provenance_integrity_score_percent": 0.0
+      }
+    },
+    "iped": {
+      "software_under_test": {
+        "candidate_name": "IPED Digital Evidence Processor",
+        "exact_version": "4.0.0+",
+        "runtime_environment": "iped.exe / iped.jar (Java 17)",
+        "configuration_flags": ["-d", "-o"]
+      },
+      "discovered_output_formats": {
+        "has_iped_json": null,
+        "has_csv_exports": null,
+        "has_lucene_index": null,
+        "has_carved_output": null,
+        "discovered_files_count": 0
+      },
+      "raw_observations": [
+        {"run_index": 1, "duration_sec": 0.0, "peak_ram_mb": 0.0, "avg_cpu_percent": 0.0},
+        {"run_index": 2, "duration_sec": 0.0, "peak_ram_mb": 0.0, "avg_cpu_percent": 0.0},
+        {"run_index": 3, "duration_sec": 0.0, "peak_ram_mb": 0.0, "avg_cpu_percent": 0.0}
+      ],
+      "summary_metrics": {
+        "processing_time_p50_sec": 0.0,
+        "processing_time_p95_sec": 0.0,
+        "peak_ram_rss_mb": 0.0,
+        "avg_cpu_utilization_percent": 0.0,
+        "output_size_mb": 0.0,
+        "headless_cli_reliability": "PASS / FAIL",
+        "contract_mapping_coverage_percent": 0.0,
+        "provenance_integrity_score_percent": 0.0
+      }
+    }
+  },
+  "discrepancy_and_correctness_analysis": {
+    "ground_truth_comparison_summary": {
+      "autopsy_discrepancy_count": 0,
+      "iped_discrepancy_count": 0
+    },
+    "itemized_discrepancies": [
+      {
+        "discrepancy_id": "DISC-001",
+        "candidate_engine": "Autopsy / IPED",
+        "target_artifact": "EXIF GPS / Call Log / Carved Media",
+        "discrepancy_type": "Missing Observation / Inaccurate Metadata / False Positive / Broken Provenance",
+        "severity": "Critical / Major / Minor / Informational",
+        "potential_decision_impact": "Qualitative analysis of impact on crime linkage decision support."
+      }
+    ]
+  }
+}

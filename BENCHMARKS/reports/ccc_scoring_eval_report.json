@@ -1,0 +1,72 @@
+{
+  "document_version": "1.0.0",
+  "phase": "Phase 5 \u2014 CCC Scoring Formulation",
+  "execution_timestamp_utc": "2026-09-06T11:28:48Z",
+  "summary": {
+    "total_test_cases": 3,
+    "passed_test_cases": 3,
+    "pass_rate_percent": 100.0
+  },
+  "test_evaluations": [
+    {
+      "test_case_id": "TC-CCC-STRONG-001",
+      "name": "High Priority Multi-Source Association",
+      "calculated_score": 98,
+      "calculated_ring": "RED",
+      "expected_ring": "RED",
+      "status": "PASSED",
+      "explanation": [
+        "Relationship Type Weight: CALLED (Base: 100%)",
+        "Frequency Count: 18 interactions recorded",
+        "Recency: Recorded 2.0 days ago (Decay: 94%)",
+        "Independent Sources: 3 distinct artifacts",
+        "Entity Resolution Match Confidence: 100%",
+        "Provenance Integrity: Verified Cryptographic SHA-256"
+      ],
+      "supporting_evidence_ids": [
+        "EV-CONTRACT-2026-9001",
+        "EV-CONTRACT-2026-9002",
+        "EV-CONTRACT-2026-9003"
+      ]
+    },
+    {
+      "test_case_id": "TC-CCC-MODERATE-001",
+      "name": "Moderate Priority Shared Phone Usage",
+      "calculated_score": 70,
+      "calculated_ring": "YELLOW",
+      "expected_ring": "YELLOW",
+      "status": "PASSED",
+      "explanation": [
+        "Relationship Type Weight: USED_PHONE (Base: 80%)",
+        "Frequency Count: 4 interactions recorded",
+        "Recency: Recorded 12.0 days ago (Decay: 67%)",
+        "Independent Sources: 2 distinct artifacts",
+        "Entity Resolution Match Confidence: 100%",
+        "Provenance Integrity: Verified Cryptographic SHA-256"
+      ],
+      "supporting_evidence_ids": [
+        "EV-CONTRACT-2026-9001",
+        "EV-CONTRACT-2026-9004"
+      ]
+    },
+    {
+      "test_case_id": "TC-CCC-WEAK-001",
+      "name": "Low Priority Distant Spatial Location Ping",
+      "calculated_score": 24,
+      "calculated_ring": "GREEN",
+      "expected_ring": "GREEN",
+      "status": "PASSED",
+      "explanation": [
+        "Relationship Type Weight: VISITED (Base: 40%)",
+        "Frequency Count: 1 interactions recorded",
+        "Recency: Recorded 60.0 days ago (Decay: 14%)",
+        "Independent Sources: 1 distinct artifacts",
+        "Entity Resolution Match Confidence: 75%",
+        "Provenance Integrity: Verified Cryptographic SHA-256"
+      ],
+      "supporting_evidence_ids": [
+        "EV-CONTRACT-2026-9003"
+      ]
+    }
+  ]
+}

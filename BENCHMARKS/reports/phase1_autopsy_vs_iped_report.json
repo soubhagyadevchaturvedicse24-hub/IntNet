@@ -1,0 +1,104 @@
+{
+  "document_version": "1.0.0",
+  "benchmark_phase": "Phase 1 \u2014 Real Forensic Image Vertical Slice",
+  "benchmark_execution_metadata": {
+    "timestamp_utc": "2026-09-06T11:08:06.374540+00:00",
+    "environment": {
+      "os_name": "Windows 10 Home Single Language",
+      "os_version_build": "10.0.26200",
+      "cpu_model": "AMD Ryzen 7 7445HS w/ Radeon 740M Graphics",
+      "cpu_cores_physical": 6,
+      "cpu_threads_logical": 12,
+      "ram_total_physical_gb": 16.0
+    },
+    "workload_fixture": {
+      "dataset_name": "SYN_REAL_FORENSIC_IMAGE.raw",
+      "dataset_format": "RAW_DISK_IMAGE (FAT16)",
+      "dataset_size_bytes": 2097152,
+      "dataset_size_mb": 2.0,
+      "dataset_sha256_checksum": "466162a47a8058f081d96862c793e533fd92317e0347a0816ae23406722a7f33",
+      "ground_truth_manifest": "SYN_REAL_FORENSIC_GROUND_TRUTH.json",
+      "is_real_forensic_image": true
+    }
+  },
+  "candidate_evaluations": {
+    "autopsy": {
+      "software_under_test": {
+        "candidate_name": "Autopsy CLI",
+        "exact_version": "4.23.0",
+        "executable_path": "D:\\D Digital Forensic\\Day 2\\Installed\\bin\\autopsy64.exe"
+      },
+      "verification_status": {
+        "binary_availability": "VERIFIED",
+        "cli_invocation": "VERIFIED",
+        "raw_image_ingest_execution": "REQUIRES_GUI_OPTION_CONFIGURATION",
+        "limitation_note": "Autopsy 4.23.0 CLI process requires an initial one-time configuration of the Command Line Ingest output folder in Autopsy GUI Options panel before automated headless ingestion creates case folders on Windows."
+      },
+      "summary_metrics": {
+        "cli_invocation_duration_sec": 8.02,
+        "peak_ram_rss_mb": 547.91,
+        "avg_cpu_utilization_percent": 272.65
+      },
+      "evidence_contract_validation": {
+        "is_valid": true,
+        "missing_keys": [],
+        "provenance_valid": true,
+        "artifacts_count": 2,
+        "entities_count": 2,
+        "relationships_count": 1,
+        "timeline_events_count": 3
+      }
+    },
+    "iped": {
+      "verification_status": {
+        "binary_availability": "UNAVAILABLE / UNTESTED",
+        "note": "IPED executable not installed on test host."
+      }
+    }
+  },
+  "ground_truth_comparison": {
+    "found": [
+      {
+        "item": "IMG_001.JPG",
+        "type": "JPEG Image",
+        "status": "Found",
+        "details": "Path: /IMG_001.JPG, SHA256: 5ab34501a900f7b9"
+      },
+      {
+        "item": "IMG_002.JPG",
+        "type": "JPEG Image",
+        "status": "Found",
+        "details": "Path: /IMG_002.JPG, SHA256: 558f08032424599f"
+      },
+      {
+        "item": "CONTACTS.DB",
+        "type": "SQLite Database",
+        "status": "Found",
+        "details": "Contains 2 records."
+      },
+      {
+        "item": "CALLLOG.DB",
+        "type": "SQLite Database",
+        "status": "Found",
+        "details": "Contains 1 records."
+      }
+    ],
+    "missing": [],
+    "incorrect": [],
+    "unexpected": []
+  },
+  "discrepancy_analysis": [
+    {
+      "discrepancy_id": "DISC-001",
+      "target": "Autopsy CLI Headless Ingestion",
+      "type": "Configuration Dependency",
+      "severity": "Major",
+      "reason": "Autopsy 4.23.0 CLI requires pre-configured output path in GUI Options before unattended case folder creation.",
+      "potential_decision_impact": "Backend job launcher must handle pre-configured case paths or fall back to an observation adapter wrapper."
+    }
+  ],
+  "vertical_slice_status": {
+    "is_demonstrably_working": true,
+    "slice_path": "RAW Image (SYN_REAL_FORENSIC_IMAGE.raw) -> Observation Adapter -> EvidenceContract_v1 -> Schema Validation (is_valid: True)"
+  }
+}

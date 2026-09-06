@@ -1,0 +1,75 @@
+{
+  "document_version": "1.0.0",
+  "dataset_id": "ER_EVALUATION_DATASET_V1",
+  "description": "Deterministic evaluation dataset for Entity Resolution containing exact matches, formatting variations, obvious non-matches, and ambiguous candidates.",
+  "ground_truth_clusters": [
+    {
+      "cluster_id": "CLUSTER-PER-001",
+      "canonical_value": "Vikram Singh",
+      "entity_type": "Person",
+      "observations": [
+        {"obs_id": "EV-OBS-101", "raw_value": "Vikram Singh", "source_file": "contacts.db"},
+        {"obs_id": "EV-OBS-102", "raw_value": "Vikram  Singh", "source_file": "fir_record_01.pdf"},
+        {"obs_id": "EV-OBS-103", "raw_value": "VIKRAM SINGH", "source_file": "chat_dump.json"}
+      ]
+    },
+    {
+      "cluster_id": "CLUSTER-PER-002",
+      "canonical_value": "Ananya Sharma",
+      "entity_type": "Person",
+      "observations": [
+        {"obs_id": "EV-OBS-104", "raw_value": "Ananya Sharma", "source_file": "contacts.db"},
+        {"obs_id": "EV-OBS-105", "raw_value": "Ananya  Sharma", "source_file": "call_log.db"}
+      ]
+    },
+    {
+      "cluster_id": "CLUSTER-PHONE-001",
+      "canonical_value": "+919876543210",
+      "entity_type": "PhoneNumber",
+      "observations": [
+        {"obs_id": "EV-OBS-201", "raw_value": "+91 98765 43210", "source_file": "contacts.db"},
+        {"obs_id": "EV-OBS-202", "raw_value": "9876543210", "source_file": "calllog.db"},
+        {"obs_id": "EV-OBS-203", "raw_value": "+91-98765-43210", "source_file": "sms_messages.xml"}
+      ]
+    },
+    {
+      "cluster_id": "CLUSTER-VEH-001",
+      "canonical_value": "DL01AB1234",
+      "entity_type": "Vehicle",
+      "observations": [
+        {"obs_id": "EV-OBS-301", "raw_value": "DL-01-AB-1234", "source_file": "traffic_cam_01.jpg"},
+        {"obs_id": "EV-OBS-302", "raw_value": "DL 01 AB 1234", "source_file": "anpr_log.csv"},
+        {"obs_id": "EV-OBS-303", "raw_value": "dl01ab1234", "source_file": "challan_record.pdf"}
+      ]
+    },
+    {
+      "cluster_id": "CLUSTER-LOC-001",
+      "canonical_value": "Connaught Place Zone 1",
+      "entity_type": "Location",
+      "observations": [
+        {"obs_id": "EV-OBS-401", "raw_value": "Connaught Place, Zone-1", "source_file": "gps_track.gpx"},
+        {"obs_id": "EV-OBS-402", "raw_value": "CONNAUGHT PLACE ZONE 1", "source_file": "cell_tower_log.csv"}
+      ]
+    },
+    {
+      "cluster_id": "CLUSTER-AMBIGUOUS-001",
+      "canonical_value": "V. Singh",
+      "entity_type": "Person",
+      "is_ambiguous": true,
+      "expected_match_cluster": "CLUSTER-PER-001",
+      "expected_status": "HUMAN_REVIEW_REQUIRED",
+      "observations": [
+        {"obs_id": "EV-OBS-106", "raw_value": "V. Singh", "source_file": "informant_note.txt"}
+      ]
+    },
+    {
+      "cluster_id": "CLUSTER-NONMATCH-001",
+      "canonical_value": "Rajesh Kumar",
+      "entity_type": "Person",
+      "is_distinct": true,
+      "observations": [
+        {"obs_id": "EV-OBS-107", "raw_value": "Rajesh Kumar", "source_file": "witness_statement.pdf"}
+      ]
+    }
+  ]
+}

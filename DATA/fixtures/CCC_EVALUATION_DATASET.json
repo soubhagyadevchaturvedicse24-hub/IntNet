@@ -1,0 +1,47 @@
+{
+  "document_version": "1.0.0",
+  "dataset_id": "CCC_EVALUATION_DATASET_V1",
+  "description": "Deterministic evaluation dataset containing weak, moderate, and strong synthetic graph relationships for CCC scoring validation.",
+  "test_relationships": [
+    {
+      "test_case_id": "TC-CCC-STRONG-001",
+      "name": "High Priority Multi-Source Association",
+      "rel_type": "CALLED",
+      "frequency": 18,
+      "days_elapsed": 2,
+      "source_count": 3,
+      "er_confidence": 1.00,
+      "provenance_valid": true,
+      "evidence_ids": ["EV-CONTRACT-2026-9001", "EV-CONTRACT-2026-9002", "EV-CONTRACT-2026-9003"],
+      "expected_ring": "RED",
+      "min_expected_score": 76
+    },
+    {
+      "test_case_id": "TC-CCC-MODERATE-001",
+      "name": "Moderate Priority Shared Phone Usage",
+      "rel_type": "USED_PHONE",
+      "frequency": 4,
+      "days_elapsed": 12,
+      "source_count": 2,
+      "er_confidence": 1.00,
+      "provenance_valid": true,
+      "evidence_ids": ["EV-CONTRACT-2026-9001", "EV-CONTRACT-2026-9004"],
+      "expected_ring": "YELLOW",
+      "min_expected_score": 45,
+      "max_expected_score": 75
+    },
+    {
+      "test_case_id": "TC-CCC-WEAK-001",
+      "name": "Low Priority Distant Spatial Location Ping",
+      "rel_type": "VISITED",
+      "frequency": 1,
+      "days_elapsed": 60,
+      "source_count": 1,
+      "er_confidence": 0.75,
+      "provenance_valid": true,
+      "evidence_ids": ["EV-CONTRACT-2026-9003"],
+      "expected_ring": "GREEN",
+      "max_expected_score": 40
+    }
+  ]
+}

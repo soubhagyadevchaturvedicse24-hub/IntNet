@@ -1,0 +1,48 @@
+{
+  "fixture_id": "SYN_REAL_FORENSIC_IMAGE.raw",
+  "format": "RAW_DISK_IMAGE",
+  "file_path": "D:\\Proto SIH\\DATA\\fixtures\\SYN_REAL_FORENSIC_IMAGE.raw",
+  "size_bytes": 2097152,
+  "master_sha256": "466162a47a8058f081d96862c793e533fd92317e0347a0816ae23406722a7f33",
+  "is_real_forensic_image": true,
+  "contents": [
+    {
+      "file_name": "IMG_001.JPG",
+      "path_in_image": "/IMG_001.JPG",
+      "size_bytes": 197,
+      "sha256": "5ab34501a900f7b9324fe82025316d113f203c0e3d7631ab2553010df23fdb7b",
+      "cluster": 2,
+      "exif": {
+        "datetime": "2026-08-14T14:20:01Z",
+        "gps": "28.6139, 77.2090"
+      }
+    },
+    {
+      "file_name": "IMG_002.JPG",
+      "path_in_image": "/IMG_002.JPG",
+      "size_bytes": 197,
+      "sha256": "558f08032424599f11e9646d6313acfa0ff6a2a4c303aa873ccd4ae7e98928d5",
+      "cluster": 3,
+      "exif": {
+        "datetime": "2026-08-14T14:20:02Z",
+        "gps": "28.6149, 77.2100"
+      }
+    },
+    {
+      "file_name": "CONTACTS.DB",
+      "path_in_image": "/CONTACTS.DB",
+      "size_bytes": 8192,
+      "sha256": "a23befd42b91ca169805c53672a2518a6832aca4642e4763ef26334165267a31",
+      "cluster": 4,
+      "records_count": 2
+    },
+    {
+      "file_name": "CALLLOG.DB",
+      "path_in_image": "/CALLLOG.DB",
+      "size_bytes": 8192,
+      "sha256": "ee8cb84a2b32706ea9e0ddda8c1e3e132f15d495d2d5fef7449254e536188cac",
+      "cluster": 5,
+      "records_count": 1
+    }
+  ]
+}

@@ -1,0 +1,180 @@
+{
+  "document_version": "1.0.0",
+  "phase": "Phase 3 \u2014 Entity Resolution Vertical Slice",
+  "execution_timestamp_utc": "2026-09-06T11:19:21Z",
+  "evaluation_metrics": {
+    "total_raw_observations": 15,
+    "canonical_clusters_resolved": 7,
+    "true_matches": 11,
+    "false_matches": 0,
+    "missed_matches": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1_score": 1.0,
+    "resolution_duration_ms": 1.012
+  },
+  "graph_integration_status": {
+    "target_database": "K\u00f9zu Embedded Cypher (BENCHMARKS/kuzu_resolved_graph_db)",
+    "canonical_nodes_ingested": 7,
+    "evidence_backed_relationships_ingested": 4
+  },
+  "resolved_canonical_entities": [
+    {
+      "canonical_entity_id": "CAN-PER-0001",
+      "entity_type": "Person",
+      "canonical_name": "Vikram Singh",
+      "normalized_value": "Vikram Singh",
+      "observed_values": [
+        "Vikram Singh",
+        "Vikram  Singh",
+        "VIKRAM SINGH"
+      ],
+      "source_evidence_ids": [
+        "EV-OBS-101",
+        "EV-OBS-102",
+        "EV-OBS-103"
+      ],
+      "supporting_sources": [
+        "contacts.db",
+        "fir_record_01.pdf",
+        "chat_dump.json"
+      ],
+      "match_confidence": 1.0,
+      "match_method": "NEW_CANONICAL_ROOT",
+      "supporting_observations_count": 3,
+      "human_verification_status": "UNVERIFIED_AUTOMATED_CLUSTER"
+    },
+    {
+      "canonical_entity_id": "CAN-PER-0002",
+      "entity_type": "Person",
+      "canonical_name": "Ananya Sharma",
+      "normalized_value": "Ananya Sharma",
+      "observed_values": [
+        "Ananya Sharma",
+        "Ananya  Sharma"
+      ],
+      "source_evidence_ids": [
+        "EV-OBS-104",
+        "EV-OBS-105"
+      ],
+      "supporting_sources": [
+        "contacts.db",
+        "call_log.db"
+      ],
+      "match_confidence": 1.0,
+      "match_method": "NEW_CANONICAL_ROOT",
+      "supporting_observations_count": 2,
+      "human_verification_status": "UNVERIFIED_AUTOMATED_CLUSTER"
+    },
+    {
+      "canonical_entity_id": "CAN-PHO-0003",
+      "entity_type": "PhoneNumber",
+      "canonical_name": "+919876543210",
+      "normalized_value": "+919876543210",
+      "observed_values": [
+        "+91 98765 43210",
+        "9876543210",
+        "+91-98765-43210"
+      ],
+      "source_evidence_ids": [
+        "EV-OBS-201",
+        "EV-OBS-202",
+        "EV-OBS-203"
+      ],
+      "supporting_sources": [
+        "contacts.db",
+        "calllog.db",
+        "sms_messages.xml"
+      ],
+      "match_confidence": 1.0,
+      "match_method": "NEW_CANONICAL_ROOT",
+      "supporting_observations_count": 3,
+      "human_verification_status": "UNVERIFIED_AUTOMATED_CLUSTER"
+    },
+    {
+      "canonical_entity_id": "CAN-VEH-0004",
+      "entity_type": "Vehicle",
+      "canonical_name": "DL01AB1234",
+      "normalized_value": "DL01AB1234",
+      "observed_values": [
+        "DL-01-AB-1234",
+        "DL 01 AB 1234",
+        "dl01ab1234"
+      ],
+      "source_evidence_ids": [
+        "EV-OBS-301",
+        "EV-OBS-302",
+        "EV-OBS-303"
+      ],
+      "supporting_sources": [
+        "traffic_cam_01.jpg",
+        "anpr_log.csv",
+        "challan_record.pdf"
+      ],
+      "match_confidence": 1.0,
+      "match_method": "NEW_CANONICAL_ROOT",
+      "supporting_observations_count": 3,
+      "human_verification_status": "UNVERIFIED_AUTOMATED_CLUSTER"
+    },
+    {
+      "canonical_entity_id": "CAN-LOC-0005",
+      "entity_type": "Location",
+      "canonical_name": "Connaught Place Zone 1",
+      "normalized_value": "Connaught Place Zone 1",
+      "observed_values": [
+        "Connaught Place, Zone-1",
+        "CONNAUGHT PLACE ZONE 1"
+      ],
+      "source_evidence_ids": [
+        "EV-OBS-401",
+        "EV-OBS-402"
+      ],
+      "supporting_sources": [
+        "gps_track.gpx",
+        "cell_tower_log.csv"
+      ],
+      "match_confidence": 1.0,
+      "match_method": "NEW_CANONICAL_ROOT",
+      "supporting_observations_count": 2,
+      "human_verification_status": "UNVERIFIED_AUTOMATED_CLUSTER"
+    },
+    {
+      "canonical_entity_id": "CAN-PER-0006",
+      "entity_type": "Person",
+      "canonical_name": "V Singh",
+      "normalized_value": "V Singh",
+      "observed_values": [
+        "V. Singh"
+      ],
+      "source_evidence_ids": [
+        "EV-OBS-106"
+      ],
+      "supporting_sources": [
+        "informant_note.txt"
+      ],
+      "match_confidence": 1.0,
+      "match_method": "NEW_CANONICAL_ROOT",
+      "supporting_observations_count": 1,
+      "human_verification_status": "UNVERIFIED_AUTOMATED_CLUSTER"
+    },
+    {
+      "canonical_entity_id": "CAN-PER-0007",
+      "entity_type": "Person",
+      "canonical_name": "Rajesh Kumar",
+      "normalized_value": "Rajesh Kumar",
+      "observed_values": [
+        "Rajesh Kumar"
+      ],
+      "source_evidence_ids": [
+        "EV-OBS-107"
+      ],
+      "supporting_sources": [
+        "witness_statement.pdf"
+      ],
+      "match_confidence": 1.0,
+      "match_method": "NEW_CANONICAL_ROOT",
+      "supporting_observations_count": 1,
+      "human_verification_status": "UNVERIFIED_AUTOMATED_CLUSTER"
+    }
+  ]
+}

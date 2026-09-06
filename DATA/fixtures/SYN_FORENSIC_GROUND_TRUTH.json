@@ -1,0 +1,117 @@
+{
+  "fixture_id": "SYN-IMAGE-01",
+  "generated_at": "2026-09-06T11:03:07.429252+00:00",
+  "master_sha256": "027ff800d087e439be4dde784df6cc82e3d96a7e8b47240ec384dc02efb15b1f",
+  "files_count": 7,
+  "files": [
+    {
+      "relative_path": "data/data/com.android.providers.contacts/databases/contacts2.db",
+      "size_bytes": 8192,
+      "sha256": "be5e4f2cfee801b3defbcf2e2c64b5d56d6a5ae8157e1258c7785217fa7f58e4"
+    },
+    {
+      "relative_path": "data/data/com.android.providers.telephony/databases/calllog.db",
+      "size_bytes": 8192,
+      "sha256": "c831da42bff759a4baa61a118d5b48015155fa2f51a2518508a267e09e56c875"
+    },
+    {
+      "relative_path": "data/media/0/DCIM/Camera/IMG_20260814_142001.jpg",
+      "size_bytes": 127,
+      "sha256": "d427ca27c39a90b09ce05addbe901d9d67e4e881b75b3937bbd13df241ce78d4"
+    },
+    {
+      "relative_path": "data/media/0/DCIM/Camera/IMG_20260814_142002.jpg",
+      "size_bytes": 127,
+      "sha256": "d427ca27c39a90b09ce05addbe901d9d67e4e881b75b3937bbd13df241ce78d4"
+    },
+    {
+      "relative_path": "data/media/0/DCIM/Camera/IMG_20260814_142003.jpg",
+      "size_bytes": 127,
+      "sha256": "d427ca27c39a90b09ce05addbe901d9d67e4e881b75b3937bbd13df241ce78d4"
+    },
+    {
+      "relative_path": "data/media/0/DCIM/Camera/IMG_20260814_142004.jpg",
+      "size_bytes": 127,
+      "sha256": "d427ca27c39a90b09ce05addbe901d9d67e4e881b75b3937bbd13df241ce78d4"
+    },
+    {
+      "relative_path": "data/media/0/DCIM/Camera/IMG_20260814_142005.jpg",
+      "size_bytes": 127,
+      "sha256": "d427ca27c39a90b09ce05addbe901d9d67e4e881b75b3937bbd13df241ce78d4"
+    }
+  ],
+  "photos_exif": [
+    {
+      "file_name": "IMG_20260814_142001.jpg",
+      "path": "data/media/0/DCIM/Camera/IMG_20260814_142001.jpg",
+      "size_bytes": 127,
+      "sha256": "d427ca27c39a90b09ce05addbe901d9d67e4e881b75b3937bbd13df241ce78d4",
+      "exif": {
+        "make": "SyntheticPhone",
+        "model": "Pro-10",
+        "datetime_original": "2026-08-14T14:20:01Z",
+        "gps_latitude": 28.614900000000002,
+        "gps_longitude": 77.21000000000001,
+        "altitude_m": 215.0
+      }
+    },
+    {
+      "file_name": "IMG_20260814_142002.jpg",
+      "path": "data/media/0/DCIM/Camera/IMG_20260814_142002.jpg",
+      "size_bytes": 127,
+      "sha256": "d427ca27c39a90b09ce05addbe901d9d67e4e881b75b3937bbd13df241ce78d4",
+      "exif": {
+        "make": "SyntheticPhone",
+        "model": "Pro-10",
+        "datetime_original": "2026-08-14T14:20:02Z",
+        "gps_latitude": 28.6159,
+        "gps_longitude": 77.211,
+        "altitude_m": 215.0
+      }
+    },
+    {
+      "file_name": "IMG_20260814_142003.jpg",
+      "path": "data/media/0/DCIM/Camera/IMG_20260814_142003.jpg",
+      "size_bytes": 127,
+      "sha256": "d427ca27c39a90b09ce05addbe901d9d67e4e881b75b3937bbd13df241ce78d4",
+      "exif": {
+        "make": "SyntheticPhone",
+        "model": "Pro-10",
+        "datetime_original": "2026-08-14T14:20:03Z",
+        "gps_latitude": 28.6169,
+        "gps_longitude": 77.212,
+        "altitude_m": 215.0
+      }
+    },
+    {
+      "file_name": "IMG_20260814_142004.jpg",
+      "path": "data/media/0/DCIM/Camera/IMG_20260814_142004.jpg",
+      "size_bytes": 127,
+      "sha256": "d427ca27c39a90b09ce05addbe901d9d67e4e881b75b3937bbd13df241ce78d4",
+      "exif": {
+        "make": "SyntheticPhone",
+        "model": "Pro-10",
+        "datetime_original": "2026-08-14T14:20:04Z",
+        "gps_latitude": 28.617900000000002,
+        "gps_longitude": 77.21300000000001,
+        "altitude_m": 215.0
+      }
+    },
+    {
+      "file_name": "IMG_20260814_142005.jpg",
+      "path": "data/media/0/DCIM/Camera/IMG_20260814_142005.jpg",
+      "size_bytes": 127,
+      "sha256": "d427ca27c39a90b09ce05addbe901d9d67e4e881b75b3937bbd13df241ce78d4",
+      "exif": {
+        "make": "SyntheticPhone",
+        "model": "Pro-10",
+        "datetime_original": "2026-08-14T14:20:05Z",
+        "gps_latitude": 28.6189,
+        "gps_longitude": 77.214,
+        "altitude_m": 215.0
+      }
+    }
+  ],
+  "contacts_count": 5,
+  "call_records_count": 4
+}
