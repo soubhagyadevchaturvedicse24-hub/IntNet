@@ -1,0 +1,71 @@
+{
+  "stage_1_login": {
+    "status": "VERIFIED",
+    "user_pill": "officer1 (INVESTIGATION_OFFICER)"
+  },
+  "stage_2_case_selection": {
+    "status": "VERIFIED",
+    "active_case": "CASE-2026-001",
+    "name": "Operation Cyber Net"
+  },
+  "stage_3_evidence_registration": {
+    "status": "VERIFIED",
+    "evidence_id": "EV-2026-8A41"
+  },
+  "stage_4_process_trigger": {
+    "status": "VERIFIED",
+    "state": "QUEUED",
+    "api_response": {
+      "status": 202,
+      "data": {
+        "job_id": "JOB-2026-752377",
+        "case_id": "CASE-2026-001",
+        "evidence_id": "EV-2026-8A41",
+        "status": "QUEUED",
+        "engine_name": "CRIMENET_ISOLATED_E01_ENGINE",
+        "engine_version": "1.0.0",
+        "image_format": "E01",
+        "observed_filesystem": null,
+        "created_at": 1788727081.2749212,
+        "started_at": null,
+        "completed_at": null,
+        "requested_by": "USER-OFFICER-001",
+        "output_directory": "D:\\Proto SIH\\DATA\\processing_output\\CASE-2026-001\\JOB-2026-752377",
+        "evidence_contract_ref": null,
+        "pre_processing_sha256": "733948eee283af8e0dc9c6e389039569a41c4522172e8cdfcebf34e86f1cd21a",
+        "post_processing_sha256": null,
+        "error_message": null,
+        "audit_references": []
+      }
+    }
+  },
+  "stage_5_processing_result": {
+    "status": "VERIFIED",
+    "filesystem": "NTFS",
+    "directories": "1122",
+    "files": "2898",
+    "contract_artifacts": "23"
+  },
+  "stage_6_explorer": {
+    "status": "VERIFIED",
+    "rendered_rows": 132,
+    "counter": "132 items"
+  },
+  "stage_7_category_filtering": {
+    "status": "VERIFIED",
+    "document_count": 20,
+    "image_count": 2,
+    "all_count": 132
+  },
+  "stage_8_artifact_details": {
+    "status": "VERIFIED",
+    "target_artifact_id": "ART-2026-001-1E6EA53D"
+  },
+  "stage_9_pdf_viewer": {
+    "status": "VERIFIED",
+    "iframe_src": "blob:http://127.0.0.1:8000/737d275f-3230-462d..."
+  },
+  "stage_10_logout": {
+    "status": "VERIFIED"
+  }
+}

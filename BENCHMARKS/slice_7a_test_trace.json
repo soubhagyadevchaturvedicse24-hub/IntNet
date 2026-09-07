@@ -1,0 +1,74 @@
+{
+  "phase_2_authentication": {
+    "valid_login_status": 200,
+    "valid_login_user": "officer1",
+    "valid_login_role": "INVESTIGATION_OFFICER",
+    "invalid_login_status": 401,
+    "invalid_login_detail": "Invalid credentials",
+    "no_auth_status": 401,
+    "with_auth_status": 200,
+    "with_auth_user": "officer1"
+  },
+  "phase_3_case_management": {
+    "create_case_status": 201,
+    "created_case_id": "CASE-2026-52E3",
+    "get_case_status": 200,
+    "retrieved_status": "ACTIVE",
+    "update_case_status": 200,
+    "updated_title": "Updated E2E Acceptance Test Case",
+    "cross_case_bola_status": 403,
+    "cross_case_bola_detail": "Authorization Denied: BOLA DENY: Officer not authorized for case 'CASE-2026-52E3'."
+  },
+  "phase_4_5_evidence": {
+    "register_status": 201,
+    "evidence_id": "EV-2026-970E",
+    "storage_reference": "CASE-2026-001/EV-2026-970E_Images_Set_1.E01"
+  },
+  "phase_6_7_processing_artifacts": {
+    "processing_time_s": 4.753,
+    "observed_filesystem": "NTFS",
+    "segment_filenames": [
+      "Images_Set_1.E01",
+      "Images_Set_1.E02"
+    ],
+    "total_directories": 1122,
+    "total_files": 2898,
+    "observed_artifacts_count": 8,
+    "ingested_artifacts_count": 8,
+    "categories_represented": [
+      "DOCUMENT"
+    ]
+  },
+  "phase_8_9_explorer_viewer": {
+    "list_artifacts_status": 200,
+    "total_case_artifacts": 81,
+    "filter_status": 200,
+    "filter_cat_count": 8,
+    "detail_status": 200,
+    "detail_name": "2.pdf",
+    "detail_provenance": "Images_Set_1.E01:/Chrome/2.pdf",
+    "detail_sha256": "324e81c6962626ad5abe890249d454a78e5ab3e53a42d941f9321e3ca0276e18",
+    "recommended_viewer": "PDF",
+    "content_status": 200,
+    "content_length_bytes": 7306574,
+    "content_media_type": "application/pdf"
+  },
+  "phase_10_graph": {
+    "overview_status": 200,
+    "node_count": 36,
+    "edge_count": 39,
+    "sample_node_id": "CAN-PER-0001",
+    "sample_node_label": "Vikram Singh",
+    "contains_seeded_demo_data": true,
+    "data_source_nature": "SEEDED_DEMO_DATA"
+  },
+  "phase_11_security": {
+    "assigned_case_access": "ALLOW (200)",
+    "cross_case_access": "DENY (403)",
+    "cross_evidence_access": "DENY (403)",
+    "cross_artifact_access": "DENY (403)",
+    "unauthenticated_api": "DENY (401)",
+    "id_manipulation_url": "DENY (403)",
+    "non_existent_artifact": "NOT FOUND (404)"
+  }
+}

@@ -1,0 +1,642 @@
+{
+  "benchmark_timestamp": "2026-09-06T20:55:08Z",
+  "original_e01_hashes": {
+    "Images_Set_1.E01": "733948eee283af8e0dc9c6e389039569a41c4522172e8cdfcebf34e86f1cd21a",
+    "Images_Set_1.E02": "1da71529a72d2e10e060efe900616f098691c65787ada11c95cefed7f8e0f84d",
+    "intact": true
+  },
+  "parsed_artifacts": [
+    {
+      "artifact_id": "ART-2026-001-1E6EA53D",
+      "filename": "ART_JOB-2026-752377_018_Jeevan_Setu.pdf",
+      "classification": "REAL E01 ARTIFACT (Large Document)",
+      "parser_type": "PDF",
+      "status": "SUCCESS",
+      "duration_ms": 660.92,
+      "size_bytes": 8298577,
+      "observations_count": 20,
+      "integrity_verified": true,
+      "key_metadata": {
+        "format": "PDF",
+        "pdf_version": "%PDF-1.6",
+        "total_pages": 33,
+        "pages_inspected": 20,
+        "max_pages_ceiling": 20,
+        "is_encrypted": false,
+        "document_info": {},
+        "pages_summary": [
+          {
+            "page_number": 1,
+            "character_count": 448,
+            "word_count": 55,
+            "truncated": false,
+            "text_snippet": "Computer  Science  and  Engineering  \n  \nSession:  2025-26     \nVocational/Industrial  \nTraining\n \nReport\n \n \nOn  \n\u201c  NextGen  Industry  Program  in  \nBlockchain\n \nand\n \nCyber\n \nSecurity\n \n\u201d\n  \nAt  \n\u201c  IIIT\u2013Naya  Raipur  \u201d \nTitle  \n\u201c\nJeevan  Setu  \u201d  \n(Duration  of  Training:  1st  July  2026  to  9..."
+          },
+          {
+            "page_number": 2,
+            "character_count": 266,
+            "word_count": 23,
+            "truncated": false,
+            "text_snippet": "   \nDEPARTMENT  OF  COMPUTER  SCIENCE  AND  ENGINEERING  \n Vocational  Training     \n \nSemester:  4Th   \nProject  Name:  Jeevan  Setu   \nCompany/Organization/Institute:  IIIT  Naya  Raipur   \n From  1/07/2026   To  9/08/2026   \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \nI\n \n \n"
+          },
+          {
+            "page_number": 3,
+            "character_count": 1133,
+            "word_count": 131,
+            "truncated": false,
+            "text_snippet": "  \nDECLARATION  BY  THE  CANDIDATE     I  the  undersigned  solemnly  declare  that  the  report  of  the  Vocational  Training  Report  \nof\n \nthe\n \nProject\n \nwork\n \nentitled\n \nJeevan\n \nSetu\n,\n \nis\n \nbased\n \non\n \nmy\n \nown\n \nwork\n \ncarried\n \nout\n \nduring\n \nthe\n \ncourse\n \nof\n \nmy\n \nstudy\n \nunder\n \nthe..."
+          },
+          {
+            "page_number": 4,
+            "character_count": 1312,
+            "word_count": 161,
+            "truncated": false,
+            "text_snippet": "  \nCERTIFICATE  OF  THE  SUPERVISOR     This  is  to  certify  that  the  report  of  the  thesis  entitled  \u201c Jeevan  Setu \u201d  is  a  record  of  bonafide  \nresearch\n \nwork\n \ncarried\n \nout\n \nby\n \nbearing\n \nRoll\n \nNo.:\n \n303302224203\n \nEnrollment\n \nNo.:\n \nCE9487\n \nrespectively\n \nunder\n \nmy\n \nguidance..."
+          },
+          {
+            "page_number": 5,
+            "character_count": 1012,
+            "word_count": 132,
+            "truncated": false,
+            "text_snippet": "  \nACKNOWLEDGEMENT    We  would  like  to  express  our  special  gratitude  to  my  mentor  Mr.  Mayank  Banchhor ,  VT  \nIncharge\n \nDr.\n \nSuman\n \nKumar\n \nSwarnkar,\n \nAssociate\n \nProfessor,\n \nCSE\n \n&\n \nMs.\n \nShraddha\n \nTaunk\n,\n \nAssistant\n \nProfessor,\n \nCSE\n \nas\n \nwell\n \nas\n \nour\n \nH.O.D\n \nDr.\n \nAn..."
+          },
+          {
+            "page_number": 6,
+            "character_count": 859,
+            "word_count": 102,
+            "truncated": false,
+            "text_snippet": "  \nTABLE  OF  CONTENTS\n  \nChapter  Title  Page  No.  \nI  Introduction   \n1.1  Problem  Statement  /  Motivation  /  Background  1.2  About  the  Project  -  Jeevan  Setu   \n01  \nII  Hardware  and  Software  Requirements  2.1  Hardware  Requirements  2.2  Software  requirements  \n03  \nIII  Flow  Char..."
+          },
+          {
+            "page_number": 7,
+            "character_count": 41,
+            "word_count": 4,
+            "truncated": false,
+            "text_snippet": " \n     Chapter  \u2013  I  Introduction   \n  \n"
+          },
+          {
+            "page_number": 8,
+            "character_count": 2614,
+            "word_count": 308,
+            "truncated": false,
+            "text_snippet": " \nChapter  1   \nIntroduction   \n \n1.1  Problem  Statement  /  Motivation  /  Background  \nThe  motivation  for  Jeevan  Setu  was  drawn  directly  from  documented,  real-world  failures  in  \norgan-transport\n \nlogistics\n \nrather\n \nthan\n \nfrom\n \na\n \nhypothetical\n \nscenario.\n \nOfficial\n \ndata\n \nrele..."
+          },
+          {
+            "page_number": 9,
+            "character_count": 2672,
+            "word_count": 271,
+            "truncated": false,
+            "text_snippet": " \nChapter  1   \nIntroduction   \n \n \n1.2\n \nAbout\n \nthe\n \nProject\n \n-\n \nJeevan\n \nSetu\n \n \nJeevan  Setu  is  a  state-of-the-art,  decentralized  digital  evidence  framework  and  cold-chain  \nmonitoring\n \nsystem\n \nengineered\n \nspecifically\n \nfor\n \nhuman\n \norgan\n \ntransportation.\n \nWhen\n \na\n \ndonor\n \n..."
+          },
+          {
+            "page_number": 10,
+            "character_count": 67,
+            "word_count": 7,
+            "truncated": false,
+            "text_snippet": " \n    Chapter  \u2013  II  Hardware  and  Software  \nRequirements\n  \n  \n"
+          },
+          {
+            "page_number": 11,
+            "character_count": 1547,
+            "word_count": 166,
+            "truncated": false,
+            "text_snippet": " \n \nChapter  2   \nHardware  and  Software  Requirement  \n \n2.1  Hardware  Requirements  \nThe  minimum  hardware  components  required  to  assemble  and  deploy  the  Jeevan  Setu  edge  \ntransit\n \nbox\n \nare:\n \n \n\u2022  Processor  /  Microcontroller:  ESP32-WROOM-32D  Dual-core  32-bit  Xtensa  LX6  \nMC..."
+          },
+          {
+            "page_number": 12,
+            "character_count": 1536,
+            "word_count": 151,
+            "truncated": false,
+            "text_snippet": " \nChapter  2   \nHardware  and  Software  Requirement  \n \n2.2  Software  requirements  \nThe  core  software  stack  and  technologies  powering  the  Jeevan  Setu  framework  are:   \n\u2022  Firmware  Language:  C++  /  Arduino  Framework  Custom  embedded  firmware  \nutilizing\n \nuECC\n \nand\n \nSHA-256\n \nli..."
+          },
+          {
+            "page_number": 13,
+            "character_count": 82,
+            "word_count": 11,
+            "truncated": false,
+            "text_snippet": " \n    Chapter  \u2013  III  Flow  Chart  /  E-R  \nDiagrams\n \n/\n \nBlock\n \nDiagram\n  \n  \n"
+          },
+          {
+            "page_number": 14,
+            "character_count": 550,
+            "word_count": 56,
+            "truncated": false,
+            "text_snippet": " \n                        \n                  \nChapter\n \n3\n \n \nFlow  Chart  /  E-R  Diagrams  /  Block  Diagram  \n \n3.1  Flow  Chart  \nThe  end-to-end  navigational  workflow  and  cryptographic  data  pipeline  of  Jeevan  Setu  is  \nillustrated\n \nbelow.\n \nIt\n \nencompasses\n \ndonor\n \nregistration,\n \n..."
+          },
+          {
+            "page_number": 15,
+            "character_count": 426,
+            "word_count": 46,
+            "truncated": false,
+            "text_snippet": "         \nChapter\n \n3\n \n        \nFlow  Chart  /  E-R  Diagrams  /  Block  Diagram  \n \n3.2  E-R  Diagrams   \nThe  Entity-Relationship  architecture  establishes  relational  integrity  between  hospital  \nauthorities,\n \norgan\n \nmissions,\n \ntelemetry\n \nstreams,\n \nand\n \nblockchain\n \naudit\n \nblocks:\n \n ..."
+          },
+          {
+            "page_number": 16,
+            "character_count": 441,
+            "word_count": 29,
+            "truncated": false,
+            "text_snippet": " \n \n                                                                                               \nChapter\n \n3\n \n \nFlow  Chart  /  E-R  Diagrams  /  Block  Diagram  \n \n \n Fig.  3.2.3  IoT  Telemetry  &  Cryptographic  Payload  Entity   \n \nFig.\n \n3.2.4\n \nComprehensive\n \nDatabase\n \n&\n \nLedger\n \nEntit..."
+          },
+          {
+            "page_number": 17,
+            "character_count": 653,
+            "word_count": 64,
+            "truncated": false,
+            "text_snippet": " \n                                                                                               Chapter  3   \nFlow  Chart  /  E-R  Diagrams  /  Block  Diagram  \n \n3.3  Block  Diagram  /  Data  Flow  Diagram  \nThe  multi-layered  architecture  diagram  depicts  the  complete  life  cycle  of  an  or..."
+          },
+          {
+            "page_number": 18,
+            "character_count": 52,
+            "word_count": 6,
+            "truncated": false,
+            "text_snippet": " \n    Chapter  \u2013  IV  Results  &  Discussions   \n  \n"
+          },
+          {
+            "page_number": 19,
+            "character_count": 2502,
+            "word_count": 242,
+            "truncated": false,
+            "text_snippet": "       \n                                                                              \nChapter\n \n4\n \n \nResults  &  Discussions  \n \n4.1  Results  &  Discussions  \nThe  Jeevan  Setu  framework  was  comprehensively  evaluated  across  rigorous  simulated  and  \nhardware-in-the-loop\n \ntransit\n \nconditi..."
+          },
+          {
+            "page_number": 20,
+            "character_count": 2027,
+            "word_count": 194,
+            "truncated": false,
+            "text_snippet": " \nChapter  4   \nResults  &  Discussions  \n \n4.2  Applications   \nThe  proposed  Jeevan  Setu  framework  delivers  transformative  utility  across  multiple  critical  \nmedical\n \nand\n \nhigh-security\n \nlogistical\n \ndomains:\n \n \n\u25cf  Human  Organ  &  Tissue  Logistics  :  Ensuring  strict  compliance  w..."
+          }
+        ],
+        "total_words_extracted": 2159
+      }
+    },
+    {
+      "artifact_id": "ART-2026-001-DAE9A00F",
+      "filename": "ART_JOB-2026-752377_014_Crime_Linkage_Detector_Meeting_Minutes.pdf",
+      "classification": "REAL E01 ARTIFACT (Document)",
+      "parser_type": "PDF",
+      "status": "SUCCESS",
+      "duration_ms": 501.1,
+      "size_bytes": 248516,
+      "observations_count": 21,
+      "integrity_verified": true,
+      "key_metadata": {
+        "format": "PDF",
+        "pdf_version": "%PDF-1.7",
+        "total_pages": 17,
+        "pages_inspected": 17,
+        "max_pages_ceiling": 20,
+        "is_encrypted": false,
+        "document_info": {
+          "title": "Crime Linkage Detector Meeting Minutes",
+          "author": "ChatGPT Canvas",
+          "creator": "ChatGPT",
+          "producer": "WeasyPrint 68.0"
+        },
+        "pages_summary": [
+          {
+            "page_number": 1,
+            "character_count": 1261,
+            "word_count": 180,
+            "truncated": false,
+            "text_snippet": "MINUTES OF MEETING\nCrime Linkage Detector \u2014 Problem Statement Decoding &\nSolution Planning\nProject: Crime Linkage Detector\nTarget Organization: National Crime Records Bureau\nMeeting Focus: Problem Statement Understanding, Feature Identification, Technical Approach,\nFeasibility and Next Steps\nDate: 0..."
+          },
+          {
+            "page_number": 2,
+            "character_count": 1330,
+            "word_count": 193,
+            "truncated": false,
+            "text_snippet": "Key Interpretation\nThe interconnected nature of criminal activity is not only a challenge.\nIt can also become a positive opportunity for analysis.\nIf criminal activities leave interconnected traces across different data sources, those connections can\npotentially be identified and represented as a ne..."
+          },
+          {
+            "page_number": 3,
+            "character_count": 1142,
+            "word_count": 166,
+            "truncated": false,
+            "text_snippet": "Important Technical Clarification\nThe final implementation should validate the actual image format and storage requirements.\nA forensic image does not inherently mean that TB-level source data becomes MB-level data.\nImaging generally preserves the relevant source data and therefore the resulting ima..."
+          },
+          {
+            "page_number": 4,
+            "character_count": 871,
+            "word_count": 128,
+            "truncated": false,
+            "text_snippet": "Nodes\nNodes can represent entities such as:\nPeople\nVehicles\nPhone numbers\nLocations\nOrganizations\nEvents\nEdges\nEdges represent relationships between entities.\nExamples:\nPerson \u2192 Called \u2192 Phone Number\nPerson \u2192 Used \u2192 Vehicle\nPerson \u2192 Visited \u2192 Location\nPerson \u2192 Associated With \u2192 Organization\nPerson \u2192..."
+          },
+          {
+            "page_number": 5,
+            "character_count": 962,
+            "word_count": 135,
+            "truncated": false,
+            "text_snippet": "7. Key Individual Identification\nAnother important requirement is identifying key individuals who play influential roles within a\ncriminal network.\nThe system can use graph-based characteristics such as:\nNumber of connections\nCentrality\nFrequency of interactions\nPosition within the network\nConnectio..."
+          },
+          {
+            "page_number": 6,
+            "character_count": 992,
+            "word_count": 123,
+            "truncated": false,
+            "text_snippet": "\u2462 Conclude \u2014 Generate Intelligence\nThe system provides investigators with:\nCriminal network visualization\nSuspicious connections\nKey individuals\nSuspicious zones\nSeverity indicators\nAnalytical dashboards\nActionable intelligence\n9. Entity Identification\nThe system should extract important entities fr..."
+          },
+          {
+            "page_number": 7,
+            "character_count": 1117,
+            "word_count": 148,
+            "truncated": false,
+            "text_snippet": "The system can use:\nCoordinates \u2192 Location Mapping \u2192 Event Association \u2192 Network Analysis\nThis can help identify:\nFrequently occurring locations\nCommon locations between suspects\nLocations associated with incidents\nPotential suspicious zones\nGeographical concentration of activities\n11. Vehicle Intel..."
+          },
+          {
+            "page_number": 8,
+            "character_count": 650,
+            "word_count": 93,
+            "truncated": false,
+            "text_snippet": "Individual A\n\u2193 \nPhone Number\n\u2193\nIndividual B\n\u2193\nVehicle\n\u2193\nLocation\n\u2193\nEvent\n\u2193\nOrganization\nSuch chains can help investigators discover relationships that may not be obvious from individual\nrecords.\n14. Investigator Assistance Dashboard\nThe final system should include a dedicated dashboard for Investiga..."
+          },
+          {
+            "page_number": 9,
+            "character_count": 1169,
+            "word_count": 172,
+            "truncated": false,
+            "text_snippet": "15. Severity Analysis\nOne proposed dashboard feature is a severity-based analytical view.\nThe system can visualize crime or network activity according to severity and time.\nFor example:\nHigh \u2192 Medium \u2192 Low\nor\nCritical \u2192 High \u2192 Moderate \u2192 Low\nThe exact classification methodology should be finalized a..."
+          },
+          {
+            "page_number": 10,
+            "character_count": 674,
+            "word_count": 92,
+            "truncated": false,
+            "text_snippet": "ConfidenceCategory Interpretation\n0\u201340% \ud83d\udfe2 Green Lower confidence\n>40\u201380% \ud83d\udfe1 YellowModerate confidence\n>80% \ud83d\udd34 Red Higher confidence\nPurpose\nThe CCC system can help investigators prioritize potential contacts for further examination.\nImportant Note\nThese thresholds are currently proposed working thresh..."
+          },
+          {
+            "page_number": 11,
+            "character_count": 433,
+            "word_count": 56,
+            "truncated": false,
+            "text_snippet": "\u2193\nEntity Resolution\n\u2193\nGraph Construction\n\u2193\nPattern & Anomaly Detection\n\u2193\nNetwork Analysis\n\u2193\nConfidence Prediction\n\u2193\nSeverity + CCC Classification\n\u2193\nInvestigator Dashboard\n\u2193\nActionable Intelligence\n19. Technology Direction\nThe proposed solution may leverage multiple technology areas:\nArtificial Intel..."
+          },
+          {
+            "page_number": 12,
+            "character_count": 839,
+            "word_count": 110,
+            "truncated": false,
+            "text_snippet": "Natural Language Processing\nFor processing unstructured documents and extracting:\nPeople\nLocations\nOrganizations\nVehicles\nPhone numbers\nEvents\nRelationships\nGraph Analytics\nFor:\nNetwork construction\nRelationship discovery\nKey individual identification\nCentrality analysis\nCommunity detection\nHidden r..."
+          },
+          {
+            "page_number": 13,
+            "character_count": 1089,
+            "word_count": 157,
+            "truncated": false,
+            "text_snippet": "The architecture should be designed in a modular manner so that individual components can be\nimproved without rebuilding the entire system.\n21. Scalability\nScalability is a critical requirement because the target environment may involve very large datasets.\nThe proposed system should support:\nMultip..."
+          },
+          {
+            "page_number": 14,
+            "character_count": 1146,
+            "word_count": 165,
+            "truncated": false,
+            "text_snippet": "AI-generated relationships and classifications should be presented as:\nLeads\nIndicators\nConfidence scores\nPotential associations\nAnalytical insights\nrather than automatic declarations of guilt.\nHuman investigation and verification should remain the final decision layer .\n24. Current Research Require..."
+          },
+          {
+            "page_number": 15,
+            "character_count": 1305,
+            "word_count": 176,
+            "truncated": false,
+            "text_snippet": "Priority Task Expected Output Deadline\n\ud83d\udd34 High Define entities and relationshipsEntity relationship\nschema\nTo be\nconfirmed\n\ud83d\udd34 High Finalize graph architecture Graph model To be\nconfirmed\n\ud83d\udfe0\nMedium Research NLP models Model shortlist To be\nconfirmed\n\ud83d\udfe0\nMedium Research graph technologies Technology compar..."
+          },
+          {
+            "page_number": 16,
+            "character_count": 842,
+            "word_count": 114,
+            "truncated": false,
+            "text_snippet": "Problem\nLarge + fragmented + unstructured crime data\n\u2193\nChallenge\nManual analysis struggles to discover hidden relationships\n\u2193\nSolution\nAI + NLP + ML + Graph Analytics\n\u2193\nOutput\nConnected criminal network + patterns + key individuals + suspicious relationships\n\u2193\nInvestigator Value\nVisual and analytica..."
+          },
+          {
+            "page_number": 17,
+            "character_count": 991,
+            "word_count": 136,
+            "truncated": false,
+            "text_snippet": "Proposed Agenda\n\u2460 Finalize data sources and data flow\n\u2461 Define complete entity schema\n\u2462 Define relationship types\n\u2463 Finalize graph database / graph analytics approach\n\u2464 Decide NLP and AI pipeline\n\u2465 Define confidence scoring methodology\n\u2466 Define CCC classification\n\u2467 Define severity calculation\n\u2468 Desi..."
+          }
+        ],
+        "total_words_extracted": 2344
+      }
+    },
+    {
+      "artifact_id": "ART-2026-001-48A024E4",
+      "filename": "ART_JOB-2026-752377_015_Golden_Temple_Aarti_Ceremony.png",
+      "classification": "REAL E01 ARTIFACT (High-Res Image)",
+      "parser_type": "IMAGE",
+      "status": "SUCCESS",
+      "duration_ms": 91.65,
+      "size_bytes": 2544344,
+      "observations_count": 2,
+      "integrity_verified": true,
+      "key_metadata": {
+        "format": "PNG",
+        "color_mode": "RGB",
+        "width": 1701,
+        "height": 924,
+        "has_exif": false,
+        "exif_tag_count": 0,
+        "exif_metadata": {},
+        "has_gps": false,
+        "gps_metadata": null
+      }
+    },
+    {
+      "artifact_id": "ART-2026-001-57103AF2",
+      "filename": "ART_JOB-2026-752377_011_ChatGPT_Image_Aug_31__2026__07_25_22_PM.png",
+      "classification": "REAL E01 ARTIFACT (Image)",
+      "parser_type": "IMAGE",
+      "status": "SUCCESS",
+      "duration_ms": 61.3,
+      "size_bytes": 2584338,
+      "observations_count": 2,
+      "integrity_verified": true,
+      "key_metadata": {
+        "format": "PNG",
+        "color_mode": "RGB",
+        "width": 1024,
+        "height": 1536,
+        "has_exif": false,
+        "exif_tag_count": 0,
+        "exif_metadata": {},
+        "has_gps": false,
+        "gps_metadata": null
+      }
+    },
+    {
+      "artifact_id": "ART-SYNTHETIC-DB-001",
+      "filename": "synthetic_sample.db",
+      "classification": "SYNTHETIC TEST DATA (Controlled Test Fixture)",
+      "parser_type": "SQLITE",
+      "status": "SUCCESS",
+      "duration_ms": 5.75,
+      "size_bytes": 16384,
+      "observations_count": 7,
+      "integrity_verified": true,
+      "key_metadata": {
+        "format": "SQLite 3",
+        "pragma_stats": {
+          "page_size": 4096,
+          "page_count": 4,
+          "encoding": "UTF-8",
+          "freelist_count": 0,
+          "user_version": 8,
+          "schema_version": 3
+        },
+        "table_count": 3,
+        "view_count": 0,
+        "index_count": 0,
+        "table_names": [
+          "metadata_tags",
+          "suspect_contacts",
+          "system_logs"
+        ],
+        "view_names": [],
+        "index_names": [],
+        "tables": {
+          "metadata_tags": {
+            "column_count": 2,
+            "columns": [
+              {
+                "cid": 0,
+                "name": "tag_id",
+                "type": "INTEGER",
+                "notnull": false,
+                "dflt_value": null,
+                "pk": true
+              },
+              {
+                "cid": 1,
+                "name": "tag_name",
+                "type": "TEXT",
+                "notnull": false,
+                "dflt_value": null,
+                "pk": false
+              }
+            ],
+            "row_count_display": "3",
+            "is_exact_count": true,
+            "sample_row_count": 3,
+            "sample_rows": [
+              {
+                "tag_id": 1,
+                "tag_name": "NARCOTICS"
+              },
+              {
+                "tag_id": 2,
+                "tag_name": "FINANCIAL"
+              },
+              {
+                "tag_id": 3,
+                "tag_name": "HAWALA"
+              }
+            ]
+          },
+          "suspect_contacts": {
+            "column_count": 4,
+            "columns": [
+              {
+                "cid": 0,
+                "name": "id",
+                "type": "INTEGER",
+                "notnull": false,
+                "dflt_value": null,
+                "pk": true
+              },
+              {
+                "cid": 1,
+                "name": "name",
+                "type": "TEXT",
+                "notnull": false,
+                "dflt_value": null,
+                "pk": false
+              },
+              {
+                "cid": 2,
+                "name": "phone",
+                "type": "TEXT",
+                "notnull": false,
+                "dflt_value": null,
+                "pk": false
+              },
+              {
+                "cid": 3,
+                "name": "role",
+                "type": "TEXT",
+                "notnull": false,
+                "dflt_value": null,
+                "pk": false
+              }
+            ],
+            "row_count_display": "25",
+            "is_exact_count": true,
+            "sample_row_count": 10,
+            "sample_rows": [
+              {
+                "id": 1,
+                "name": "Synthetic Contact 1",
+                "phone": "+91-9876543201",
+                "role": "HANDLER"
+              },
+              {
+                "id": 2,
+                "name": "Synthetic Contact 2",
+                "phone": "+91-9876543202",
+                "role": "COURIER"
+              },
+              {
+                "id": 3,
+                "name": "Synthetic Contact 3",
+                "phone": "+91-9876543203",
+                "role": "HANDLER"
+              },
+              {
+                "id": 4,
+                "name": "Synthetic Contact 4",
+                "phone": "+91-9876543204",
+                "role": "COURIER"
+              },
+              {
+                "id": 5,
+                "name": "Synthetic Contact 5",
+                "phone": "+91-9876543205",
+                "role": "HANDLER"
+              },
+              {
+                "id": 6,
+                "name": "Synthetic Contact 6",
+                "phone": "+91-9876543206",
+                "role": "COURIER"
+              },
+              {
+                "id": 7,
+                "name": "Synthetic Contact 7",
+                "phone": "+91-9876543207",
+                "role": "HANDLER"
+              },
+              {
+                "id": 8,
+                "name": "Synthetic Contact 8",
+                "phone": "+91-9876543208",
+                "role": "COURIER"
+              },
+              {
+                "id": 9,
+                "name": "Synthetic Contact 9",
+                "phone": "+91-9876543209",
+                "role": "HANDLER"
+              },
+              {
+                "id": 10,
+                "name": "Synthetic Contact 10",
+                "phone": "+91-9876543210",
+                "role": "COURIER"
+              }
+            ]
+          },
+          "system_logs": {
+            "column_count": 4,
+            "columns": [
+              {
+                "cid": 0,
+                "name": "log_id",
+                "type": "INTEGER",
+                "notnull": false,
+                "dflt_value": null,
+                "pk": true
+              },
+              {
+                "cid": 1,
+                "name": "timestamp",
+                "type": "TEXT",
+                "notnull": false,
+                "dflt_value": null,
+                "pk": false
+              },
+              {
+                "cid": 2,
+                "name": "event_type",
+                "type": "TEXT",
+                "notnull": false,
+                "dflt_value": null,
+                "pk": false
+              },
+              {
+                "cid": 3,
+                "name": "details",
+                "type": "TEXT",
+                "notnull": false,
+                "dflt_value": null,
+                "pk": false
+              }
+            ],
+            "row_count_display": "15",
+            "is_exact_count": true,
+            "sample_row_count": 10,
+            "sample_rows": [
+              {
+                "log_id": 1,
+                "timestamp": "2026-09-01T12:01:00Z",
+                "event_type": "CALL_EVENT",
+                "details": "Synthetic CDR record 1"
+              },
+              {
+                "log_id": 2,
+                "timestamp": "2026-09-01T12:02:00Z",
+                "event_type": "CALL_EVENT",
+                "details": "Synthetic CDR record 2"
+              },
+              {
+                "log_id": 3,
+                "timestamp": "2026-09-01T12:03:00Z",
+                "event_type": "CALL_EVENT",
+                "details": "Synthetic CDR record 3"
+              },
+              {
+                "log_id": 4,
+                "timestamp": "2026-09-01T12:04:00Z",
+                "event_type": "CALL_EVENT",
+                "details": "Synthetic CDR record 4"
+              },
+              {
+                "log_id": 5,
+                "timestamp": "2026-09-01T12:05:00Z",
+                "event_type": "CALL_EVENT",
+                "details": "Synthetic CDR record 5"
+              },
+              {
+                "log_id": 6,
+                "timestamp": "2026-09-01T12:06:00Z",
+                "event_type": "CALL_EVENT",
+                "details": "Synthetic CDR record 6"
+              },
+              {
+                "log_id": 7,
+                "timestamp": "2026-09-01T12:07:00Z",
+                "event_type": "CALL_EVENT",
+                "details": "Synthetic CDR record 7"
+              },
+              {
+                "log_id": 8,
+                "timestamp": "2026-09-01T12:08:00Z",
+                "event_type": "CALL_EVENT",
+                "details": "Synthetic CDR record 8"
+              },
+              {
+                "log_id": 9,
+                "timestamp": "2026-09-01T12:09:00Z",
+                "event_type": "CALL_EVENT",
+                "details": "Synthetic CDR record 9"
+              },
+              {
+                "log_id": 10,
+                "timestamp": "2026-09-01T12:10:00Z",
+                "event_type": "CALL_EVENT",
+                "details": "Synthetic CDR record 10"
+              }
+            ]
+          }
+        }
+      }
+    }
+  ],
+  "security_tests": {},
+  "overall_status": "SUCCESS"
+}

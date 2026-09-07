@@ -13,9 +13,41 @@ _backup_checkpoints/
 venv/
 ENV/
 env/
+BENCHMARKS/venv_bench/
 
 # OS / IDE
 .DS_Store
 Thumbs.db
 .vscode/
 .idea/
+
+# Forensic Disk Images & Evidence Blobs (Prevents 100MB+ push rejections)
+*.E01
+*.e01
+*.E02
+*.e02
+*.E[0-9][0-9]
+*.e[0-9][0-9]
+*.raw
+!DATA/fixtures/*.raw
+Images/
+DATA/staging_evidence/
+DATA/evidence_store/
+DATA/processing_output/
+DATA/test_fixtures/
+
+# SQLite Databases & Journals (Runtime state)
+DATA/*.db
+DATA/*.db-shm
+DATA/*.db-wal
+!DATA/fixtures/**/*.db
+
+# Ephemeral Benchmark & Test Artifacts
+BENCHMARKS/kuzu_test_er_db*
+BENCHMARKS/kuzu_slice5_graph_db*
+BENCHMARKS/tmp_error_test/
+
+BENCHMARKS/output/
+BENCHMARKS/screenshots/
+BENCHMARKS/temp_csv_*
+

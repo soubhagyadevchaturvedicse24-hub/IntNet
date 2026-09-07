@@ -413,3 +413,6 @@ class GraphIntelligenceService:
             "notes": notes,
             "timestamp": "2026-09-06T17:00:00Z"
         }
+
+# Global shared singleton to prevent Kùzu lock contention on BENCHMARKS/kuzu_resolved_graph_db
+shared_demo_graph_service = GraphIntelligenceService()

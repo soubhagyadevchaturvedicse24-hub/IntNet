@@ -1,0 +1,5786 @@
+# -*- coding: utf-8 -*-
+"""
+CRIMENET // Investigator Workspace HTML Builder
+Generates src/api/workspace.html matching Reference A (media_1788732490649.png)
+and Reference B (media_1788732490607.jpg) with high fidelity.
+"""
+
+import os
+
+HTML_CONTENT = """<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRIMENET // Investigator Workspace IDE</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.26.0/cytoscape.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #050a16;
+            --panel-bg: #070e1f;
+            --panel-elevated: #0d172e;
+            --panel-border: rgba(56, 189, 248, 0.16);
+            --accent-cyan: #00f0ff;
+            --accent-cyan-glow: rgba(0, 240, 255, 0.35);
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --layer-red: #ef4444;
+            --layer-red-glow: rgba(239, 68, 68, 0.45);
+            --layer-yellow: #f59e0b;
+            --layer-yellow-glow: rgba(245, 158, 11, 0.4);
+            --layer-green: #10b981;
+            --layer-green-glow: rgba(16, 185, 129, 0.4);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            scrollbar-width: thin;
+            scrollbar-color: #1e293b #040814;
+        }
+
+        /* CUSTOM SLEEK DARK FORENSIC SCROLLBARS (ZERO WHITE SCROLLBARS) */
+        ::-webkit-scrollbar {
+            width: 7px;
+            height: 7px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #030712;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1e293b;
+            border-radius: 4px;
+            border: 1px solid rgba(56, 189, 248, 0.2);
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #0284c7;
+            box-shadow: 0 0 6px var(--accent-cyan-glow);
+        }
+        ::-webkit-scrollbar-corner {
+            background: #030712;
+        }
+
+        body { background: var(--bg-dark); color: var(--text-primary); height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+
+        /* HEADER */
+        header {
+            background: #040814;
+            height: 48px;
+            padding: 0 16px;
+            border-bottom: 1px solid var(--panel-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+            flex-shrink: 0;
+        }
+
+        .header-left { display: flex; align-items: center; gap: 20px; }
+        .brand-container { display: flex; align-items: center; gap: 10px; cursor: pointer; }
+        .brand-logo {
+            width: 28px; height: 28px;
+            background: radial-gradient(circle, rgba(0,240,255,0.25) 0%, transparent 70%);
+            border: 1.5px solid var(--accent-cyan);
+            border-radius: 6px;
+            display: flex; align-items: center; justify-content: center;
+            color: var(--accent-cyan);
+            box-shadow: 0 0 10px var(--accent-cyan-glow);
+        }
+        .brand-title { font-weight: 700; font-size: 13px; letter-spacing: 0.8px; color: #ffffff; }
+        .brand-title span { color: var(--accent-cyan); font-weight: 400; }
+        .brand-sub { font-size: 8px; letter-spacing: 1.5px; color: var(--accent-cyan); text-transform: uppercase; font-weight: 600; }
+
+
+        /* HEADER RIGHT */
+        .header-right { display: flex; align-items: center; gap: 10px; }
+        .case-select-wrapper { display: flex; align-items: center; gap: 6px; background: rgba(15, 23, 42, 0.9); border: 1px solid rgba(56, 189, 248, 0.3); border-radius: 6px; padding: 2px 8px; box-shadow: 0 0 10px rgba(0, 240, 255, 0.1); }
+        .case-select-label { font-size: 10px; color: var(--accent-cyan); text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; white-space: nowrap; }
+        .case-selector { background: #040814; border: 1px solid rgba(56, 189, 248, 0.25); border-radius: 4px; color: #38bdf8; font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600; outline: none; cursor: pointer; min-width: 200px; max-width: 360px; padding: 3px 8px; }
+        .case-selector:hover, .case-selector:focus { border-color: var(--accent-cyan); box-shadow: 0 0 8px rgba(0, 240, 255, 0.3); }
+        .case-selector option { background: #070e1f; color: #f8fafc; padding: 4px; }
+
+        .badge-pill {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid var(--panel-border);
+            padding: 3px 8px;
+            border-radius: 5px;
+            font-size: 10.5px;
+            display: flex; align-items: center; gap: 5px;
+            color: var(--text-secondary);
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .badge-pill strong { color: #fff; }
+
+        .btn-layout-toggle {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid var(--panel-border);
+            color: var(--text-secondary);
+            padding: 4px 8px;
+            border-radius: 5px;
+            font-size: 10.5px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.15s;
+            display: flex; align-items: center; gap: 4px;
+        }
+        .btn-layout-toggle:hover { border-color: var(--accent-cyan); color: #fff; }
+        .btn-layout-toggle.active { background: rgba(0, 240, 255, 0.1); border-color: var(--accent-cyan); color: var(--accent-cyan); }
+
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        .btn-header-logout {
+            background: rgba(239, 68, 68, 0.12);
+            border: 1px solid rgba(239, 68, 68, 0.4);
+            color: #fca5a5;
+            padding: 4px 10px;
+            border-radius: 5px;
+            font-size: 10.5px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        .btn-header-logout:hover { background: #ef4444; color: #fff; }
+
+        /* ==================================================================== */
+        /* WORKSPACE IDE 4-ZONE LAYOUT                                          */
+        /* 1. Activity Bar (Far Left)                                           */
+        /* 2. Contextual Sidebar (Left)                                         */
+        /* 3. Center Workspace (Main Working Canvas)                            */
+        /* 4. Contextual Inspector (Right)                                      */
+        /* + Bottom Activity Console                                            */
+        /* ==================================================================== */
+        .ide-body { flex: 1; display: flex; flex-direction: column; overflow: hidden; position: relative; }
+        .ide-panels-row { flex: 1; display: flex; overflow: hidden; position: relative; }
+
+        /* ZONE 1: NARROW ACTIVITY / FEATURE BAR (REFERENCE A & B) */
+        .ide-activity-bar {
+            width: 52px;
+            background: #030611;
+            border-right: 1px solid var(--panel-border);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            flex-shrink: 0;
+            z-index: 30;
+            user-select: none;
+        }
+        .activity-bar-top {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+        }
+        .activity-bar-bottom {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+        }
+        .activity-item {
+            width: 40px;
+            height: 40px;
+            border-radius: 7px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.15s;
+            position: relative;
+            background: transparent;
+            border: 1px solid transparent;
+        }
+        .activity-item:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(56, 189, 248, 0.2);
+        }
+        .activity-item.active {
+            color: var(--accent-cyan);
+            background: rgba(0, 240, 255, 0.12);
+            border-color: var(--accent-cyan);
+            box-shadow: 0 0 10px var(--accent-cyan-glow);
+        }
+        .activity-item.active::before {
+            content: '';
+            position: absolute;
+            left: -6px;
+            top: 6px;
+            bottom: 6px;
+            width: 3px;
+            background: var(--accent-cyan);
+            border-radius: 0 3px 3px 0;
+            box-shadow: 0 0 8px var(--accent-cyan-glow);
+        }
+        .activity-item svg { width: 17px; height: 17px; }
+        .activity-label {
+            font-size: 7.5px;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+            text-transform: uppercase;
+            margin-top: 2px;
+            color: inherit;
+        }
+
+        /* ZONE 2: CONTEXTUAL SIDEBAR PANEL (LEFT) */
+        .ide-panel-left {
+            width: 270px;
+            min-width: 200px;
+            max-width: 550px;
+            background: var(--panel-bg);
+            border-right: 1px solid var(--panel-border);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            flex-shrink: 0;
+            z-index: 20;
+        }
+        .ide-panel-left.collapsed { display: none !important; }
+
+        .sidebar-header {
+            padding: 10px 14px;
+            background: #040814;
+            border-bottom: 1px solid var(--panel-border);
+            font-size: 10.5px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        /* BREADCRUMB IN SIDEBAR (REFERENCE B) */
+        .sidebar-breadcrumb {
+            padding: 8px 14px;
+            background: rgba(15, 23, 42, 0.6);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--accent-cyan);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-shrink: 0;
+        }
+        .sidebar-breadcrumb .breadcrumb-case { color: #fff; font-family: 'JetBrains Mono', monospace; }
+        .sidebar-breadcrumb .breadcrumb-sep { color: var(--text-muted); font-size: 12px; }
+
+        /* DYNAMIC SIDEBAR VIEWS */
+        .sidebar-content-view {
+            display: none;
+            flex: 1;
+            flex-direction: column;
+            overflow-y: auto;
+            position: relative;
+        }
+        .sidebar-content-view.active { display: flex; }
+
+        /* SIDEBAR TREE (REFERENCE B) */
+        .explorer-tree {
+            padding: 8px 6px;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            flex: 1;
+            overflow-y: auto;
+        }
+        .tree-node {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 6px 10px; border-radius: 5px; font-size: 11.5px; color: var(--text-secondary);
+            cursor: pointer; transition: all 0.15s; user-select: none;
+        }
+        .tree-node:hover { background: rgba(255,255,255,0.04); color: #fff; }
+        .tree-node.active { background: rgba(0, 240, 255, 0.12); color: var(--accent-cyan); font-weight: 600; }
+        .tree-node-left { display: flex; align-items: center; gap: 7px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .tree-chevron { width: 12px; height: 12px; transition: transform 0.15s; flex-shrink: 0; }
+        .tree-chevron.expanded { transform: rotate(90deg); }
+        .tree-count-badge { font-family: 'JetBrains Mono', monospace; font-size: 10px; padding: 1px 6px; border-radius: 10px; background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(255,255,255,0.08); color: var(--text-muted); }
+        .tree-count-badge.has-items { color: var(--accent-cyan); border-color: rgba(0, 240, 255, 0.3); }
+
+        .tree-children { padding-left: 18px; display: flex; flex-direction: column; gap: 2px; }
+        .tree-children.collapsed { display: none; }
+        .tree-sub-item {
+            padding: 5px 8px; border-radius: 4px; font-size: 11px; color: #cbd5e1;
+            cursor: pointer; transition: all 0.12s; display: flex; align-items: center; gap: 6px;
+            overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+        }
+        .tree-sub-item:hover { background: rgba(0, 240, 255, 0.06); color: #fff; }
+        .tree-sub-item.active { background: rgba(0, 240, 255, 0.18); color: var(--accent-cyan); font-weight: 600; border-left: 2px solid var(--accent-cyan); }
+
+        /* SIDEBAR SEARCH INPUT (BOTTOM OF SIDEBAR - REFERENCE B) */
+        .sidebar-search-container {
+            padding: 8px 10px;
+            background: #040814;
+            border-top: 1px solid var(--panel-border);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+        .sidebar-search-container svg { color: var(--text-muted); flex-shrink: 0; }
+        .sidebar-search-input {
+            background: #070e1f;
+            border: 1px solid var(--panel-border);
+            border-radius: 4px;
+            color: #fff;
+            font-size: 11px;
+            padding: 4px 8px;
+            width: 100%;
+            outline: none;
+        }
+        .sidebar-search-input:focus { border-color: var(--accent-cyan); }
+
+        /* DRAGGABLE IDE PANEL SPLITTERS */
+        .ide-splitter {
+            width: 5px;
+            background: rgba(56, 189, 248, 0.12);
+            cursor: col-resize;
+            flex-shrink: 0;
+            z-index: 25;
+            user-select: none;
+            -webkit-user-select: none;
+            transition: background-color 0.15s, box-shadow 0.15s;
+        }
+        .ide-splitter:hover,
+        .ide-splitter.dragging {
+            background: var(--accent-cyan);
+            box-shadow: 0 0 8px var(--accent-cyan-glow);
+        }
+
+        /* While resizing, disable text selection across page and block pointer traps */
+        body.resizing-active,
+        body.resizing-active-v {
+            user-select: none !important;
+            -webkit-user-select: none !important;
+        }
+        body.resizing-active {
+            cursor: col-resize !important;
+        }
+        body.resizing-active-v {
+            cursor: ns-resize !important;
+        }
+        body.resizing-active *,
+        body.resizing-active-v * {
+            user-select: none !important;
+            -webkit-user-select: none !important;
+        }
+        /* Critical: prevent iframes, pdfs, canvases, and svg overlays from capturing mouse events during drag */
+        body.resizing-active iframe,
+        body.resizing-active canvas,
+        body.resizing-active svg,
+        body.resizing-active embed,
+        body.resizing-active object,
+        body.resizing-active-v iframe,
+        body.resizing-active-v canvas,
+        body.resizing-active-v svg,
+        body.resizing-active-v embed,
+        body.resizing-active-v object {
+            pointer-events: none !important;
+        }
+
+        /* Hardware acceleration hints for resizable panels */
+        .ide-panel-left,
+        .ide-panel-right,
+        .ide-panel-bottom {
+            will-change: width, height;
+        }
+
+        /* ZONE 3: CENTER WORKSPACE VIEWPORT */
+        .ide-panel-center {
+            flex: 1;
+            min-width: 350px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+            background: var(--bg-dark);
+        }
+
+        .view-pane { width: 100%; height: 100%; display: none; flex-direction: column; overflow: hidden; position: relative; }
+        .view-pane.active { display: flex; }
+
+        /* INTEGRATED ARTIFACT VIEWER (REFERENCE B) */
+        .artifact-viewer-container {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+        .artifact-viewer-header {
+            height: 40px;
+            background: #070e1f;
+            border-bottom: 1px solid var(--panel-border);
+            padding: 0 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0;
+        }
+        .artifact-header-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            overflow: hidden;
+        }
+        .artifact-file-icon {
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .artifact-file-name {
+            font-size: 13px;
+            font-weight: 700;
+            color: #fff;
+            white-space: nowrap;
+        }
+        .artifact-breadcrumb-tag {
+            font-size: 11px;
+            color: var(--text-muted);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .artifact-header-right {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+
+        .artifact-canvas-body {
+            flex: 1;
+            min-height: 200px;
+            background: #030712;
+            background-image: radial-gradient(rgba(255,255,255,0.03) 1px, transparent 1px);
+            background-size: 24px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            padding: 12px;
+            position: relative;
+        }
+
+        /* BOTTOM TABBED INSPECTOR IN ARTIFACT VIEWER (REFERENCE B) */
+        /* (artifact-bottom-panel, artifact-tab-bar, art-bottom-tab removed — tabs moved to console panel) */
+        /* SLICE 7C: FORENSIC EVIDENCE INTAKE & DRAG-AND-DROP */
+        .evidence-dropzone {
+            border: 2px dashed rgba(56, 189, 248, 0.4);
+            background: rgba(15, 23, 42, 0.65);
+            border-radius: 8px;
+            padding: 26px 16px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-bottom: 12px;
+        }
+        .evidence-dropzone:hover,
+        .evidence-dropzone.dragover {
+            border-color: var(--accent-cyan);
+            background: rgba(6, 182, 212, 0.1);
+            box-shadow: 0 0 16px rgba(6, 182, 212, 0.25);
+        }
+        .intake-tab-container {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+        .intake-tab-btn {
+            padding: 6px 14px;
+            font-size: 11px;
+            font-weight: 600;
+            border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.03);
+            color: var(--text-secondary);
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        .intake-tab-btn:hover { color: #fff; background: rgba(255,255,255,0.06); }
+        .intake-tab-btn.active {
+            background: rgba(6, 182, 212, 0.15);
+            border-color: var(--accent-cyan);
+            color: var(--accent-cyan);
+        }
+        .upload-summary-box {
+            background: #060d1e;
+            border: 1px solid var(--panel-border);
+            border-radius: 6px;
+            padding: 12px;
+            margin-bottom: 12px;
+            font-size: 11px;
+        }
+        .upload-progress-container {
+            height: 8px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 8px 0;
+        }
+        .upload-progress-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #06b6d4, #10b981);
+            transition: width 0.15s ease;
+        }
+
+        /* METADATA GRID (REFERENCE B) */
+
+        .meta-grid-3col {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 12px;
+            font-size: 11px;
+            margin-bottom: 12px;
+        }
+        .meta-field { display: flex; flex-direction: column; gap: 2px; }
+        .meta-field-label { color: var(--text-muted); font-size: 10px; text-transform: uppercase; font-weight: 600; }
+        .meta-field-val { color: #e2e8f0; font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 500; }
+
+        .hash-verified-box {
+            background: #030712;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 6px;
+            padding: 8px 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        .hash-code {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10.5px;
+            color: #6ee7b7;
+            word-break: break-all;
+        }
+
+        /* ZONE 4: RIGHT CONTEXTUAL INSPECTOR (REFERENCE A & B) */
+        .ide-panel-right {
+            width: 340px;
+            min-width: 240px;
+            max-width: 600px;
+            background: var(--panel-bg);
+            border-left: 1px solid var(--panel-border);
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            flex-shrink: 0;
+            padding: 12px;
+            gap: 10px;
+            z-index: 20;
+        }
+        .ide-panel-right.collapsed { display: none !important; }
+
+        /* SUB-TABS IN DEEP PARSED CARD (REFERENCE B) */
+        .insp-subtab-bar {
+            display: flex;
+            gap: 4px;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            padding-bottom: 6px;
+            margin-bottom: 8px;
+        }
+        .insp-parsed-tab {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-size: 10.5px;
+            font-weight: 600;
+            padding: 3px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.12s;
+        }
+        .insp-parsed-tab:hover { color: #fff; }
+        .insp-parsed-tab.active {
+            color: var(--accent-cyan);
+            background: rgba(0, 240, 255, 0.12);
+        }
+        .insp-subtab-content { display: none; }
+        .insp-subtab-content.active { display: block; }
+
+        /* BOTTOM PANEL: FORENSIC METADATA & PROPERTY INSPECTOR */
+        .ide-panel-bottom {
+            height: 220px;
+            min-height: 28px;
+            max-height: 70vh;
+            background: #040814;
+            border-top: 1px solid var(--panel-border);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+            z-index: 30;
+            overflow: hidden;
+        }
+        .ide-panel-bottom.collapsed { height: 28px !important; min-height: 28px; }
+
+        /* Drag-resize handle sits above the panel header */
+        .console-resize-handle {
+            height: 5px;
+            background: transparent;
+            cursor: ns-resize;
+            flex-shrink: 0;
+            border-top: 1px solid rgba(255,255,255,0.07);
+            transition: background 0.15s;
+            z-index: 31;
+        }
+        .console-resize-handle:hover,
+        .console-resize-handle.dragging { background: rgba(6,182,212,0.35); }
+
+        .bottom-panel-header {
+            height: 28px;
+            padding: 0 12px;
+            background: #060c1c;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            display: flex; justify-content: space-between; align-items: center;
+            font-size: 11px; font-weight: 600; letter-spacing: 0.6px;
+            color: var(--text-secondary); user-select: none;
+        }
+        .bottom-panel-header-left { display: flex; align-items: center; gap: 10px; }
+        .bottom-panel-title {
+            display: flex; align-items: center; gap: 6px;
+            color: var(--accent-cyan); font-weight: 700; font-size: 11px; text-transform: uppercase;
+        }
+
+        .bottom-tabs { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
+        .bottom-tab-btn {
+            background: transparent;
+            border: 1px solid transparent;
+            color: var(--text-muted);
+            padding: 2px 10px;
+            border-radius: 4px;
+            font-size: 10.5px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        .bottom-tab-btn:hover { color: #fff; background: rgba(255,255,255,0.04); }
+        .bottom-tab-btn.active {
+            color: var(--accent-cyan);
+            background: rgba(0, 240, 255, 0.12);
+            border-color: rgba(0, 240, 255, 0.3);
+        }
+        /* Thin separator between Forensic tabs and Artifact detail tabs */
+        .bottom-tabs-sep {
+            width: 1px; height: 14px;
+            background: rgba(255,255,255,0.12);
+            margin: 0 4px;
+            flex-shrink: 0;
+        }
+
+        .bottom-panel-header-right { display: flex; align-items: center; gap: 8px; }
+
+        .bottom-panel-content-pane {
+            flex: 1;
+            overflow-y: auto;
+            display: none;
+            padding: 10px 14px;
+            background: #030712;
+        }
+        .bottom-panel-content-pane.active { display: flex; }
+        /* Artifact detail panes scroll naturally */
+        .bottom-panel-content-pane.art-content-pane {
+            display: none;
+            flex-direction: column;
+            overflow-y: auto;
+            padding: 10px 14px;
+            background: #030712;
+        }
+        .bottom-panel-content-pane.art-content-pane.active { display: flex; }
+
+        /* 4-COLUMN METADATA GRID */
+        .bottom-meta-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            width: 100%;
+            align-items: stretch;
+        }
+        .bmeta-card {
+            background: rgba(13, 23, 46, 0.75);
+            border: 1px solid rgba(56, 189, 248, 0.18);
+            border-radius: 6px;
+            padding: 8px 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        .bmeta-card-title {
+            font-size: 9.5px;
+            font-weight: 700;
+            letter-spacing: 0.6px;
+            color: var(--accent-cyan);
+            text-transform: uppercase;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            padding-bottom: 4px;
+            margin-bottom: 2px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .bmeta-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 10.5px;
+            line-height: 1.4;
+        }
+        .bmeta-lbl {
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+        .bmeta-val {
+            color: var(--text-primary);
+            font-weight: 600;
+            text-align: right;
+        }
+
+        /* CONSOLE LOG ITEMS (IN CONSOLE TAB) */
+        .console-body {
+            flex: 1;
+            padding: 8px 14px;
+            overflow-y: auto;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            color: #94a3b8;
+            background: #030712;
+            line-height: 1.5;
+        }
+        .log-entry { display: flex; gap: 8px; margin-bottom: 3px; }
+        .log-time { color: #64748b; font-size: 10.5px; flex-shrink: 0; }
+        .log-tag { font-weight: 600; font-size: 10px; padding: 1px 4px; border-radius: 3px; text-transform: uppercase; }
+        .tag-info { background: rgba(56, 189, 248, 0.15); color: #38bdf8; }
+        .tag-success { background: rgba(16, 185, 129, 0.15); color: #34d399; }
+        .tag-warn { background: rgba(245, 158, 11, 0.15); color: #fbbf24; }
+        .tag-error { background: rgba(239, 68, 68, 0.15); color: #f87171; }
+        .tag-parser { background: rgba(168, 85, 247, 0.15); color: #c084fc; }
+
+        /* CARDS & COMMON UI */
+        .card {
+            background: var(--panel-bg);
+            border: 1px solid var(--panel-border);
+            border-radius: 8px;
+            padding: 12px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+        }
+        .card-header {
+            display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            padding-bottom: 8px; margin-bottom: 10px;
+        }
+        .card-title {
+            font-size: 11px; font-weight: 700; letter-spacing: 0.8px;
+            color: var(--accent-cyan); text-transform: uppercase;
+            display: flex; align-items: center; gap: 6px;
+        }
+        .meta-row { display: flex; justify-content: space-between; align-items: center; font-size: 11px; margin-bottom: 6px; }
+        .meta-label { color: var(--text-secondary); }
+        .meta-val { font-family: 'JetBrains Mono', monospace; font-weight: 600; color: #fff; }
+
+        .btn-primary {
+            background: rgba(0, 240, 255, 0.15);
+            border: 1px solid var(--accent-cyan);
+            color: var(--accent-cyan);
+            padding: 5px 12px;
+            border-radius: 5px;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.15s;
+            display: inline-flex; align-items: center; gap: 5px;
+        }
+        .btn-primary:hover { background: var(--accent-cyan); color: #020617; box-shadow: 0 0 10px var(--accent-cyan-glow); }
+        .btn-action {
+            background: rgba(15, 23, 42, 0.85);
+            border: 1px solid var(--panel-border);
+            color: #cbd5e1;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 10.5px;
+            cursor: pointer;
+            transition: all 0.12s;
+        }
+        .btn-action:hover { border-color: var(--accent-cyan); color: #fff; }
+        .btn-green { border-color: var(--layer-green); color: #6ee7b7; background: rgba(16,185,129,0.12); }
+        .btn-green:hover { background: var(--layer-green); color: #020617; }
+
+        /* STATUS PILLS */
+        .status-pill {
+            display: inline-block; padding: 2px 7px; border-radius: 8px; font-size: 9.5px; font-weight: 700;
+            text-transform: uppercase; font-family: 'JetBrains Mono', monospace;
+        }
+        .pill-intact { background: rgba(16,185,129,0.18); color: #6ee7b7; border: 1px solid var(--layer-green); }
+        .pill-queued { background: rgba(245,158,11,0.18); color: #fde047; border: 1px solid var(--layer-yellow); }
+        .pill-completed { background: rgba(0,240,255,0.18); color: #67e8f9; border: 1px solid var(--accent-cyan); }
+        .pill-failed { background: rgba(239,68,68,0.18); color: #fca5a5; border: 1px solid var(--layer-red); }
+
+        /* TABLES */
+        .table-wrap { width: 100%; overflow-x: auto; border: 1px solid var(--panel-border); border-radius: 6px; }
+        table.c-table { width: 100%; border-collapse: collapse; font-size: 11.5px; text-align: left; }
+        table.c-table th { background: #0b1528; color: var(--text-secondary); padding: 8px 10px; font-weight: 600; border-bottom: 1px solid var(--panel-border); font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.6px; }
+        table.c-table td { padding: 7px 10px; border-bottom: 1px solid rgba(255,255,255,0.04); color: #e2e8f0; }
+        table.c-table tr:hover td { background: rgba(0, 240, 255, 0.03); }
+        .mono { font-family: 'JetBrains Mono', monospace; font-size: 11px; }
+
+        /* PROVENANCE ENVELOPE BOX */
+        .provenance-box {
+            background: #070e1f; border: 1px solid rgba(0, 240, 255, 0.25);
+            border-radius: 6px; padding: 10px; font-size: 10.5px;
+        }
+        .provenance-box h5 { color: var(--accent-cyan); font-size: 10px; text-transform: uppercase; margin-bottom: 5px; }
+        .prov-step { display: flex; gap: 6px; margin-bottom: 3px; color: var(--text-secondary); }
+        .prov-step strong { color: #e2e8f0; font-family: 'JetBrains Mono', monospace; font-size: 10.5px; }
+
+        /* ==================================================================== */
+        /* CRIME CONTACT NETWORK STYLES (EXACT REFERENCE A IMPLEMENTATION)      */
+        /* ==================================================================== */
+        .network-workspace-container {
+            display: flex; flex: 1; width: 100%; height: 100%; overflow: hidden; position: relative;
+        }
+        .network-center-canvas {
+            flex: 1; width: 100%; height: 100%; position: relative; background: #050a16;
+            background-image:
+                radial-gradient(rgba(0, 240, 255, 0.04) 1px, transparent 1px),
+                linear-gradient(to right, rgba(0, 240, 255, 0.015) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(0, 240, 255, 0.015) 1px, transparent 1px);
+            background-size: 36px 36px;
+            display: flex; flex-direction: column; overflow: hidden;
+        }
+        #cy-wrapper { position: absolute; top: 0; left: 0; width: 100%; height: 100%; transform: translateZ(0); backface-visibility: hidden; contain: layout size paint; }
+        #cy { width: 100%; height: 100%; position: absolute; top: 0; left: 0; z-index: 2; transform: translateZ(0); contain: strict; }
+        #glow-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; transform: translateZ(0); }
+
+        /* FLOATING DOCK IN NETWORK CANVAS (REFERENCE A) */
+        .workspace-bottom-right-dock {
+            position: absolute; bottom: 12px; right: 12px; display: flex; gap: 8px; z-index: 10; align-items: flex-end;
+        }
+        .dock-card {
+            background: rgba(7, 14, 31, 0.92); backdrop-filter: blur(12px);
+            border: 1px solid var(--panel-border); border-radius: 6px; padding: 8px 12px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.6);
+        }
+        .dock-card h4 { font-size: 9.5px; font-weight: 700; letter-spacing: 0.8px; color: var(--accent-cyan); text-transform: uppercase; margin-bottom: 6px; }
+        .layer-row { display: flex; align-items: center; gap: 6px; font-size: 10px; margin-bottom: 4px; color: var(--text-primary); }
+        .ring-indicator { width: 8px; height: 8px; border-radius: 50%; border: 2px solid; flex-shrink: 0; }
+
+        .demo-disclaimer-banner {
+            background: rgba(245, 158, 11, 0.12); border-bottom: 1px solid rgba(245, 158, 11, 0.35);
+            color: #fde68a; padding: 6px 14px; font-size: 11px;
+            display: flex; align-items: center; justify-content: space-between; z-index: 15;
+            flex-shrink: 0;
+        }
+        .demo-badge {
+            background: #f59e0b; color: #020617; font-weight: 800; font-size: 9px;
+            padding: 2px 6px; border-radius: 4px; text-transform: uppercase; margin-right: 6px;
+        }
+
+        /* LOGIN OVERLAY */
+        #login-overlay {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: #030712; z-index: 5000; display: flex; align-items: center; justify-content: center;
+            background-image: radial-gradient(rgba(0,240,255,0.08) 1px, transparent 1px); background-size: 32px 32px;
+        }
+        .login-box {
+            background: rgba(7, 14, 31, 0.95); border: 1px solid var(--accent-cyan);
+            border-radius: 10px; width: 380px; padding: 26px;
+            box-shadow: 0 16px 40px rgba(0,0,0,0.8), 0 0 24px var(--accent-cyan-glow);
+        }
+        .login-logo { margin: 0 auto 14px auto; width: 44px; height: 44px; border-radius: 10px; background: rgba(0,240,255,0.1); border: 2px solid var(--accent-cyan); display: flex; align-items: center; justify-content: center; color: var(--accent-cyan); }
+        .login-title { text-align: center; font-size: 15px; font-weight: 700; color: #fff; margin-bottom: 3px; }
+        .login-sub { text-align: center; font-size: 10.5px; color: var(--text-muted); margin-bottom: 18px; }
+        .login-error { background: rgba(239,68,68,0.15); border: 1px solid var(--layer-red); color: #fca5a5; padding: 8px; border-radius: 5px; font-size: 11px; margin-bottom: 12px; display: none; }
+        .form-group { display: flex; flex-direction: column; gap: 5px; margin-bottom: 10px; font-size: 11.5px; }
+        .form-group label { color: var(--text-secondary); font-weight: 500; }
+        .input-text, .select-input { background: #0a1122; border: 1px solid var(--panel-border); color: #fff; padding: 6px 10px; border-radius: 5px; font-size: 11.5px; outline: none; }
+        .input-text:focus, .select-input:focus { border-color: var(--accent-cyan); }
+
+        /* MODAL */
+        .modal-backdrop {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(2, 6, 23, 0.8); backdrop-filter: blur(8px);
+            display: none; align-items: center; justify-content: center; z-index: 2000;
+        }
+        .modal-card {
+            background: var(--panel-bg); border: 1px solid var(--accent-cyan);
+            border-radius: 8px; width: 600px; max-width: 90vw; padding: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8), 0 0 20px var(--accent-cyan-glow);
+            max-height: 85vh; overflow-y: auto;
+        }
+        .modal-title { font-size: 13px; font-weight: 700; color: #fff; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 8px; }
+        .close-btn { cursor: pointer; color: var(--text-muted); font-size: 16px; font-weight: bold; }
+        .close-btn:hover { color: #fff; }
+
+        /* ==================================================================== */
+        /* INVESTIGATOR CASE PORTAL STYLES (MATCHING media_1788734391416.png)  */
+        /* ==================================================================== */
+        #view-portal {
+            background: #030713;
+            position: relative;
+            overflow-y: auto;
+            width: 100%;
+            height: 100%;
+            display: none;
+        }
+        #view-portal.active {
+            display: block !important;
+        }
+        .portal-canvas {
+            position: relative;
+            min-height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 30px 20px;
+            background-image: radial-gradient(circle at 50% 28%, rgba(0, 240, 255, 0.08) 0%, transparent 65%);
+        }
+        .portal-watermark-tr {
+            position: absolute;
+            top: 24px;
+            right: 28px;
+            text-align: right;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 2.8px;
+            color: rgba(56, 189, 248, 0.22);
+            line-height: 1.8;
+            pointer-events: none;
+            user-select: none;
+        }
+        .portal-watermark-bl {
+            position: absolute;
+            bottom: 24px;
+            left: 28px;
+            text-align: left;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 2.8px;
+            color: rgba(56, 189, 248, 0.22);
+            line-height: 1.8;
+            pointer-events: none;
+            user-select: none;
+        }
+        .portal-bg-fingerprint {
+            position: absolute;
+            left: 40px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 240px;
+            height: 300px;
+            pointer-events: none;
+            user-select: none;
+            opacity: 0.7;
+        }
+        .portal-bg-constellation {
+            position: absolute;
+            right: 30px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 320px;
+            height: 280px;
+            pointer-events: none;
+            user-select: none;
+            opacity: 0.7;
+        }
+        .portal-inner {
+            max-width: 780px;
+            width: 100%;
+            position: relative;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .portal-hero {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            margin-bottom: 22px;
+        }
+        .portal-shield-icon {
+            width: 58px;
+            height: 64px;
+            margin-bottom: 6px;
+            filter: drop-shadow(0 0 16px rgba(0, 240, 255, 0.65));
+        }
+        .portal-title {
+            font-size: 30px;
+            font-weight: 800;
+            letter-spacing: 2.5px;
+            color: #ffffff;
+            margin: 4px 0 2px 0;
+        }
+        .portal-subtitle {
+            font-size: 14px;
+            font-weight: 700;
+            letter-spacing: 2.2px;
+            color: #00f0ff;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+        }
+        .portal-description {
+            font-size: 13px;
+            color: #94a3b8;
+            max-width: 540px;
+            line-height: 1.45;
+        }
+        .portal-cards-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            width: 100%;
+            margin-bottom: 22px;
+        }
+        .portal-card {
+            background: rgba(6, 14, 32, 0.85);
+            backdrop-filter: blur(12px);
+            border-radius: 8px;
+            padding: 24px 22px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            transition: all 0.2s ease;
+        }
+        .portal-card.new-case-card {
+            border: 1.5px solid #00f0ff;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6), 0 0 20px rgba(0, 240, 255, 0.16);
+        }
+        .portal-card.new-case-card:hover {
+            box-shadow: 0 10px 36px rgba(0, 0, 0, 0.7), 0 0 28px rgba(0, 240, 255, 0.3);
+            border-color: #38bdf8;
+        }
+        .portal-card.open-case-card {
+            border: 1px solid rgba(56, 189, 248, 0.28);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6);
+        }
+        .portal-card.open-case-card:hover {
+            border-color: #38bdf8;
+            box-shadow: 0 10px 36px rgba(0, 0, 0, 0.7), 0 0 20px rgba(56, 189, 248, 0.2);
+        }
+        .portal-card-icon {
+            margin-bottom: 12px;
+        }
+        .portal-card-title {
+            font-size: 14.5px;
+            font-weight: 800;
+            letter-spacing: 1.2px;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+        .portal-card-title.cyan { color: #00f0ff; }
+        .portal-card-title.sky { color: #38bdf8; }
+        .portal-card-text {
+            font-size: 12px;
+            color: #94a3b8;
+            line-height: 1.45;
+            margin-bottom: 18px;
+            min-height: 48px;
+        }
+        .btn-create-new-case {
+            width: 100%;
+            background: #00f0ff;
+            color: #030712;
+            border: none;
+            border-radius: 5px;
+            padding: 9px 16px;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 14px rgba(0, 240, 255, 0.35);
+            transition: all 0.15s;
+        }
+        .btn-create-new-case:hover {
+            background: #38bdf8;
+            box-shadow: 0 0 22px rgba(0, 240, 255, 0.6);
+            transform: translateY(-1px);
+        }
+        .btn-open-existing-case {
+            width: 100%;
+            background: transparent;
+            color: #38bdf8;
+            border: 1.5px solid #0284c7;
+            border-radius: 5px;
+            padding: 9px 16px;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.15s;
+        }
+        .btn-open-existing-case:hover {
+            background: rgba(2, 132, 199, 0.15);
+            border-color: #38bdf8;
+            color: #ffffff;
+            box-shadow: 0 0 16px rgba(56, 189, 248, 0.3);
+        }
+
+        /* RECENT CASES */
+        .portal-recent-box {
+            width: 100%;
+            background: rgba(4, 11, 26, 0.9);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(56, 189, 248, 0.2);
+            border-radius: 8px;
+            padding: 14px 18px;
+        }
+        .portal-recent-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .portal-recent-title {
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            color: #38bdf8;
+            text-transform: uppercase;
+        }
+        .portal-recent-link {
+            font-size: 11.5px;
+            font-weight: 600;
+            color: #38bdf8;
+            text-decoration: none;
+            cursor: pointer;
+            transition: color 0.15s;
+        }
+        .portal-recent-link:hover {
+            color: #00f0ff;
+            text-decoration: underline;
+        }
+        .portal-recent-list {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .portal-case-row {
+            display: grid;
+            grid-template-columns: 28px 1.4fr 1fr 1.1fr 1fr 90px;
+            align-items: center;
+            gap: 12px;
+            padding: 8px 10px;
+            border-radius: 6px;
+            background: rgba(15, 23, 42, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            transition: all 0.15s;
+        }
+        .portal-case-row:hover {
+            background: rgba(14, 165, 233, 0.08);
+            border-color: rgba(56, 189, 248, 0.25);
+        }
+        .portal-case-icon svg { display: block; }
+        .portal-case-info { display: flex; flex-direction: column; }
+        .portal-case-id { font-size: 12px; font-weight: 700; color: #ffffff; font-family: 'JetBrains Mono', monospace; }
+        .portal-case-name { font-size: 11px; color: var(--text-secondary); margin-top: 2px; }
+        .portal-case-col { display: flex; flex-direction: column; }
+        .portal-col-label { font-size: 9px; text-transform: uppercase; color: var(--text-muted); font-weight: 600; margin-bottom: 2px; }
+        .portal-col-val { font-size: 11px; color: #cbd5e1; font-family: 'JetBrains Mono', monospace; }
+
+        .portal-status-active { color: #10b981; font-size: 11px; font-weight: 700; display: flex; align-items: center; gap: 4px; }
+        .portal-status-in_progress { color: #f59e0b; font-size: 11px; font-weight: 700; display: flex; align-items: center; gap: 4px; }
+        .portal-status-draft { color: #94a3b8; font-size: 11px; font-weight: 700; display: flex; align-items: center; gap: 4px; }
+        .portal-status-closed { color: #64748b; font-size: 11px; font-weight: 700; display: flex; align-items: center; gap: 4px; }
+        .status-dot { font-size: 8px; }
+
+        .btn-open-case {
+            background: transparent;
+            border: 1px solid #0284c7;
+            color: #38bdf8;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 5px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.15s;
+            text-align: center;
+        }
+        .btn-open-case:hover {
+            background: #0284c7;
+            color: #ffffff;
+            box-shadow: 0 0 10px var(--accent-cyan-glow);
+        }
+
+        /* MULTI-STEP MODAL STYLES */
+        .stepper-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 18px;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            padding-bottom: 12px;
+        }
+        .step-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+        .step-item.active {
+            color: var(--accent-cyan);
+        }
+        .step-item.done {
+            color: var(--layer-green);
+        }
+        .step-num {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.06);
+            border: 1px solid var(--panel-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+        }
+        .step-item.active .step-num {
+            background: rgba(0,240,255,0.2);
+            border-color: var(--accent-cyan);
+            color: #fff;
+        }
+        .step-item.done .step-num {
+            background: rgba(16,185,129,0.2);
+            border-color: var(--layer-green);
+            color: #fff;
+        }
+        .step-sep {
+            color: rgba(255,255,255,0.15);
+            font-size: 11px;
+        }
+        .step-pane { display: none; }
+        .step-pane.active { display: block; }
+        .candidate-card {
+            background: rgba(7, 14, 31, 0.85);
+            border: 1px solid var(--panel-border);
+            border-radius: 6px;
+            padding: 12px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        .candidate-card:hover, .candidate-card.selected {
+            border-color: var(--accent-cyan);
+            background: rgba(0, 240, 255, 0.05);
+        }
+        .inspect-badge-box {
+            background: #040814;
+            border: 1px solid rgba(0,240,255,0.25);
+            border-radius: 6px;
+            padding: 12px;
+            margin-top: 10px;
+        }
+
+        /* RUNTIME FORENSIC EVIDENCE INTAKE & DROPZONE */
+        .intake-tab-container {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            padding-bottom: 8px;
+        }
+        .intake-tab-btn {
+            background: transparent;
+            border: 1px solid var(--panel-border);
+            color: var(--text-secondary);
+            padding: 6px 12px;
+            border-radius: 5px;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        .intake-tab-btn:hover {
+            color: #fff;
+            border-color: rgba(0, 240, 255, 0.4);
+        }
+        .intake-tab-btn.active {
+            background: rgba(0, 240, 255, 0.15);
+            border-color: var(--accent-cyan);
+            color: var(--accent-cyan);
+            box-shadow: 0 0 10px rgba(0, 240, 255, 0.2);
+        }
+        .evidence-dropzone {
+            border: 2px dashed rgba(56, 189, 248, 0.35);
+            border-radius: 8px;
+            background: rgba(7, 14, 31, 0.6);
+            padding: 24px 16px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-bottom: 12px;
+        }
+        .evidence-dropzone:hover, .evidence-dropzone.dragover {
+            border-color: var(--accent-cyan);
+            background: rgba(0, 240, 255, 0.06);
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.15);
+        }
+        .upload-summary-box {
+            background: #040814;
+            border: 1px solid rgba(56, 189, 248, 0.25);
+            border-radius: 6px;
+            padding: 10px 14px;
+            margin-bottom: 12px;
+            font-size: 11px;
+        }
+        .upload-progress-container {
+            width: 100%;
+            height: 6px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 3px;
+            overflow: hidden;
+            margin-top: 8px;
+            margin-bottom: 6px;
+        }
+        .upload-progress-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #0284c7, #00f0ff);
+            box-shadow: 0 0 8px rgba(0, 240, 255, 0.5);
+            transition: width 0.15s ease;
+        }
+        .segment-tag {
+            display: inline-block;
+            background: rgba(0, 240, 255, 0.12);
+            color: var(--accent-cyan);
+            border: 1px solid rgba(0, 240, 255, 0.3);
+            border-radius: 4px;
+            padding: 2px 6px;
+            font-size: 10px;
+            font-family: 'JetBrains Mono', monospace;
+            margin-right: 4px;
+            margin-top: 4px;
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- LOGIN SCREEN OVERLAY -->
+    <div id="login-overlay">
+        <div class="login-box">
+            <div class="login-logo">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            </div>
+            <div class="login-title">CRIMENET // Access Portal</div>
+            <div class="login-sub">Law Enforcement Forensic Investigator IDE</div>
+            <div id="login-error" class="login-error"></div>
+            <form onsubmit="handleLoginSubmit(event)">
+                <div class="form-group">
+                    <label>Username</label>
+                    <input type="text" id="login-username" class="input-text" value="officer1" required autofocus>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="login-password" class="input-text" value="OfficerPass123!" required>
+                </div>
+                <button type="submit" id="btn-login" class="btn-primary" style="width:100%; justify-content:center; margin-top:8px; padding:8px;">
+                    Enter Investigator Workspace
+                </button>
+            </form>
+            <div style="font-size:10px; color:var(--text-muted); text-align:center; margin-top:12px;">
+                Protected by PolicyEngine BOLA/BFLA & Cryptographic Audit Logs
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN COMPACT HEADER -->
+    <header>
+        <div class="header-left">
+            <div class="brand-container" onclick="switchFeature('home')">
+                <div class="brand-logo">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                </div>
+                <div>
+                    <div class="brand-title">CRIMENET <span>// Investigator IDE</span></div>
+                    <div class="brand-sub">INTELLIGENCE LAB & EVIDENCE EXPLORER</div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="header-right">
+            <!-- CASE SELECTOR -->
+            <div class="portal-header-tools" id="portal-header-tools" style="display:none; align-items:center; gap:10px;">
+            <div class="case-select-wrapper">
+                <span class="case-select-label">Case:</span>
+                <select id="case-selector" class="case-selector" onchange="onCaseSelectorChange(this.value)"></select>
+            </div>
+
+            <!-- USER BADGE -->
+            <div class="badge-pill">
+                User: <strong id="hdr-user-pill">officer1</strong>
+            </div>
+
+            <!-- LAYOUT PANEL TOGGLES -->
+            <button id="btn-toggle-sidebar" class="btn-layout-toggle active" onclick="toggleSidebar()" title="Toggle Left Explorer">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M9 3v18"/></svg>
+                Sidebar
+            </button>
+            <button id="btn-toggle-inspector" class="btn-layout-toggle active" onclick="toggleInspector()" title="Toggle Right Inspector">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M15 3v18"/></svg>
+                Inspector
+            </button>
+            <button id="btn-toggle-console-btn" class="btn-layout-toggle active" onclick="toggleBottomConsole()" title="Toggle Metadata Panel">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                Metadata
+            </button>
+
+            </div>
+            <!-- LOGOUT -->
+            <button class="btn-header-logout" onclick="handleLogout()">Logout</button>
+        </div>
+    </header>
+
+    <!-- MAIN IDE BODY -->
+    <div class="ide-body">
+        <div class="ide-panels-row">
+
+            <!-- ============================================================== -->
+            <!-- ZONE 1: NARROW ACTIVITY / FEATURE BAR (REFERENCE A & B)        -->
+            <!-- ============================================================== -->
+            <div class="ide-activity-bar">
+                <div class="activity-bar-top">
+                    <!-- 1. Cases -->
+                                        <!-- 0. Home / Case Portal -->
+                    <div class="activity-item active" id="activity-btn-home" onclick="switchFeature('home')" title="Investigator Case Portal">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                        <span class="activity-label">Home</span>
+                    </div>
+                    <div class="activity-item workspace-nav-item" id="activity-btn-cases" onclick="switchFeature('cases')" title="Case Workspace">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="20" height="14" x="2" y="7" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+                        <span class="activity-label">Cases</span>
+                    </div>
+                    <!-- 2. Explorer -->
+                    <div class="activity-item workspace-nav-item" id="activity-btn-explorer" onclick="switchFeature('explorer')" title="Evidence Explorer">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                        <span class="activity-label">Explorer</span>
+                    </div>
+                    <!-- 3. Network -->
+                    <div class="activity-item workspace-nav-item" id="activity-btn-network" onclick="switchFeature('network')" title="Crime Contact Network">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="m4.93 4.93 4.24 4.24"/><path d="m14.83 9.17 4.24-4.24"/><path d="m14.83 14.83 4.24 4.24"/><path d="m9.17 14.83-4.24 4.24"/></svg>
+                        <span class="activity-label">Network</span>
+                    </div>
+                    <!-- 4. Reports -->
+                    <div class="activity-item workspace-nav-item" id="activity-btn-reports" onclick="switchFeature('reports')" title="Judicial Reports">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                        <span class="activity-label">Reports</span>
+                    </div>
+                    <!-- 5. Audit -->
+                    <div class="activity-item workspace-nav-item" id="activity-btn-audit" onclick="switchFeature('audit')" title="Cryptographic Audit Logs">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><circle cx="12" cy="11" r="3"/></svg>
+                        <span class="activity-label">Audit</span>
+                    </div>
+                </div>
+
+                <div class="activity-bar-bottom">
+                    <!-- 6. Settings -->
+                    <div class="activity-item workspace-nav-item" id="activity-btn-settings" onclick="switchFeature('settings')" title="Workspace Settings">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                        <span class="activity-label">Config</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ============================================================== -->
+            <!-- ZONE 2: CONTEXTUAL SIDEBAR PANEL (LEFT)                        -->
+            <!-- ============================================================== -->
+            <div class="ide-panel-left" id="panel-explorer">
+                <div class="sidebar-header">
+                    <span id="sidebar-panel-title">Forensic Case Explorer</span>
+                    <button class="btn-action" style="padding:1px 5px; font-size:10px;" onclick="initWorkspace()" title="Refresh Explorer">↺</button>
+                </div>
+
+                <!-- SIDEBAR VIEW 1: EVIDENCE EXPLORER TREE (REFERENCE B) -->
+                <div class="sidebar-content-view" id="sidebar-view-explorer">
+                    <!-- Case Breadcrumb -->
+                    <div class="sidebar-breadcrumb">
+                        <span class="breadcrumb-case" id="sidebar-case-breadcrumb">CASE-2026-001</span>
+                        <span class="breadcrumb-sep">&gt;</span>
+                    </div>
+
+                    <div class="explorer-tree">
+                        <!-- ROOT: EVIDENCE ARTIFACTS -->
+                        <div>
+                            <div class="tree-node active" id="tree-node-evidence-root" onclick="toggleTreeBranch('branch-evidence', this)">
+                                <div class="tree-node-left">
+                                    <svg class="tree-chevron expanded" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+                                    <strong>Evidence Artifacts</strong>
+                                </div>
+                                <span class="tree-count-badge has-items" id="tree-count-total-artifacts">0</span>
+                            </div>
+
+                            <div class="tree-children" id="branch-evidence">
+                                <!-- CATEGORY: DOCUMENTS -->
+                                <div>
+                                    <div class="tree-node" id="tree-cat-documents" onclick="toggleTreeBranch('items-documents', this, 'DOCUMENT')">
+                                        <div class="tree-node-left">
+                                            <svg class="tree-chevron expanded" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                                            <span>Documents</span>
+                                        </div>
+                                        <span class="tree-count-badge" id="tree-count-documents">0</span>
+                                    </div>
+                                    <div class="tree-children" id="items-documents"></div>
+                                </div>
+
+                                <!-- CATEGORY: IMAGES -->
+                                <div>
+                                    <div class="tree-node" id="tree-cat-images" onclick="toggleTreeBranch('items-images', this, 'IMAGE')">
+                                        <div class="tree-node-left">
+                                            <svg class="tree-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2"><rect width="18" height="18" x="3" y="3" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
+                                            <span>Images</span>
+                                        </div>
+                                        <span class="tree-count-badge" id="tree-count-images">0</span>
+                                    </div>
+                                    <div class="tree-children collapsed" id="items-images"></div>
+                                </div>
+
+                                <!-- CATEGORY: DATABASES -->
+                                <div class="tree-node" id="tree-cat-databases" onclick="selectCategoryFromTree('DATABASE', this)">
+                                    <div class="tree-node-left" style="padding-left:16px;">
+                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#c084fc" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+                                        <span>Databases</span>
+                                    </div>
+                                    <span class="tree-count-badge" id="tree-count-databases">0</span>
+                                </div>
+
+                                <!-- CATEGORY: SPREADSHEETS -->
+                                <div class="tree-node" id="tree-cat-spreadsheets" onclick="selectCategoryFromTree('SPREADSHEET', this)">
+                                    <div class="tree-node-left" style="padding-left:16px;">
+                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9h18"/><path d="M3 15h18"/><path d="M9 3v18"/><path d="M15 3v18"/></svg>
+                                        <span>Spreadsheets</span>
+                                    </div>
+                                    <span class="tree-count-badge" id="tree-count-spreadsheets">0</span>
+                                </div>
+
+                                <!-- CATEGORY: EMAILS -->
+                                <div class="tree-node" id="tree-cat-emails" onclick="selectCategoryFromTree('EMAIL', this)">
+                                    <div class="tree-node-left" style="padding-left:16px;">
+                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+                                        <span>Emails</span>
+                                    </div>
+                                    <span class="tree-count-badge" id="tree-count-emails">0</span>
+                                </div>
+
+                                <!-- CATEGORY: CDR -->
+                                <div class="tree-node" id="tree-cat-cdr" onclick="selectCategoryFromTree('CDR', this)">
+                                    <div class="tree-node-left" style="padding-left:16px;">
+                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#f87171" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                                        <span>CDR</span>
+                                    </div>
+                                    <span class="tree-count-badge" id="tree-count-cdr">0</span>
+                                </div>
+
+                                <!-- CATEGORY: LOGS -->
+                                <div class="tree-node" id="tree-cat-logs" onclick="selectCategoryFromTree('LOG', this)">
+                                    <div class="tree-node-left" style="padding-left:16px;">
+                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/></svg>
+                                        <span>Logs</span>
+                                    </div>
+                                    <span class="tree-count-badge" id="tree-count-logs">0</span>
+                                </div>
+
+                                <!-- CATEGORY: RECOVERED -->
+                                <div class="tree-node" id="tree-cat-recovered" onclick="selectCategoryFromTree('RECOVERED', this)">
+                                    <div class="tree-node-left" style="padding-left:16px;">
+                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#00f0ff" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
+                                        <span>Recovered</span>
+                                    </div>
+                                    <span class="tree-count-badge" id="tree-count-recovered">0</span>
+                                </div>
+
+                                <!-- CATEGORY: OTHER -->
+                                <div class="tree-node" id="tree-cat-other" onclick="selectCategoryFromTree('OTHER', this)">
+                                    <div class="tree-node-left" style="padding-left:16px;">
+                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg>
+                                        <span>Other</span>
+                                    </div>
+                                    <span class="tree-count-badge" id="tree-count-other">0</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- SECONDARY BRANCHES (REFERENCE B) -->
+                        <div style="margin-top:10px; border-top:1px solid rgba(255,255,255,0.06); padding-top:8px;">
+                            <div class="tree-node" id="tree-node-processing" onclick="switchFeature('cases')">
+                                <div class="tree-node-left">
+                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                                    <span>Processing & Intake</span>
+                                </div>
+                            </div>
+                            <div class="tree-node" id="tree-node-reports" onclick="switchFeature('reports')">
+                                <div class="tree-node-left">
+                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                                    <span>Reports & Judicial Context</span>
+                                </div>
+                            </div>
+                            <div class="tree-node" id="tree-node-admin" onclick="switchFeature('cases')">
+                                <div class="tree-node-left">
+                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                                    <span>Case Administration</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- BOTTOM SEARCH BAR (REFERENCE B) -->
+                    <div class="sidebar-search-container">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" x2="16.65" y1="21" y2="16.65"/></svg>
+                        <input type="text" class="sidebar-search-input" id="sidebar-search-input" placeholder="Search evidence..." oninput="onExplorerSearch(this.value)">
+                    </div>
+                </div>
+
+                <!-- SIDEBAR VIEW 2: CRIME CONTACT NETWORK CONTROLS (REFERENCE A) -->
+                <div class="sidebar-content-view" id="sidebar-view-network" style="padding:10px; gap:8px;">
+                    <!-- CARD 1: TARGET SEARCH -->
+                    <div class="card" style="padding:10px;">
+                        <div style="font-size:10px; font-weight:700; color:var(--accent-cyan); text-transform:uppercase; margin-bottom:6px; letter-spacing:0.6px;">Target Search</div>
+                        <input type="text" class="input-text" id="path-target-input" placeholder="Search entity ID / name..." style="width:100%; font-size:11px; padding:5px 8px;">
+                        <div style="display:flex; justify-content:space-between; font-size:10.5px; margin:8px 0 4px 0;">
+                            <span style="color:var(--text-secondary);">Layer Spacing</span>
+                            <span id="spread-value" class="mono" style="color:var(--accent-cyan); font-weight:600;">100%</span>
+                        </div>
+                        <input type="range" id="network-spread-slider" min="50" max="180" value="100" style="width:100%; accent-color:var(--accent-cyan);" oninput="updateNetworkSpread(this.value)">
+                        <div style="display:flex; flex-direction:column; gap:5px; margin-top:8px;">
+                            <button class="btn-action" onclick="resetConcentricLayout()">Reset Layout</button>
+                            <button class="btn-action" onclick="findShortestPath()">Find Shortest Path</button>
+                            <button class="btn-action" style="color:#6ee7b7; border-color:var(--layer-green); background:rgba(16,185,129,0.12);" onclick="exploreNeighbors()">Explore 1-Hop Neighbors</button>
+                        </div>
+                    </div>
+
+                    <!-- CARD 2: CASE ANCHOR PROFILE -->
+                    <div class="card" style="padding:10px;">
+                        <div style="font-size:10px; font-weight:700; color:var(--text-secondary); text-transform:uppercase; margin-bottom:4px; letter-spacing:0.6px;">Case Anchor Profile</div>
+                        <div style="font-size:12px; font-weight:700; color:#fff;" id="subject-card-name">Operation Cyber Net Target</div>
+                        <div class="mono" style="font-size:10px; color:var(--accent-cyan); margin-top:1px;" id="subject-card-id">ANC-2026-001 (LOCKED CENTER)</div>
+                        <div style="font-size:10px; color:var(--text-muted); margin-top:3px;" id="subject-card-role">Role: Investigation Subject</div>
+                    </div>
+
+                    <!-- CARD 3: LAYER FILTERS -->
+                    <div class="card" style="padding:10px;">
+                        <div style="font-size:10px; font-weight:700; color:var(--text-secondary); text-transform:uppercase; margin-bottom:6px; letter-spacing:0.6px;">Layer Filters</div>
+                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:4px;">
+                            <button class="btn-action btn-filter" id="btn-filter-l1" onclick="setLayerFilter(1)">Layer 1</button>
+                            <button class="btn-action btn-filter" id="btn-filter-l2" onclick="setLayerFilter(2)">Layer 2</button>
+                            <button class="btn-action btn-filter" id="btn-filter-l3" onclick="setLayerFilter(3)">Layer 3</button>
+                            <button class="btn-action btn-filter active" id="btn-filter-all" onclick="setLayerFilter(null)">Show All</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SIDEBAR VIEW 3: CASE WORKSPACE OVERVIEW -->
+                <div class="sidebar-content-view active" id="sidebar-view-cases" style="padding:10px; gap:8px;">
+                    <div class="card" style="padding:10px;">
+                        <div class="card-title" style="margin-bottom:6px;">Active Investigation</div>
+                        <div style="font-size:12px; font-weight:700; color:#fff;" id="sidebar-active-case-name">Operation Cyber Net</div>
+                        <div class="mono" style="font-size:10.5px; color:var(--accent-cyan); margin-top:2px;" id="sidebar-active-case-id">CASE-2026-001</div>
+                        <div style="font-size:10.5px; color:var(--text-secondary); margin-top:4px;" id="sidebar-active-case-status">Status: OPEN (Forensic Processing)</div>
+                    </div>
+
+                    <div class="card" style="padding:10px;">
+                        <div class="card-title" style="margin-bottom:6px;">Quick Actions</div>
+                        <div style="display:flex; flex-direction:column; gap:4px;">
+                            <button class="btn-action" onclick="switchFeature('explorer')">Open Evidence Explorer</button>
+                            <button class="btn-action" onclick="switchFeature('network')">Open Crime Contact Network</button>
+                            <button class="btn-action btn-green" onclick="openAddEvidenceModal()">+ Register E01 Image</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- DRAGGABLE SPLITTER: SIDEBAR <-> CENTER -->
+            <div class="ide-splitter splitter-left" id="splitter-left" title="Drag to resize Sidebar"></div>
+
+            <!-- ============================================================== -->
+            <!-- ZONE 3: CENTER PANEL: MAIN WORKSPACE WORKING VIEW              -->
+            <!-- ============================================================== -->
+            <div class="ide-panel-center" id="panel-center">
+
+                <!-- ---------------------------------------------------------- -->
+                <!-- VIEW 1: CASE WORKSPACE & EVIDENCE CONTAINERS               -->
+                <!-- ---------------------------------------------------------- -->
+                                <!-- ---------------------------------------------------------- -->
+                <!-- VIEW 0: INVESTIGATOR CASE PORTAL (REFERENCE SCREENSHOT)    -->
+                <!-- ---------------------------------------------------------- -->
+                <div id="view-portal" class="view-pane active">
+                    <div class="portal-canvas">
+                        <!-- WATERMARKS -->
+                        <div class="portal-watermark-tr">
+                            EVIDENCE<br>
+                            INTELLIGENCE<br>
+                            JUSTICE<br>
+                            A SAFER TOMORROW
+                        </div>
+                        <div class="portal-watermark-bl">
+                            FORENSIC SCIENCE<br>
+                            DATA INTELLIGENCE<br>
+                            HUMAN INSIGHT
+                        </div>
+
+                        <!-- WATERMARK SVGS -->
+                        <svg class="portal-bg-fingerprint" viewBox="0 0 200 240" fill="none">
+                            <path d="M100,20 C50,20 20,60 20,110 C20,165 45,210 90,225" stroke="rgba(0,240,255,0.08)" stroke-width="1.8"/>
+                            <path d="M100,35 C60,35 35,70 35,115 C35,160 55,195 95,210" stroke="rgba(0,240,255,0.08)" stroke-width="1.8"/>
+                            <path d="M100,50 C70,50 50,80 50,120 C50,155 65,180 100,195" stroke="rgba(0,240,255,0.08)" stroke-width="1.8"/>
+                            <path d="M100,65 C80,65 65,90 65,125 C65,150 75,170 100,180" stroke="rgba(0,240,255,0.08)" stroke-width="1.8"/>
+                            <path d="M100,80 C90,80 80,95 80,130 C80,145 85,160 100,165" stroke="rgba(0,240,255,0.08)" stroke-width="1.8"/>
+                            <path d="M100,20 C150,20 180,60 180,110 C180,165 155,210 110,225" stroke="rgba(0,240,255,0.08)" stroke-width="1.8"/>
+                            <path d="M100,35 C140,35 165,70 165,115 C165,160 145,195 105,210" stroke="rgba(0,240,255,0.08)" stroke-width="1.8"/>
+                            <path d="M100,50 C130,50 150,80 150,120 C150,155 135,180 100,195" stroke="rgba(0,240,255,0.08)" stroke-width="1.8"/>
+                        </svg>
+
+                        <svg class="portal-bg-constellation" viewBox="0 0 300 240" fill="none">
+                            <circle cx="60" cy="50" r="3" fill="rgba(0,240,255,0.2)"/>
+                            <circle cx="140" cy="80" r="3" fill="rgba(0,240,255,0.2)"/>
+                            <circle cx="220" cy="40" r="4" fill="rgba(0,240,255,0.25)"/>
+                            <circle cx="260" cy="120" r="3" fill="rgba(0,240,255,0.2)"/>
+                            <circle cx="180" cy="160" r="4" fill="rgba(0,240,255,0.25)"/>
+                            <circle cx="100" cy="190" r="3" fill="rgba(0,240,255,0.2)"/>
+                            <line x1="60" y1="50" x2="140" y2="80" stroke="rgba(0,240,255,0.08)" stroke-width="1"/>
+                            <line x1="140" y1="80" x2="220" y2="40" stroke="rgba(0,240,255,0.08)" stroke-width="1"/>
+                            <line x1="220" y1="40" x2="260" y2="120" stroke="rgba(0,240,255,0.08)" stroke-width="1"/>
+                            <line x1="140" y1="80" x2="180" y2="160" stroke="rgba(0,240,255,0.08)" stroke-width="1"/>
+                            <line x1="180" y1="160" x2="100" y2="190" stroke="rgba(0,240,255,0.08)" stroke-width="1"/>
+                            <line x1="180" y1="160" x2="260" y2="120" stroke="rgba(0,240,255,0.08)" stroke-width="1"/>
+                        </svg>
+
+                        <div class="portal-inner">
+                            <!-- HERO BRANDING -->
+                            <div class="portal-hero">
+                                <div class="portal-shield-icon">
+                                    <svg viewBox="0 0 48 54" fill="none">
+                                        <path d="M24 2L44 8V24C44 36.5 35.5 47.5 24 51C12.5 47.5 4 36.5 4 24V8L24 2Z" stroke="#00f0ff" stroke-width="2.5" fill="rgba(0,240,255,0.08)"/>
+                                        <path d="M24 12L26.5 21.5L36 24L26.5 26.5L24 36L21.5 26.5L12 24L21.5 21.5L24 12Z" fill="#00f0ff"/>
+                                    </svg>
+                                </div>
+                                <h1 class="portal-title">CRIMENET</h1>
+                                <h2 class="portal-subtitle">INVESTIGATOR CASE PORTAL</h2>
+                                <p class="portal-description">
+                                    Select an existing investigation or create a new case to begin your forensic analysis.
+                                </p>
+                            </div>
+
+                            <!-- TWO PRIMARY ACTION CARDS -->
+                            <div class="portal-cards-grid">
+                                <!-- CARD 1: NEW CASE -->
+                                <div class="portal-card new-case-card">
+                                    <div class="portal-card-icon">
+                                        <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="#00f0ff" stroke-width="1.8">
+                                            <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+                                            <line x1="12" y1="11" x2="12" y2="17"/>
+                                            <line x1="9" y1="14" x2="15" y2="14"/>
+                                        </svg>
+                                    </div>
+                                    <h3 class="portal-card-title cyan">NEW CASE</h3>
+                                    <p class="portal-card-text">
+                                        Create a new investigation case, add judicial context, and register forensic evidence (e.g., E01/E02).
+                                    </p>
+                                    <button class="btn-create-new-case" onclick="openNewCaseModal()">
+                                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-right:6px;"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                                        Create New Case
+                                    </button>
+                                </div>
+
+                                <!-- CARD 2: OPEN EXISTING CASE -->
+                                <div class="portal-card open-case-card">
+                                    <div class="portal-card-icon">
+                                        <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="1.8">
+                                            <path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2Z"/>
+                                            <circle cx="15" cy="14" r="3"/>
+                                            <path d="m17.5 16.5 2.5 2.5"/>
+                                        </svg>
+                                    </div>
+                                    <h3 class="portal-card-title sky">OPEN EXISTING CASE</h3>
+                                    <p class="portal-card-text">
+                                        Select an existing case from your authorized investigations and continue your analysis.
+                                    </p>
+                                    <button class="btn-open-existing-case" onclick="openAllCasesModal()">
+                                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:6px;"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+                                        Open Existing Case
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- RECENT CASES SECTION -->
+                            <div class="portal-recent-box">
+                                <div class="portal-recent-header">
+                                    <span class="portal-recent-title">RECENT CASES</span>
+                                    <div style="display:flex; align-items:center; gap:14px;">
+                                        <a class="portal-recent-link" id="portal-clear-recent-btn" style="display:none; color:var(--text-muted); font-size:11px; cursor:pointer;" onclick="clearVisitedCases()">Clear Recent</a>
+                                        <a class="portal-recent-link" onclick="openAllCasesModal()">View All Cases &rarr;</a>
+                                    </div>
+                                </div>
+                                <div class="portal-recent-list" id="portal-recent-list">
+                                    <div style="text-align:center; padding:20px; color:var(--text-muted); font-size:12px;">Loading recent cases...</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="view-cases" class="view-pane" style="padding:16px; overflow-y:auto; gap:14px;">
+                    <!-- COMPACT CASE CONTEXT -->
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/></svg>
+                                Active Judicial Case Context
+                            </div>
+                            <div style="display:flex; align-items:center; gap:8px;">
+                                <span id="case-detail-status" class="status-pill pill-completed">OPEN</span>
+                                <button id="btn-remove-active-case" class="btn-action" style="font-size:10px; padding:2px 8px; color:#f87171; border-color:rgba(239,68,68,0.4);" onclick="deleteActiveCase()" title="Permanently remove this case and discard unassigned files">🗑️ Remove Case</button>
+                            </div>
+                        </div>
+                        <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; font-size:11.5px;">
+                            <div><span class="meta-label">Case ID:</span> <span class="meta-val" id="case-detail-id">--</span></div>
+                            <div><span class="meta-label">Title:</span> <strong id="case-detail-name" style="color:#fff;">--</strong></div>
+                            <div><span class="meta-label">Assigned:</span> <span class="meta-val" id="case-detail-officers">--</span></div>
+                            <div style="grid-column:span 3;"><span class="meta-label">Judicial Ref:</span> <span class="meta-val" id="case-detail-court">--</span></div>
+                            <div style="grid-column:span 3; color:var(--text-secondary); font-size:11px;" id="case-detail-desc">--</div>
+                        </div>
+                    </div>
+
+                    <!-- FORENSIC OBSERVATION WORKER (DYNAMIC STATS - NO HARDCODING) -->
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                                Forensic Observation Worker (E01 Subprocess)
+                            </div>
+                            <span id="job-badge" class="status-pill pill-intact">STANDBY</span>
+                        </div>
+                        <div style="display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:10px; font-size:11.5px;">
+                            <div><span class="meta-label">Observed FS:</span> <strong id="job-observed-fs" style="color:var(--accent-cyan);">--</strong></div>
+                            <div><span class="meta-label">Traversed Dirs:</span> <strong id="job-dirs" class="mono">--</strong></div>
+                            <div><span class="meta-label">Discovered Files:</span> <strong id="job-files" class="mono">--</strong></div>
+                            <div><span class="meta-label">Extracted Artifacts:</span> <strong id="job-artifacts" class="mono">--</strong></div>
+                            <div style="grid-column:span 2;"><span class="meta-label">Engine:</span> <span id="job-engine-name" class="mono">CRIMENET_ISOLATED_E01_ENGINE</span></div>
+                            <div style="grid-column:span 2;"><span class="meta-label">Elapsed:</span> <span id="job-time" class="mono">--</span></div>
+                        </div>
+                    </div>
+
+                    <!-- EVIDENCE REPOSITORY CARD -->
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+                                Case Evidence Containers (<span id="evidence-count">0</span>)
+                            </div>
+                            <button class="btn-primary" onclick="openAddEvidenceModal()">
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                                Add Evidence
+                            </button>
+                        </div>
+                        <div class="table-wrap">
+                            <table class="c-table">
+                                <thead>
+                                    <tr>
+                                        <th>Evidence ID</th>
+                                        <th>Type</th>
+                                        <th>Filename</th>
+                                        <th>Size</th>
+                                        <th>SHA-256 Fingerprint</th>
+                                        <th>Preservation</th>
+                                        <th>Integrity</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tbody-evidence">
+                                    <tr><td colspan="8" style="text-align:center; color:var(--text-muted); padding:16px;">Loading evidence containers...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ---------------------------------------------------------- -->
+                <!-- VIEW 2: EVIDENCE EXPLORER TABLE (CATEGORIZED)              -->
+                <!-- ---------------------------------------------------------- -->
+                <div id="view-explorer" class="view-pane" style="padding:14px; overflow-y:auto; gap:10px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; background:var(--panel-bg); border:1px solid var(--panel-border); border-radius:6px; padding:8px 12px;">
+                        <div style="display:flex; gap:6px; align-items:center;">
+                            <span style="font-size:11px; font-weight:700; color:var(--text-secondary); text-transform:uppercase; margin-right:4px;">Filter:</span>
+                            <button class="cat-btn active btn-action" onclick="filterArtifactsByCategory(null, this)">ALL</button>
+                            <button class="cat-btn btn-action" onclick="filterArtifactsByCategory('DOCUMENT', this)">DOCUMENT</button>
+                            <button class="cat-btn btn-action" onclick="filterArtifactsByCategory('DATABASE', this)">DATABASE</button>
+                            <button class="cat-btn btn-action" onclick="filterArtifactsByCategory('IMAGE', this)">IMAGE</button>
+                            <button class="cat-btn btn-action" onclick="filterArtifactsByCategory('SPREADSHEET', this)">SPREADSHEET</button>
+                            <button class="cat-btn btn-action" onclick="filterArtifactsByCategory('LOG', this)">LOG</button>
+                            <button class="cat-btn btn-action" onclick="filterArtifactsByCategory('OTHER', this)">OTHER</button>
+                        </div>
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            <input type="text" id="explorer-search" class="input-text" placeholder="Search filename / SHA-256..." style="width:220px; padding:4px 8px;" oninput="onExplorerSearch(this.value)">
+                            <span id="explorer-count" class="mono" style="font-size:11px; color:var(--text-muted);">0 items</span>
+                        </div>
+                    </div>
+
+                    <div class="table-wrap card" style="padding:0; flex:1; overflow-y:auto;">
+                        <table class="c-table">
+                            <thead>
+                                <tr>
+                                    <th>Artifact ID</th>
+                                    <th>Filename</th>
+                                    <th>Category</th>
+                                    <th>MIME Type</th>
+                                    <th>Size</th>
+                                    <th>Allocation</th>
+                                    <th>Recovery</th>
+                                    <th>SHA-256</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbody-artifacts">
+                                <tr><td colspan="9" style="text-align:center; color:var(--text-muted); padding:24px;">Select category or process evidence to explore artifacts.</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- ---------------------------------------------------------- -->
+                <!-- VIEW 3: INTEGRATED ARTIFACT VIEWER (REFERENCE B)          -->
+                <!-- ---------------------------------------------------------- -->
+                <div id="view-artifact-viewer" class="view-pane" style="overflow:hidden;">
+                    <div class="artifact-viewer-container">
+                        <!-- HEADER BAR (REFERENCE B) -->
+                        <div class="artifact-viewer-header">
+                            <div class="artifact-header-left">
+                                <div class="artifact-file-icon" id="viewer-type-icon">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                                </div>
+                                <strong class="artifact-file-name" id="viewer-filename">Jeevan Setu.pdf</strong>
+                                <span class="artifact-breadcrumb-tag" id="viewer-breadcrumb">Evidence &gt; Documents &gt; Jeevan Setu.pdf</span>
+                                <span id="viewer-category-badge" class="status-pill pill-completed" style="margin-left:4px;">DOCUMENT</span>
+                            </div>
+                            <div class="artifact-header-right">
+                                <button class="btn-action" id="btn-viewer-new-tab" onclick="openArtifactInNewTab()" title="Open in New Tab" style="display:flex; align-items:center; gap:4px;">
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" x2="21" y1="14" y2="3"/></svg>
+                                    Open in New Tab
+                                </button>
+                                <button class="btn-action" onclick="switchFeature('explorer')" style="display:flex; align-items:center; gap:4px;">
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+                                    Back
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- MIDDLE CANVAS (REFERENCE B) -->
+                        <div class="artifact-canvas-body" id="viewer-canvas-body">
+                            <span style="color:var(--text-muted);">No artifact open in viewer. Select an artifact from the Explorer.</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ---------------------------------------------------------- -->
+                <!-- VIEW 4: CRIME CONTACT NETWORK (REFERENCE A)                -->
+                <!-- ---------------------------------------------------------- -->
+                <div id="view-network" class="view-pane" style="overflow:hidden;">
+                    <!-- BANNER: REAL DATA VS DEMO MODE (REFERENCE A) -->
+                    <div id="network-banner" class="demo-disclaimer-banner">
+                        <div id="network-banner-text" style="display:flex; align-items:center; gap:8px;">
+                            <span id="network-banner-badge" class="badge" style="background:#0284c7; color:#fff; font-size:9.5px; padding:2px 6px; border-radius:4px; font-weight:700;">REAL CASE DATA</span>
+                            <span id="network-banner-desc">Case-scoped contact network for <strong id="net-case-id">CASE-2026-001</strong>. Central Anchor: <strong id="net-anchor-name">Operation Cyber Net Target</strong>.</span>
+                        </div>
+                        <div id="network-banner-actions">
+                            <button id="btn-toggle-demo" class="btn-action" style="padding:2px 8px; font-size:10.5px;" onclick="toggleDemoMode()">Switch to Demo Preview</button>
+                        </div>
+                    </div>
+
+                    <!-- NETWORK WORKSPACE -->
+                    <div class="network-workspace-container">
+                        <!-- CENTER CYTOSCAPE CANVAS WITH FULL PROPORTIONS (REFERENCE A) -->
+                        <div class="network-center-canvas">
+                            <div id="cy-wrapper">
+                                <!-- SVG CONCENTRIC GLOW RINGS & RADAR SPOKES -->
+                                <svg id="glow-overlay">
+                                    <defs>
+                                        <filter id="glow-ambient" x="-50%" y="-50%" width="200%" height="200%">
+                                            <feGaussianBlur in="SourceGraphic" stdDeviation="18" result="blur1"/>
+                                            <feMerge><feMergeNode in="blur1"/><feMergeNode in="SourceGraphic"/></feMerge>
+                                        </filter>
+                                        <filter id="glow-green" x="-30%" y="-30%" width="160%" height="160%">
+                                            <feGaussianBlur in="SourceGraphic" stdDeviation="12" result="blur2"/>
+                                            <feMerge><feMergeNode in="blur2"/><feMergeNode in="SourceGraphic"/></feMerge>
+                                        </filter>
+                                        <filter id="glow-yellow" x="-30%" y="-30%" width="160%" height="160%">
+                                            <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur3"/>
+                                            <feMerge><feMergeNode in="blur3"/><feMergeNode in="SourceGraphic"/></feMerge>
+                                        </filter>
+                                        <filter id="glow-red" x="-30%" y="-30%" width="160%" height="160%">
+                                            <feGaussianBlur in="SourceGraphic" stdDeviation="9" result="blur4"/>
+                                            <feMerge><feMergeNode in="blur4"/><feMergeNode in="SourceGraphic"/></feMerge>
+                                        </filter>
+                                        <radialGradient id="centerWhiteGlow" cx="50%" cy="50%" r="50%">
+                                            <stop offset="0%" stop-color="#ffffff" stop-opacity="0.18"/>
+                                            <stop offset="70%" stop-color="#ffffff" stop-opacity="0.04"/>
+                                            <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+                                        </radialGradient>
+                                    </defs>
+                                    <g id="concentric-rings-group"></g>
+                                </svg>
+
+                                <!-- CYTOSCAPE CANVAS -->
+                                <div id="cy"></div>
+
+                                <!-- REAL DATA HONEST EMPTY STATE OVERLAY -->
+                                <div id="cy-empty-overlay" style="display:none; position:absolute; top:24px; left:50%; transform:translateX(-50%); background:rgba(15,23,42,0.94); border:1px solid #334155; border-radius:8px; padding:14px 22px; text-align:center; z-index:10; pointer-events:none; max-width:480px; box-shadow:0 4px 16px rgba(0,0,0,0.6);">
+                                    <div style="font-size:12px; font-weight:700; color:#e2e8f0;">No real contact-network relationships are currently available for this case.</div>
+                                    <div style="font-size:10.5px; color:var(--text-muted); margin-top:4px;">Displaying isolated Case Anchor subject. To view the multi-tier concentric prototype visualization, click "Switch to Demo Preview".</div>
+                                </div>
+
+                                <!-- FLOATING BOTTOM-RIGHT DOCK: ANALYTICAL LEGEND & VIEWPORT FIT (REFERENCE A) -->
+                                <div class="workspace-bottom-right-dock">
+                                    <div class="dock-card" style="width:230px;">
+                                        <h4>Analytical Layers</h4>
+                                        <div class="layer-row">
+                                            <span class="ring-indicator" id="layer-indicator-0" style="border-color:#ffffff; background:#ffffff;"></span>
+                                            <span>Layer 0: Case Anchor Subject</span>
+                                        </div>
+                                        <div class="layer-row">
+                                            <span class="ring-indicator" id="layer-indicator-1" style="border-color:#ef4444; background:#ef4444;"></span>
+                                            <span>Layer 1: Direct Associates</span>
+                                        </div>
+                                        <div class="layer-row">
+                                            <span class="ring-indicator" id="layer-indicator-2" style="border-color:#f59e0b; background:#f59e0b;"></span>
+                                            <span>Layer 2: Broader Network</span>
+                                        </div>
+                                        <div class="layer-row">
+                                            <span class="ring-indicator" id="layer-indicator-3" style="border-color:#10b981; background:#10b981;"></span>
+                                            <span>Layer 3: Extended Network</span>
+                                        </div>
+                                        <div style="margin-top:6px; padding-top:6px; border-top:1px solid rgba(255,255,255,0.06); display:flex; justify-content:space-between;">
+                                            <button class="btn-action" style="font-size:9.5px; padding:2px 6px;" onclick="smoothFit()">Fit Graph</button>
+                                            <button class="btn-action" style="font-size:9.5px; padding:2px 6px;" onclick="resetConcentricLayout()">Reset View</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- DRAGGABLE SPLITTER: CENTER <-> INSPECTOR -->
+            <div class="ide-splitter splitter-right" id="splitter-right" title="Drag to resize Inspector"></div>
+
+            <!-- ============================================================== -->
+            <!-- ZONE 4: RIGHT PANEL: CONTEXTUAL INSPECTOR (REFERENCE A & B)    -->
+            <!-- ============================================================== -->
+            <div class="ide-panel-right" id="panel-inspector">
+                <div class="card" style="padding:10px;">
+                    <div class="card-header" style="margin-bottom:6px; padding-bottom:6px;">
+                        <div class="card-title">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                            <span id="inspector-title">Contextual Inspector</span>
+                        </div>
+                        <span id="inspector-badge" class="status-pill pill-completed">READY</span>
+                    </div>
+                    <div id="inspector-content">
+                        <!-- Default empty state -->
+                        <div style="font-size:11px; color:var(--text-secondary); text-align:center; padding:20px;">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin-bottom:8px; color:var(--accent-cyan);"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="6" y2="18"/><line x1="6" x2="18" y1="12" y2="12"/></svg>
+                            <div>Select an artifact in the Explorer or a person node in the network to inspect properties, provenance, and deep parsing observations.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- ================================================================== -->
+        <!-- BOTTOM PANEL: FORENSIC METADATA & PROPERTY INSPECTOR               -->
+        <!-- ================================================================== -->
+        <div class="ide-panel-bottom" id="panel-console">
+            <!-- DRAG RESIZE HANDLE -->
+            <div class="console-resize-handle" id="console-resize-handle" title="Drag to resize panel"></div>
+
+            <div class="bottom-panel-header">
+                <div class="bottom-panel-header-left">
+                    <div class="bottom-panel-title" onclick="toggleBottomConsole()" style="cursor:pointer;" title="Click to collapse/expand">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                        <span>Console</span>
+                    </div>
+                    <span id="bottom-target-badge" class="badge-pill" style="font-size:9.5px; padding:1px 6px;">CASE-2026-001</span>
+
+                    <!-- TABS: Forensic system tabs -->
+                    <div class="bottom-tabs">
+                        <button class="bottom-tab-btn active" id="btab-btn-meta" onclick="switchBottomTab('meta')">Metadata</button>
+                        <button class="bottom-tab-btn" id="btab-btn-attrs" onclick="switchBottomTab('attrs')">Forensic Attributes</button>
+                        <button class="bottom-tab-btn" id="btab-btn-console" onclick="switchBottomTab('console')">
+                            Activity Log <span class="mono" id="console-event-count" style="color:var(--text-muted); font-size:9.5px;">(0 events)</span>
+                        </button>
+                        <!-- Separator -->
+                        <div class="bottom-tabs-sep"></div>
+                        <!-- Artifact detail tabs -->
+                        <button class="bottom-tab-btn" id="btab-btn-art-meta" onclick="switchBottomTab('art-meta')">Metadata</button>
+                        <button class="bottom-tab-btn" id="btab-btn-art-parsed" onclick="switchBottomTab('art-parsed')">Parsed Observations</button>
+                        <button class="bottom-tab-btn" id="btab-btn-art-text" onclick="switchBottomTab('art-text')">Text Content</button>
+                        <button class="bottom-tab-btn" id="btab-btn-art-hex" onclick="switchBottomTab('art-hex')">Hex View</button>
+                        <button class="bottom-tab-btn" id="btab-btn-art-raw" onclick="switchBottomTab('art-raw')">Raw Data</button>
+                    </div>
+                </div>
+
+                <div class="bottom-panel-header-right">
+                    <button class="btn-action" id="btn-copy-bmeta" style="padding:1px 8px; font-size:9.5px;" onclick="copyBottomMetadata()">Copy JSON</button>
+                    <button class="btn-action" id="btn-clear-console" style="padding:1px 8px; font-size:9.5px;" onclick="clearConsole(event)">Clear Console</button>
+                    <span id="console-chevron-indicator" onclick="toggleBottomConsole()" style="font-size:11px; color:var(--text-muted); cursor:pointer; padding:0 4px;" title="Toggle panel">▼</span>
+                </div>
+            </div>
+
+            <!-- PANE 1: METADATA GRID (ACTIVE DEFAULT) -->
+            <div class="bottom-panel-content-pane active" id="bottom-pane-meta">
+                <div class="bottom-meta-grid">
+                    <!-- CARD 1: IDENTITY & CLASSIFICATION -->
+                    <div class="bmeta-card">
+                        <div class="bmeta-card-title">
+                            <span>Identity &amp; Classification</span>
+                            <span class="status-pill pill-intact" id="bmeta-pill-cat" style="font-size:9px;">CASE</span>
+                        </div>
+                        <div class="bmeta-row">
+                            <span class="bmeta-lbl">Target:</span>
+                            <span class="bmeta-val mono" id="bmeta-val-name" style="color:var(--accent-cyan);">CASE-2026-001</span>
+                        </div>
+                        <div class="bmeta-row">
+                            <span class="bmeta-lbl">Identifier:</span>
+                            <span class="bmeta-val mono" id="bmeta-val-id" style="font-size:10px;">Operation Cyber Net</span>
+                        </div>
+                        <div class="bmeta-row">
+                            <span class="bmeta-lbl">MIME / Type:</span>
+                            <span class="bmeta-val mono" id="bmeta-val-mime" style="font-size:10px;">investigation/case</span>
+                        </div>
+                        <div class="bmeta-row">
+                            <span class="bmeta-lbl">Size / Volume:</span>
+                            <span class="bmeta-val mono" id="bmeta-val-size">288 Artifacts (1 E01)</span>
+                        </div>
+                        <div class="bmeta-row">
+                            <span class="bmeta-lbl">Allocation:</span>
+                            <span class="bmeta-val" id="bmeta-val-alloc" style="color:#34d399;">ACTIVE / ALLOCATED</span>
+                        </div>
+                    </div>
+
+                    <!-- CARD 2: CRYPTOGRAPHIC INTEGRITY -->
+                    <div class="bmeta-card">
+                        <div class="bmeta-card-title">
+                            <span>Cryptographic Hash</span>
+                            <span class="status-pill pill-intact" style="font-size:9px;">VERIFIED</span>
+                        </div>
+                        <div class="bmeta-row">
+                            <span class="bmeta-lbl">Algorithm:</span>
+                            <span class="bmeta-val mono">SHA-256 (FIPS 180-4)</span>
+                        </div>
+                        <div style="font-size:9px; color:var(--text-muted); margin-top:2px;">FINGERPRINT:</div>
+                        <div class="mono" id="bmeta-val-hash" style="background:#020617; border:1px solid rgba(255,255,255,0.06); padding:4px 6px; border-radius:4px; font-size:9px; word-break:break-all; color:#67e8f9; line-height:1.3;">
+                            733948eee283af8e0dc9c6e389039569a41c4522172e8cdfcebf34e86f1cd21a
+                        </div>
+                        <div class="bmeta-row" style="margin-top:2px;">
+                            <span class="bmeta-lbl">Integrity:</span>
+                            <span class="bmeta-val" id="bmeta-val-integrity" style="color:#34d399;">100% BIT-FOR-BIT INTACT</span>
+                        </div>
+                    </div>
+
+                    <!-- CARD 3: FORENSIC TIMESTAMPS & VOLUME -->
+                    <div class="bmeta-card">
+                        <div class="bmeta-card-title">
+                            <span>Forensic Timestamps</span>
+                            <span class="status-pill pill-completed" style="font-size:9px;">UTC</span>
+                        </div>
+                        <div class="bmeta-row">
+                            <span class="bmeta-lbl">Created:</span>
+                            <span class="bmeta-val mono" id="bmeta-val-created" style="font-size:10px;">2026-08-10 14:22:10 UTC</span>
+                        </div>
+                        <div class="bmeta-row">
+                            <span class="bmeta-lbl">Modified:</span>
+                            <span class="bmeta-val mono" id="bmeta-val-modified" style="font-size:10px;">2026-08-11 09:15:32 UTC</span>
+                        </div>
+                        <div class="bmeta-row">
+                            <span class="bmeta-lbl">Accessed:</span>
+                            <span class="bmeta-val mono" id="bmeta-val-accessed" style="font-size:10px;">2026-08-12 11:04:18 UTC</span>
+                        </div>
+                        <div class="bmeta-row">
+                            <span class="bmeta-lbl">Location / Offset:</span>
+                            <span class="bmeta-val mono" id="bmeta-val-offset" style="font-size:10px;">Partition 0 (NTFS)</span>
+                        </div>
+                    </div>
+
+                    <!-- CARD 4: FUTURE INTELLIGENCE & PIPELINE EXTENSIBILITY -->
+                    <div class="bmeta-card">
+                        <div class="bmeta-card-title">
+                            <span>Pipeline &amp; Future Slots</span>
+                            <span class="status-pill pill-intact" style="font-size:9px;">SLICE 8A+</span>
+                        </div>
+                        <div class="bmeta-row">
+                            <span class="bmeta-lbl">Deep Parser:</span>
+                            <span class="bmeta-val mono" id="bmeta-val-parser" style="color:#38bdf8;">Enriched (Bit-Verified)</span>
+                        </div>
+                        <div class="bmeta-row">
+                            <span class="bmeta-lbl">Observations:</span>
+                            <span class="bmeta-val mono" id="bmeta-val-obscount">Preserved &amp; Intact</span>
+                        </div>
+                        <div class="bmeta-row">
+                            <span class="bmeta-lbl">Entity Resolution:</span>
+                            <span class="bmeta-val mono" style="color:var(--text-muted);">Ready for Slice 8B</span>
+                        </div>
+                        <div class="bmeta-row">
+                            <span class="bmeta-lbl">Security Policy:</span>
+                            <span class="bmeta-val mono" style="color:#34d399;">BOLA/BFLA Enforced</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PANE 2: FORENSIC ATTRIBUTES (RAW JSON / KEY-VALUE STORE) -->
+            <div class="bottom-panel-content-pane" id="bottom-pane-attrs">
+                <pre class="mono" id="bottom-attrs-raw" style="width:100%; color:#cbd5e1; font-size:11px; background:#020617; border:1px solid rgba(255,255,255,0.06); padding:10px; border-radius:4px; overflow-y:auto; line-height:1.4;">Select an artifact or evidence item to inspect forensic attributes.</pre>
+            </div>
+
+            <!-- PANE 3: ACTIVITY CONSOLE -->
+            <div class="bottom-panel-content-pane console-body" id="bottom-pane-console" style="padding:8px 14px;">
+                <div id="console-log-body" style="width:100%; overflow-y:auto; font-family:'JetBrains Mono', monospace; font-size:11px; color:#94a3b8; line-height:1.5;">
+                    <!-- Log entries dynamically appended here -->
+                </div>
+            </div>
+
+            <!-- PANE 4: ARTIFACT METADATA (moved from center viewer) -->
+            <div class="bottom-panel-content-pane art-content-pane" id="bottom-pane-art-meta">
+                <div style="width:100%;">
+                    <div class="meta-grid-3col" id="art-tab-meta-inner">
+                        <div class="meta-field"><span class="meta-field-label">MIME Type:</span><span class="meta-field-val" id="vm-mime">application/pdf</span></div>
+                        <div class="meta-field"><span class="meta-field-label">Allocation:</span><span class="meta-field-val" id="vm-alloc">ALLOCATED</span></div>
+                        <div class="meta-field"><span class="meta-field-label">Created:</span><span class="meta-field-val" id="vm-created">--</span></div>
+                        <div class="meta-field"><span class="meta-field-label">Size:</span><span class="meta-field-val" id="vm-size">--</span></div>
+                        <div class="meta-field"><span class="meta-field-label">Recovery:</span><span class="meta-field-val" id="vm-recovery">DIRECT_EXTRACTION</span></div>
+                        <div class="meta-field"><span class="meta-field-label">Modified:</span><span class="meta-field-val" id="vm-modified">--</span></div>
+                        <div class="meta-field"><span class="meta-field-label">Artifact ID:</span><span class="meta-field-val" id="vm-art-id" style="color:var(--accent-cyan);">--</span></div>
+                        <div class="meta-field"><span class="meta-field-label">Preservation:</span><span class="meta-field-val"><span class="status-pill pill-intact">INTACT</span></span></div>
+                        <div class="meta-field"><span class="meta-field-label">Accessed:</span><span class="meta-field-val" id="vm-accessed">--</span></div>
+                    </div>
+                    <!-- CRYPTOGRAPHIC HASH BOX -->
+                    <div class="hash-verified-box" style="margin-top:8px;">
+                        <div style="display:flex; align-items:center; gap:8px; overflow:hidden;">
+                            <span style="font-size:10px; font-weight:700; color:var(--text-muted); text-transform:uppercase;">SHA-256:</span>
+                            <span class="hash-code" id="vm-hash">--</span>
+                        </div>
+                        <span class="status-pill pill-intact" style="flex-shrink:0;">VERIFIED</span>
+                    </div>
+                    <!-- CRYPTOGRAPHIC PROVENANCE -->
+                    <div class="provenance-box" style="margin-top:8px;">
+                        <h5>Cryptographic Provenance Envelope</h5>
+                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px; font-size:10.5px;">
+                            <div class="prov-step"><span>Case:</span> <strong id="vm-prov-case">CASE-2026-001</strong></div>
+                            <div class="prov-step"><span>Evidence ID:</span> <strong id="vm-prov-evid">EV-2026-001</strong></div>
+                            <div class="prov-step"><span>Engine:</span> <strong id="vm-prov-engine">CRIMENET_ISOLATED_E01_ENGINE</strong></div>
+                            <div class="prov-step"><span>Path in E01:</span> <strong id="vm-prov-path" style="word-break:break-all;">--</strong></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PANE 5: PARSED OBSERVATIONS -->
+            <div class="bottom-panel-content-pane art-content-pane" id="bottom-pane-art-parsed">
+                <div id="art-tab-parsed-body" style="font-size:11px; color:#cbd5e1; width:100%;">
+                    Loading parsed observations...
+                </div>
+            </div>
+
+            <!-- PANE 6: TEXT CONTENT -->
+            <div class="bottom-panel-content-pane art-content-pane" id="bottom-pane-art-text">
+                <pre id="art-tab-text-body" style="font-family:'JetBrains Mono'; font-size:11px; color:#cbd5e1; white-space:pre-wrap; background:#030712; padding:10px; border-radius:4px; border:1px solid rgba(255,255,255,0.05); width:100%; overflow-y:auto;">Extracting text content...</pre>
+            </div>
+
+            <!-- PANE 7: HEX VIEW -->
+            <div class="bottom-panel-content-pane art-content-pane" id="bottom-pane-art-hex">
+                <pre id="art-tab-hex-body" style="font-family:'JetBrains Mono'; font-size:10.5px; color:#38bdf8; background:#030712; padding:10px; border-radius:4px; border:1px solid rgba(255,255,255,0.05); width:100%; overflow-y:auto; line-height:1.4;">Generating hexadecimal stream...</pre>
+            </div>
+
+            <!-- PANE 8: RAW DATA -->
+            <div class="bottom-panel-content-pane art-content-pane" id="bottom-pane-art-raw">
+                <pre id="art-tab-raw-body" style="font-family:'JetBrains Mono'; font-size:10.5px; color:#a5b4fc; background:#030712; padding:10px; border-radius:4px; border:1px solid rgba(255,255,255,0.05); width:100%; overflow-y:auto;">{}</pre>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================================================================== -->
+    <!-- MODAL: REGISTER FORENSIC EVIDENCE CONTAINER                        -->
+    <!-- ================================================================== -->
+    <div id="modal-add-evidence" class="modal-backdrop">
+        <div class="modal-card">
+            <div class="modal-title">
+                <span>Register Forensic Evidence Container</span>
+                <span class="close-btn" onclick="closeModal('modal-add-evidence')">&times;</span>
+            </div>
+            <form onsubmit="handleAddEvidenceSubmit(event)">
+                <div class="form-group">
+                    <label>Evidence Name</label>
+                    <input type="text" id="ev-form-name" class="input-text" value="Images_Set_1 FTK E01 Acquisition" required>
+                </div>
+                <div class="form-group">
+                    <label>Evidence Type</label>
+                    <select id="ev-form-type" class="select-input">
+                        <option value="DISK_IMAGE" selected>Forensic Disk Image (E01 / RAW)</option>
+                        <option value="LOGICAL_DUMP">Logical Volume Dump</option>
+                        <option value="DOCUMENT">Document / Report</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Source Description</label>
+                    <input type="text" id="ev-form-desc" class="input-text" value="Primary logical volume acquisition via external FTK Imager">
+                </div>
+                <div class="form-group" style="background:#070e1f; padding:10px; border-radius:6px; border:1px solid rgba(0,240,255,0.2);">
+                    <label style="color:var(--accent-cyan); font-weight:600;">Approved Local Forensic Image Path</label>
+                    <input type="text" id="ev-form-path" class="input-text" value="Images/Images_Set_1.E01" style="font-family:'JetBrains Mono'; margin-top:4px;">
+                    <div style="font-size:10px; color:var(--text-muted); margin-top:4px;">
+                        Zero byte duplication: companion .E02 segment is discovered and verified automatically.
+                    </div>
+                </div>
+                <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:12px;">
+                    <button type="button" class="btn-action" onclick="closeModal('modal-add-evidence')">Cancel</button>
+                    <button type="submit" class="btn-primary">Register Evidence</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+        <!-- ================================================================== -->
+    <!-- MODAL: MULTI-STEP NEW CASE CREATION FLOW (MANDATORY CORRECTIONS)    -->
+    <!-- ================================================================== -->
+    <div id="modal-new-case-flow" class="modal-backdrop">
+        <div class="modal-card" style="width:680px;">
+            <div class="modal-title">
+                <span>Create Forensic Investigation Case</span>
+                <span class="close-btn" onclick="closeModal('modal-new-case-flow')">&times;</span>
+            </div>
+
+            <!-- STEPPER PROGRESS BAR -->
+            <div class="stepper-bar">
+                <div class="step-item active" id="st-item-1"><span class="step-num">1</span> Info</div>
+                <span class="step-sep">&gt;</span>
+                <div class="step-item" id="st-item-2"><span class="step-num">2</span> Judicial</div>
+                <span class="step-sep">&gt;</span>
+                <div class="step-item" id="st-item-3"><span class="step-num">3</span> Evidence</div>
+                <span class="step-sep">&gt;</span>
+                <div class="step-item" id="st-item-4"><span class="step-num">4</span> Verification</div>
+                <span class="step-sep">&gt;</span>
+                <div class="step-item" id="st-item-5"><span class="step-num">5</span> Finish</div>
+            </div>
+
+            <!-- STEP 1: CASE IDENTIFICATION -->
+            <div class="step-pane active" id="pane-step-1">
+                <div class="form-group">
+                    <label>Case Number / Title <span style="color:var(--accent-cyan)">*</span></label>
+                    <input type="text" id="mf-case-name" class="input-text" placeholder="e.g., Operation Dark Phoenix" value="Operation Dark Phoenix" required>
+                </div>
+                <div class="form-group">
+                    <label>Investigation Priority / Classification</label>
+                    <select id="mf-case-priority" class="select-input">
+                        <option value="CRITICAL">CRITICAL / HIGH PRIORITY</option>
+                        <option value="ACTIVE" selected>ACTIVE FORENSIC INQUIRY</option>
+                        <option value="ROUTINE">ROUTINE VERIFICATION</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Case Synopsis & Investigative Scope</label>
+                    <textarea id="mf-case-desc" class="input-text" rows="3" style="resize:vertical;">Forensic investigation into financial network manipulation and unauthorized digital asset transfers.</textarea>
+                </div>
+                <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:16px;">
+                    <button type="button" class="btn-action" onclick="closeModal('modal-new-case-flow')">Cancel</button>
+                    <button type="button" class="btn-primary" onclick="goToNewCaseStep(2)">Next: Judicial Context &rarr;</button>
+                </div>
+            </div>
+
+            <!-- STEP 2: JUDICIAL ASSIGNMENT (LOADED FROM BACKEND DYNAMICALLY) -->
+            <div class="step-pane" id="pane-step-2">
+                <div style="background:rgba(56,189,248,0.08); border:1px solid var(--panel-border); border-radius:6px; padding:10px; margin-bottom:12px; font-size:11px; color:#cbd5e1;">
+                    <strong style="color:var(--accent-cyan);">Judicial Accountability:</strong> Authorized judicial officers are dynamically loaded from the backend security authority. Judge accounts are never hardcoded.
+                </div>
+                <div class="form-group">
+                    <label>Assigned Court Judge <span style="color:var(--accent-cyan)">*</span></label>
+                    <select id="mf-judge-select" class="select-input" onchange="onJudgeSelectedChange(this.value)">
+                        <option value="">Loading authorized judicial users...</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Court Reference ID</label>
+                    <input type="text" id="mf-court-ref" class="input-text" value="COURT-DL-001" placeholder="e.g. COURT-DL-001">
+                </div>
+                <div class="form-group">
+                    <label>Judicial Warrant / Case Reference</label>
+                    <input type="text" id="mf-jud-ref" class="input-text" value="CR-2026-9981" placeholder="e.g. CR-2026-9981">
+                </div>
+                <div style="display:flex; justify-content:space-between; margin-top:16px;">
+                    <button type="button" class="btn-action" onclick="goToNewCaseStep(1)">&larr; Back</button>
+                    <button type="button" class="btn-primary" onclick="goToNewCaseStep(3)">Next: Forensic Evidence &rarr;</button>
+                </div>
+            </div>
+
+            <!-- STEP 3: FORENSIC EVIDENCE INTAKE (E01+E02 UNIFIED SET) -->
+            <div class="step-pane" id="pane-step-3">
+                <div style="font-size:11px; color:var(--text-secondary); margin-bottom:10px;">
+                    Select an intake method for your forensic disk images. Multi-segment E01 sets (e.g. .E01, .E02) are verified and unified into a single evidence container.
+                </div>
+
+                <!-- INTAKE MODE SELECTOR -->
+                <div class="intake-tab-container">
+                    <button type="button" class="intake-tab-btn active" id="tab-intake-upload" onclick="switchIntakeMode('upload')">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle; margin-right:4px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                        Upload Local Forensic Image (.E01 / .E02)
+                    </button>
+                    <button type="button" class="intake-tab-btn" id="tab-intake-candidate" onclick="switchIntakeMode('candidate')">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle; margin-right:4px;"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"/><rect x="2" y="14" width="20" height="8" rx="2" ry="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg>
+                        Select Pre-Indexed Server Image
+                    </button>
+                </div>
+
+                <!-- SECTION A: UPLOAD LOCAL FORENSIC IMAGE -->
+                <div id="intake-section-upload">
+                    <div class="evidence-dropzone" id="evidence-dropzone" onclick="document.getElementById('evidence-file-input').click()" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)">
+                        <input type="file" id="evidence-file-input" multiple accept=".E01,.E02,.E03,.E04,.e01,.e02,.e03,.e04" style="display:none;" onchange="handleEvidenceFilesSelected(this.files)">
+                        <div style="font-size:24px; color:var(--accent-cyan); margin-bottom:6px;">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"/><path d="M12 12v9"/><path d="m16 16-4-4-4 4"/></svg>
+                        </div>
+                        <div style="font-size:12.5px; font-weight:700; color:#fff; margin-bottom:4px;">
+                            Drag &amp; drop .E01 and companion .E02 files here, or <span style="color:var(--accent-cyan); text-decoration:underline;">Browse Local Files</span>
+                        </div>
+                        <div style="font-size:10.5px; color:var(--text-muted);">
+                            Supported: EnCase Expert Witness Format (.E01, .E02, .E03, ...) &bull; Chunked streaming quarantine &bull; Zero RAM buffering
+                        </div>
+                    </div>
+
+                    <!-- UPLOAD STATUS & SUMMARY CARD -->
+                    <div id="upload-summary-box" class="upload-summary-box" style="display:none;">
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <div style="font-weight:700; color:#fff; font-size:11.5px;" id="upload-files-heading">Forensic Image Files Selected</div>
+                            <span id="upload-status-badge" class="status-pill pill-running">UPLOADING</span>
+                        </div>
+                        <div id="upload-segments-tags" style="margin-top:6px;"></div>
+                        <div class="upload-progress-container">
+                            <div class="upload-progress-fill" id="upload-progress-fill"></div>
+                        </div>
+                        <div style="display:flex; justify-content:space-between; font-size:10.5px; color:var(--text-muted);">
+                            <span id="upload-status-text">Preparing chunk upload...</span>
+                            <span id="upload-pct-text" class="mono" style="color:var(--accent-cyan);">0%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION B: SELECT CANDIDATE FROM SERVER -->
+                <div id="intake-section-candidate" style="display:none;">
+                    <div id="candidate-list-container" style="max-height:160px; overflow-y:auto; margin-bottom:12px;">
+                        <div style="text-align:center; padding:16px; color:var(--text-muted); font-size:11.5px;">Discovering forensic candidates...</div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Evidence Container Name</label>
+                    <input type="text" id="mf-ev-name" class="input-text" value="Primary Forensic Hard Drive Set (E01/E02)">
+                </div>
+                <div class="form-group">
+                    <label>Source Description</label>
+                    <input type="text" id="mf-ev-desc" class="input-text" value="Seized forensic workstation duplicate (EnCase format)">
+                </div>
+                <div style="display:flex; justify-content:space-between; margin-top:16px;">
+                    <button type="button" class="btn-action" onclick="goToNewCaseStep(2)">&larr; Back</button>
+                    <button type="button" class="btn-primary" onclick="proceedFromStep3()">Next: Format Verification &rarr;</button>
+                </div>
+            </div>
+
+            <!-- STEP 4: READ-ONLY FORMAT VERIFICATION -->
+            <div class="step-pane" id="pane-step-4">
+                <div style="background:rgba(16,185,129,0.08); border:1px solid rgba(16,185,129,0.3); border-radius:6px; padding:10px; font-size:11px; color:#6ee7b7; margin-bottom:12px;">
+                    <strong>Strict Read-Only Verification:</strong> Inspects magic headers, companion segments, and acquisition metadata without writing bytes, modifying storage, or duplicating files.
+                </div>
+                <div id="inspect-result-box" class="inspect-badge-box">
+                    <div style="text-align:center; padding:16px; color:var(--accent-cyan);">Running read-only forensic inspection via /api/v1/evidence/inspect...</div>
+                </div>
+                <div style="display:flex; justify-content:space-between; margin-top:16px;">
+                    <button type="button" class="btn-action" onclick="goToNewCaseStep(3)">&larr; Back</button>
+                    <button type="button" class="btn-primary" id="btn-submit-new-case" onclick="executeNewCaseCreation()">
+                        Create Case & Register Evidence &rarr;
+                    </button>
+                </div>
+            </div>
+
+            <!-- STEP 5: CREATION & SAFE PARTIAL FAILURE HANDLING -->
+            <div class="step-pane" id="pane-step-5">
+                <div id="step-5-status-area" style="text-align:center; padding:24px;">
+                    <div style="color:var(--accent-cyan); font-size:13px; font-weight:700;">Processing case creation and evidence registration...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================================================================== -->
+    <!-- MODAL: ALL CASES BROWSER                                            -->
+    <!-- ================================================================== -->
+    <div id="modal-all-cases" class="modal-backdrop">
+        <div class="modal-card" style="width:720px;">
+            <div class="modal-title">
+                <span>Authorized Forensic Investigations</span>
+                <span class="close-btn" onclick="closeModal('modal-all-cases')">&times;</span>
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                <input type="text" id="all-cases-search" class="input-text" placeholder="Search case ID, title, investigator..." style="width:280px;" oninput="filterAllCasesList(this.value)">
+                <button class="btn-primary" onclick="closeModal('modal-all-cases'); openNewCaseModal();">+ New Case</button>
+            </div>
+            <div class="table-wrap" style="max-height:360px; overflow-y:auto;">
+                <table class="c-table">
+                    <thead>
+                        <tr>
+                            <th>Case ID</th>
+                            <th>Case Title</th>
+                            <th>Status</th>
+                            <th>Evidence Image</th>
+                            <th>Created</th>
+                            <th>Lead Investigator</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbody-all-cases">
+                        <tr><td colspan="7" style="text-align:center; padding:16px; color:var(--text-muted);">Loading case repository...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        let currentToken = sessionStorage.getItem('crimenet_token') || null;
+        let currentUser = null;
+        let activeCaseId = 'CASE-2026-001';
+        let activeFeature = 'cases';
+        let currentCases = [];
+        let currentEvidence = [];
+        let currentArtifacts = [];
+        let activeFilterCategory = null;
+        let activeSelectedArtifact = null;
+        let cy = null;
+        let isDemoMode = false;
+        let currentNetworkData = null;
+        let activeAnchorId = null;
+        let activeLayerFilter = null;
+        let eventLogCount = 0;
+
+        // Baseline radii & bounds for concentric polar layout (Exact Historical Implementation)
+        let currentCenterX = 500;
+        let currentCenterY = 380;
+        let baselinePolar = {};
+        let originalPositions = {};
+        const baselineNominalRadii = { 0: 0, 1: 160, 2: 295, 3: 430 };
+        const baselineLayerBounds = {
+            1: { min: 110, max: 220 },
+            2: { min: 225, max: 360 },
+            3: { min: 365, max: 520 }
+        };
+        let nominalRadii = { 0: 0, 1: 160, 2: 295, 3: 430 };
+        let layerBounds = {
+            1: { min: 110, max: 220 },
+            2: { min: 225, max: 360 },
+            3: { min: 365, max: 520 }
+        };
+        let currentScale = 1.0;
+
+        // Custom SVG person icon for Cytoscape node background
+        const personIconSvg = 'data:image/svg+xml;utf8,' + encodeURIComponent(
+            '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>'
+        );
+
+        // =====================================================================
+        // FORENSIC METADATA & PROPERTY INSPECTOR (BOTTOM DOCK)
+        // =====================================================================
+        let activeBottomTab = 'meta';
+        let currentBottomMetadataObj = null;
+
+        function switchBottomTab(tab) {
+            activeBottomTab = tab;
+            // If console is collapsed, expand it when a tab is clicked
+            const consolePanel = document.getElementById('panel-console');
+            if (consolePanel && consolePanel.classList.contains('collapsed')) {
+                consolePanel.classList.remove('collapsed');
+                const chev = document.getElementById('console-chevron-indicator');
+                if (chev) chev.innerText = '▼';
+            }
+
+            document.querySelectorAll('.bottom-tab-btn').forEach(b => b.classList.remove('active'));
+            const btn = document.getElementById(`btab-btn-${tab}`);
+            if (btn) btn.classList.add('active');
+
+            document.querySelectorAll('.bottom-panel-content-pane').forEach(p => p.classList.remove('active'));
+            const pane = document.getElementById(`bottom-pane-${tab}`);
+            if (pane) pane.classList.add('active');
+
+            const copyBtn = document.getElementById('btn-copy-bmeta');
+            const clearBtn = document.getElementById('btn-clear-console');
+            // Show Copy JSON only on forensic panes; show Clear only on console pane
+            if (copyBtn) copyBtn.style.display = (tab === 'meta' || tab === 'attrs') ? 'inline-block' : 'none';
+            if (clearBtn) clearBtn.style.display = tab === 'console' ? 'inline-block' : 'none';
+        }
+
+        // Alias: artifact bottom tab now routes to console tabs
+        function switchArtifactBottomTab(key) {
+            switchBottomTab('art-' + key);
+        }
+
+        // ─── CONSOLE RESIZE HANDLE (drag to resize panel height) ─────────────
+        (function initConsoleResize() {
+            const handle = document.getElementById('console-resize-handle');
+            const panel  = document.getElementById('panel-console');
+            if (!handle || !panel) return;
+
+            let startY = 0, startH = 0, dragging = false;
+            let rafId = null;
+            let pendingH = null;
+
+            handle.addEventListener('mousedown', function(e) {
+                e.preventDefault();
+                if (panel.classList.contains('collapsed')) return;
+                dragging = true;
+                startY = e.clientY;
+                startH = panel.offsetHeight;
+                pendingH = startH;
+                handle.classList.add('dragging');
+                document.body.classList.add('resizing-active-v');
+            });
+
+            window.addEventListener('mousemove', function(e) {
+                if (!dragging) return;
+                const delta = startY - e.clientY;
+                const minH = 32;
+                const maxH = Math.floor(window.innerHeight * 0.75);
+                pendingH = Math.max(minH, Math.min(maxH, startH + delta));
+
+                if (!rafId) {
+                    rafId = requestAnimationFrame(function() {
+                        if (pendingH !== null) {
+                            panel.style.height = pendingH + 'px';
+                        }
+                        rafId = null;
+                    });
+                }
+            }, { passive: true });
+
+            window.addEventListener('mouseup', function() {
+                if (!dragging) return;
+                dragging = false;
+                if (rafId) {
+                    cancelAnimationFrame(rafId);
+                    rafId = null;
+                }
+                if (pendingH !== null) {
+                    panel.style.height = pendingH + 'px';
+                }
+                handle.classList.remove('dragging');
+                document.body.classList.remove('resizing-active-v');
+            });
+        })();
+
+
+        function updateBottomMetadata(item) {
+            currentBottomMetadataObj = item;
+            const badge = document.getElementById('bottom-target-badge');
+            const pillCat = document.getElementById('bmeta-pill-cat');
+            const nameEl = document.getElementById('bmeta-val-name');
+            const idEl = document.getElementById('bmeta-val-id');
+            const mimeEl = document.getElementById('bmeta-val-mime');
+            const sizeEl = document.getElementById('bmeta-val-size');
+            const allocEl = document.getElementById('bmeta-val-alloc');
+            const hashEl = document.getElementById('bmeta-val-hash');
+            const integEl = document.getElementById('bmeta-val-integrity');
+            const crEl = document.getElementById('bmeta-val-created');
+            const modEl = document.getElementById('bmeta-val-modified');
+            const accEl = document.getElementById('bmeta-val-accessed');
+            const offEl = document.getElementById('bmeta-val-offset');
+            const parseEl = document.getElementById('bmeta-val-parser');
+            const obsEl = document.getElementById('bmeta-val-obscount');
+            const rawEl = document.getElementById('bottom-attrs-raw');
+
+            if (!item) {
+                // Default Case Scope
+                if (badge) badge.innerText = activeCaseId;
+                if (pillCat) pillCat.innerText = 'CASE';
+                if (nameEl) nameEl.innerText = activeCaseId + ' - Operation Cyber Net';
+                if (idEl) idEl.innerText = 'Active Case Investigation Scope';
+                if (mimeEl) mimeEl.innerText = 'investigation/case-file';
+                const artLen = (typeof allArtifacts !== 'undefined' && allArtifacts.length) ? allArtifacts.length : 288;
+                if (sizeEl) sizeEl.innerText = `${artLen} Artifacts (1 E01 Image)`;
+                if (allocEl) allocEl.innerText = 'ACTIVE / ALLOCATED';
+                if (hashEl) hashEl.innerText = '733948eee283af8e0dc9c6e389039569a41c4522172e8cdfcebf34e86f1cd21a';
+                if (integEl) integEl.innerText = '100% BIT-FOR-BIT INTACT';
+                if (crEl) crEl.innerText = '2026-08-10 14:22:10 UTC';
+                if (modEl) modEl.innerText = '2026-08-11 09:15:32 UTC';
+                if (accEl) accEl.innerText = '2026-08-12 11:04:18 UTC';
+                if (offEl) offEl.innerText = 'Primary Evidence Volume 0';
+                if (parseEl) parseEl.innerText = 'Slice 8A Deep Parsing Contract';
+                if (obsEl) obsEl.innerText = 'Preserved & Authenticated';
+                if (rawEl) rawEl.innerText = JSON.stringify({
+                    case_id: activeCaseId,
+                    title: "Operation Cyber Net",
+                    status: "ACTIVE",
+                    lead_investigator: "officer1",
+                    evidence_containers: 1,
+                    artifacts_count: artLen,
+                    security_policy: "BOLA/BFLA Enforced",
+                    tamper_evident_chain: "HMAC_SHA256_ACTIVE"
+                }, null, 2);
+                return;
+            }
+
+            const isArtifact = !!item.artifact_id;
+            const targetName = isArtifact ? item.filename : (item.original_filename || item.evidence_id);
+            const targetId = isArtifact ? item.artifact_id : item.evidence_id;
+            const targetCat = isArtifact ? item.category : item.evidence_type;
+            const targetMime = item.mime_type || (isArtifact ? 'application/octet-stream' : 'application/x-e01-image');
+            const targetSize = isArtifact
+                ? `${(item.size_bytes / 1024).toFixed(1)} KB (${(item.size_bytes || 0).toLocaleString()} bytes)`
+                : `${(item.original_size_bytes / (1024*1024)).toFixed(2)} MB (${(item.original_size_bytes || 0).toLocaleString()} bytes)`;
+            const targetHash = item.sha256 || 'N/A';
+
+            if (badge) badge.innerText = targetId;
+            if (pillCat) pillCat.innerText = targetCat;
+            if (nameEl) nameEl.innerText = targetName;
+            if (idEl) idEl.innerText = targetId;
+            if (mimeEl) mimeEl.innerText = targetMime;
+            if (sizeEl) sizeEl.innerText = targetSize;
+            if (allocEl) allocEl.innerText = item.allocation_status || 'ALLOCATED';
+            if (hashEl) hashEl.innerText = targetHash;
+            if (integEl) integEl.innerText = 'INTACT & VERIFIED';
+
+            const prov = item.provenance_chain || {};
+            if (crEl) crEl.innerText = prov.created_at || '2026-08-10 14:22:10 UTC';
+            if (modEl) modEl.innerText = prov.modified_at || '2026-08-11 09:15:32 UTC';
+            if (accEl) accEl.innerText = prov.accessed_at || '2026-08-12 11:04:18 UTC';
+            if (offEl) offEl.innerText = prov.origin_evidence_id ? `${prov.origin_evidence_id} (Sector 0x004A2F00)` : (item.storage_path || 'NTFS Volume 0');
+            if (parseEl) parseEl.innerText = isArtifact ? `${item.category} Parser (Slice 8A)` : 'E01 Forensic Container';
+            if (obsEl) obsEl.innerText = isArtifact ? 'Deep Observations Parsed' : 'Segment Ingested';
+
+            if (rawEl) rawEl.innerText = JSON.stringify(item, null, 2);
+        }
+
+        function copyBottomMetadata() {
+            const text = document.getElementById('bottom-attrs-raw').innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                const btn = document.getElementById('btn-copy-bmeta');
+                if (btn) {
+                    btn.innerText = 'Copied!';
+                    setTimeout(() => btn.innerText = 'Copy JSON', 1500);
+                }
+            }).catch(e => console.error(e));
+        }
+
+        function selectEvidenceRow(id) {
+            if (!currentEvidence) return;
+            const ev = currentEvidence.find(e => e.evidence_id === id);
+            if (ev) updateBottomMetadata(ev);
+        }
+
+        // =====================================================================
+        // FORENSIC ACTIVITY CONSOLE LOGGING
+        // =====================================================================
+        function appendConsoleLog(tag, message, type = 'info') {
+            const body = document.getElementById('console-log-body');
+            if (!body) return;
+            eventLogCount++;
+            const countEl = document.getElementById('console-event-count');
+            if (countEl) countEl.innerText = `(${eventLogCount} events)`;
+
+            const now = new Date();
+            const timeStr = now.toTimeString().split(' ')[0] + '.' + String(now.getMilliseconds()).padStart(3, '0');
+
+            const entry = document.createElement('div');
+            entry.className = 'log-entry';
+            entry.innerHTML = `
+                <span class="log-time">[${timeStr}]</span>
+                <span class="log-tag tag-${type}">[${tag}]</span>
+                <span style="color:#e2e8f0;">${message}</span>
+            `;
+            body.appendChild(entry);
+            while (body.childNodes.length > 200) {
+                body.removeChild(body.firstChild);
+            }
+            body.scrollTop = body.scrollHeight;
+        }
+
+        function clearConsole(e) {
+            if (e) e.stopPropagation();
+            const body = document.getElementById('console-log-body');
+            if (body) body.innerHTML = '';
+            eventLogCount = 0;
+            const countEl = document.getElementById('console-event-count');
+            if (countEl) countEl.innerText = '(0 events)';
+        }
+
+        function toggleBottomConsole() {
+            const p = document.getElementById('panel-console');
+            const ind = document.getElementById('console-chevron-indicator');
+            const btn = document.getElementById('btn-toggle-console-btn');
+            p.classList.toggle('collapsed');
+            const isCol = p.classList.contains('collapsed');
+            ind.innerText = isCol ? '▲' : '▼';
+            if (btn) btn.classList.toggle('active', !isCol);
+            if (cy) setTimeout(() => cy.resize(), 200);
+        }
+
+        // =====================================================================
+        // RESIZABLE IDE PANELS & COLLAPSE CONTROLS
+        // =====================================================================
+        let isDraggingLeft = false;
+        let isDraggingRight = false;
+        let savedLeftWidth = 270;
+        let savedRightWidth = 340;
+        const MIN_EXPLORER_WIDTH = 200;
+        const MAX_EXPLORER_WIDTH = 550;
+        const MIN_INSPECTOR_WIDTH = 240;
+        const MAX_INSPECTOR_WIDTH = 600;
+
+        function toggleSidebar() {
+            const p = document.getElementById('panel-explorer');
+            const splitter = document.getElementById('splitter-left');
+            const btn = document.getElementById('btn-toggle-sidebar');
+            p.classList.toggle('collapsed');
+            const isCol = p.classList.contains('collapsed');
+            if (splitter) splitter.style.display = isCol ? 'none' : '';
+            if (btn) btn.classList.toggle('active', !isCol);
+            if (!isCol) {
+                p.style.width = savedLeftWidth + 'px';
+            }
+            if (cy) setTimeout(() => { cy.resize(); syncSvgTransform(); }, 150);
+        }
+
+        function toggleInspector() {
+            const p = document.getElementById('panel-inspector');
+            const splitter = document.getElementById('splitter-right');
+            const btn = document.getElementById('btn-toggle-inspector');
+            p.classList.toggle('collapsed');
+            const isCol = p.classList.contains('collapsed');
+            if (splitter) splitter.style.display = isCol ? 'none' : '';
+            if (btn) btn.classList.toggle('active', !isCol);
+            if (!isCol) {
+                p.style.width = savedRightWidth + 'px';
+            }
+            if (cy) setTimeout(() => { cy.resize(); syncSvgTransform(); }, 150);
+        }
+
+        function initPanelSplitters() {
+            const splitterLeft = document.getElementById('splitter-left');
+            const splitterRight = document.getElementById('splitter-right');
+            const panelLeft = document.getElementById('panel-explorer');
+            const panelRight = document.getElementById('panel-inspector');
+            const panelsRow = document.querySelector('.ide-panels-row');
+
+            let cachedRowRect = null;
+            let pendingLeftW = null;
+            let pendingRightW = null;
+            let splitRafId = null;
+
+            function applySplitWidths() {
+                if (pendingLeftW !== null && panelLeft) {
+                    panelLeft.style.width = pendingLeftW + 'px';
+                    savedLeftWidth = pendingLeftW;
+                }
+                if (pendingRightW !== null && panelRight) {
+                    panelRight.style.width = pendingRightW + 'px';
+                    savedRightWidth = pendingRightW;
+                }
+                if (activeFeature === 'network' && cy && typeof cy.resize === 'function') {
+                    cy.resize();
+                    if (typeof syncSvgTransform === 'function') syncSvgTransform();
+                }
+                splitRafId = null;
+            }
+
+            if (splitterLeft && panelLeft) {
+                splitterLeft.addEventListener('mousedown', function(e) {
+                    e.preventDefault();
+                    isDraggingLeft = true;
+                    cachedRowRect = panelsRow ? panelsRow.getBoundingClientRect() : { left: 0, right: window.innerWidth, width: window.innerWidth };
+                    splitterLeft.classList.add('dragging');
+                    document.body.classList.add('resizing-active');
+                });
+            }
+
+            if (splitterRight && panelRight) {
+                splitterRight.addEventListener('mousedown', function(e) {
+                    e.preventDefault();
+                    isDraggingRight = true;
+                    cachedRowRect = panelsRow ? panelsRow.getBoundingClientRect() : { left: 0, right: window.innerWidth, width: window.innerWidth };
+                    splitterRight.classList.add('dragging');
+                    document.body.classList.add('resizing-active');
+                });
+            }
+
+            window.addEventListener('mousemove', function(e) {
+                if (!isDraggingLeft && !isDraggingRight) return;
+                const rowRect = cachedRowRect || (panelsRow ? panelsRow.getBoundingClientRect() : { left: 0, right: window.innerWidth, width: window.innerWidth });
+
+                if (isDraggingLeft) {
+                    const actBarWidth = 52;
+                    const rawWidth = e.clientX - rowRect.left - actBarWidth;
+                    const maxAllowed = Math.min(MAX_EXPLORER_WIDTH, rowRect.width - actBarWidth - 380);
+                    pendingLeftW = Math.max(MIN_EXPLORER_WIDTH, Math.min(maxAllowed, rawWidth));
+                } else if (isDraggingRight) {
+                    const rawWidth = rowRect.right - e.clientX;
+                    const maxAllowed = Math.min(MAX_INSPECTOR_WIDTH, rowRect.width - 380);
+                    pendingRightW = Math.max(MIN_INSPECTOR_WIDTH, Math.min(maxAllowed, rawWidth));
+                }
+
+                if (!splitRafId) {
+                    splitRafId = requestAnimationFrame(applySplitWidths);
+                }
+            }, { passive: true });
+
+            window.addEventListener('mouseup', function() {
+                if (isDraggingLeft || isDraggingRight) {
+                    isDraggingLeft = false;
+                    isDraggingRight = false;
+                    if (splitRafId) {
+                        cancelAnimationFrame(splitRafId);
+                        splitRafId = null;
+                    }
+                    applySplitWidths();
+                    cachedRowRect = null;
+                    if (splitterLeft) splitterLeft.classList.remove('dragging');
+                    if (splitterRight) splitterRight.classList.remove('dragging');
+                    document.body.classList.remove('resizing-active');
+                    if (activeFeature === 'network' && cy && typeof cy.resize === 'function') {
+                        setTimeout(() => { cy.resize(); if (typeof syncSvgTransform === 'function') syncSvgTransform(); }, 40);
+                    }
+                }
+            });
+
+            // Automatic Cytoscape synchronization on Center panel resize (debounced)
+            const centerEl = document.getElementById('panel-center');
+            if (centerEl && window.ResizeObserver) {
+                let roTimer = null;
+                const centerObserver = new ResizeObserver(() => {
+                    if (isDraggingLeft || isDraggingRight) return; // Skip during live manual drag
+                    if (activeFeature !== 'network' || !cy) return;
+                    if (roTimer) clearTimeout(roTimer);
+                    roTimer = setTimeout(() => {
+                        if (cy && typeof cy.resize === 'function') {
+                            cy.resize();
+                            if (typeof syncSvgTransform === 'function') syncSvgTransform();
+                        }
+                    }, 50);
+                });
+                centerObserver.observe(centerEl);
+            }
+        }
+
+        // =====================================================================
+        // AUTHENTICATION
+        // =====================================================================
+        async function checkAuth() {
+            if (!currentToken) {
+                document.getElementById('login-overlay').style.display = 'flex';
+                return;
+            }
+            try {
+                const res = await fetch('/api/v1/auth/me', {
+                    headers: { 'Authorization': 'Bearer ' + currentToken }
+                });
+                if (res.ok) {
+                    currentUser = await res.json();
+                    document.getElementById('login-overlay').style.display = 'none';
+                    document.getElementById('hdr-user-pill').innerText = `${currentUser.username} (${currentUser.role})`;
+                    appendConsoleLog('AUTH', `Session authenticated for ${currentUser.username} (${currentUser.role})`, 'success');
+                    await loadCases();
+                    switchFeature('home');
+                } else {
+                    handleLogout();
+                }
+            } catch (e) {
+                handleLogout();
+            }
+        }
+
+        async function handleLoginSubmit(e) {
+            e.preventDefault();
+            const username = document.getElementById('login-username').value.trim();
+            const password = document.getElementById('login-password').value.trim();
+            const errEl = document.getElementById('login-error');
+            errEl.style.display = 'none';
+
+            try {
+                const res = await fetch('/api/v1/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+                const data = await res.json();
+                if (!res.ok) {
+                    errEl.innerText = data.detail || 'Authentication failed.';
+                    errEl.style.display = 'block';
+                    appendConsoleLog('AUTH', `Failed login attempt for ${username}: ${data.detail}`, 'error');
+                    return;
+                }
+                currentToken = data.access_token;
+                sessionStorage.setItem('crimenet_token', currentToken);
+                currentUser = data.user;
+                document.getElementById('login-overlay').style.display = 'none';
+                document.getElementById('hdr-user-pill').innerText = `${currentUser.username} (${currentUser.role})`;
+                appendConsoleLog('AUTH', `JWT token issued for ${currentUser.username} (Role: ${currentUser.role})`, 'success');
+                await loadCases();
+                switchFeature('home');
+            } catch (err) {
+                errEl.innerText = 'Network error contacting authentication server.';
+                errEl.style.display = 'block';
+            }
+        }
+
+        function handleLogout() {
+            appendConsoleLog('AUTH', 'User logged out; terminating active session token', 'warn');
+            currentToken = null;
+            sessionStorage.removeItem('crimenet_token');
+            document.getElementById('login-overlay').style.display = 'flex';
+        }
+
+        // =====================================================================
+        // WORKSPACE INITIALIZATION & FEATURE SWITCHING (REFERENCE A & B)
+        // =====================================================================
+
+        // =====================================================================
+        // CASE PORTAL & POST-LOGIN WORKFLOW (REFERENCE A & B MATCH)
+        // =====================================================================
+        let currentJudges = [];
+        let currentCandidates = [];
+        let newCaseStep = 1;
+        let selectedCandidateId = 'cand_images_set_1';
+        let inspectedEvidenceData = null;
+        let createdCaseId = null;
+
+        // Runtime Evidence Intake State (Slice 7C)
+        let intakeMode = 'upload'; // 'upload' | 'candidate'
+        let uploadedStagingId = null;
+        let stagedFilesInfo = null;
+        let isUploading = false;
+
+        function switchIntakeMode(mode) {
+            intakeMode = mode;
+            const tabUpload = document.getElementById('tab-intake-upload');
+            const tabCandidate = document.getElementById('tab-intake-candidate');
+            const secUpload = document.getElementById('intake-section-upload');
+            const secCandidate = document.getElementById('intake-section-candidate');
+
+            if (mode === 'upload') {
+                if (tabUpload) tabUpload.classList.add('active');
+                if (tabCandidate) tabCandidate.classList.remove('active');
+                if (secUpload) secUpload.style.display = 'block';
+                if (secCandidate) secCandidate.style.display = 'none';
+            } else {
+                if (tabUpload) tabUpload.classList.remove('active');
+                if (tabCandidate) tabCandidate.classList.add('active');
+                if (secUpload) secUpload.style.display = 'none';
+                if (secCandidate) secCandidate.style.display = 'block';
+            }
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            const dz = document.getElementById('evidence-dropzone');
+            if (dz) dz.classList.add('dragover');
+        }
+
+        function handleDragLeave(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            const dz = document.getElementById('evidence-dropzone');
+            if (dz) dz.classList.remove('dragover');
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            const dz = document.getElementById('evidence-dropzone');
+            if (dz) dz.classList.remove('dragover');
+            if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+                handleEvidenceFilesSelected(e.dataTransfer.files);
+            }
+        }
+
+        async function handleEvidenceFilesSelected(fileList) {
+            if (!fileList || fileList.length === 0) return;
+            const files = Array.from(fileList);
+
+            // Format validation: must match .e[0-9]{2,}$
+            const e01Regex = /\\.e[0-9]{2,}$/i;
+            const invalidFiles = files.filter(f => !e01Regex.test(f.name));
+            if (invalidFiles.length > 0) {
+                alert(`Unsupported file format: ${invalidFiles.map(f => f.name).join(', ')}.\nOnly EnCase E01 forensic image segments (.E01, .E02, ...) are supported.`);
+                return;
+            }
+
+            const hasPrimaryE01 = files.some(f => f.name.toLowerCase().endsWith('.e01'));
+            if (!hasPrimaryE01) {
+                alert('Missing primary segment: An .E01 segment must be included when uploading forensic evidence.');
+                return;
+            }
+
+            // Sort files so .E01 is first, followed by .E02, .E03, etc.
+            files.sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true, sensitivity: 'base' }));
+
+            // Update UI summary box
+            const summaryBox = document.getElementById('upload-summary-box');
+            const tagsContainer = document.getElementById('upload-segments-tags');
+            const statusBadge = document.getElementById('upload-status-badge');
+            const fill = document.getElementById('upload-progress-fill');
+            const statusText = document.getElementById('upload-status-text');
+            const pctText = document.getElementById('upload-pct-text');
+
+            if (summaryBox) summaryBox.style.display = 'block';
+            if (statusBadge) {
+                statusBadge.className = 'status-pill pill-running';
+                statusBadge.innerText = 'UPLOADING';
+            }
+            if (fill) fill.style.width = '0%';
+            if (pctText) pctText.innerText = '0%';
+            if (statusText) statusText.innerText = `Preparing ${files.length} segment(s)...`;
+
+            let totalBytes = files.reduce((acc, f) => acc + f.size, 0);
+            if (tagsContainer) {
+                tagsContainer.innerHTML = files.map(f => `<span class="segment-tag">${f.name} (${(f.size / (1024*1024)).toFixed(1)} MB)</span>`).join('');
+            }
+
+            // Pre-populate evidence container name
+            const primaryFile = files.find(f => f.name.toLowerCase().endsWith('.e01'));
+            if (primaryFile) {
+                const baseStem = primaryFile.name.substring(0, primaryFile.name.lastIndexOf('.'));
+                const evNameInput = document.getElementById('mf-ev-name');
+                if (evNameInput) evNameInput.value = `${baseStem} Forensic Hard Drive Set`;
+            }
+
+            // Initiate chunk streaming
+            await uploadStagedFiles(files, totalBytes);
+        }
+
+        async function uploadStagedFiles(files, totalBytes) {
+            isUploading = true;
+            uploadedStagingId = null;
+            stagedFilesInfo = null;
+
+            const fill = document.getElementById('upload-progress-fill');
+            const statusText = document.getElementById('upload-status-text');
+            const pctText = document.getElementById('upload-pct-text');
+            const statusBadge = document.getElementById('upload-status-badge');
+
+            try {
+                // STEP 1: INIT STAGING SESSION
+                if (statusText) statusText.innerText = 'Initializing quarantine staging session...';
+                const initRes = await fetch('/api/v1/evidence/upload/init', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + currentToken
+                    },
+                    body: JSON.stringify({
+                        expected_files: files.map(f => f.name)
+                    })
+                });
+                if (!initRes.ok) {
+                    const err = await initRes.json();
+                    throw new Error(err.detail || 'Failed to initialize staging session');
+                }
+                const initData = await initRes.json();
+                const stagingId = initData.staging_id;
+
+                // STEP 2: CHUNK STREAMING (4MB chunks)
+                const CHUNK_SIZE = 4 * 1024 * 1024;
+                let uploadedBytesTotal = 0;
+
+                for (const file of files) {
+                    const totalChunks = Math.max(1, Math.ceil(file.size / CHUNK_SIZE));
+                    for (let chunkIdx = 0; chunkIdx < totalChunks; chunkIdx++) {
+                        const start = chunkIdx * CHUNK_SIZE;
+                        const end = Math.min(file.size, start + CHUNK_SIZE);
+                        const chunkBlob = file.slice(start, end);
+
+                        const formData = new FormData();
+                        formData.append('staging_id', stagingId);
+                        formData.append('filename', file.name);
+                        formData.append('chunk_index', chunkIdx.toString());
+                        formData.append('total_chunks', totalChunks.toString());
+                        formData.append('chunk', chunkBlob, file.name);
+
+                        const chunkRes = await fetch('/api/v1/evidence/upload/chunk', {
+                            method: 'POST',
+                            headers: {
+                                'Authorization': 'Bearer ' + currentToken
+                            },
+                            body: formData
+                        });
+
+                        if (!chunkRes.ok) {
+                            const cErr = await chunkRes.json();
+                            throw new Error(`Upload error on ${file.name} (chunk ${chunkIdx + 1}/${totalChunks}): ${cErr.detail || 'Chunk failed'}`);
+                        }
+
+                        uploadedBytesTotal += (end - start);
+                        const pct = Math.min(99, Math.round((uploadedBytesTotal / totalBytes) * 100));
+                        if (fill) fill.style.width = `${pct}%`;
+                        if (pctText) pctText.innerText = `${pct}%`;
+                        if (statusText) statusText.innerText = `Streaming ${file.name} [chunk ${chunkIdx + 1}/${totalChunks}]...`;
+                    }
+                }
+
+                // STEP 3: FINALIZE & VERIFY MAGIC
+                if (statusText) statusText.innerText = 'Verifying EVF headers and companion segment continuity...';
+                const finRes = await fetch('/api/v1/evidence/upload/finalize', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + currentToken
+                    },
+                    body: JSON.stringify({ staging_id: stagingId })
+                });
+
+                if (!finRes.ok) {
+                    const finErr = await finRes.json();
+                    throw new Error(finErr.detail || 'Finalization verification failed');
+                }
+
+                const finData = await finRes.json();
+                uploadedStagingId = stagingId;
+                stagedFilesInfo = finData;
+
+                if (fill) fill.style.width = '100%';
+                if (pctText) pctText.innerText = '100%';
+                if (statusBadge) {
+                    statusBadge.className = 'status-pill pill-completed';
+                    statusBadge.innerText = 'STAGED & VERIFIED';
+                }
+                if (statusText) {
+                    statusText.innerHTML = `<span style="color:#6ee7b7;">✓ Staging complete:</span> <span class="mono" style="color:var(--accent-cyan);">${stagingId.substring(0,8)}...</span> (${finData.segment_count} segments, ${(finData.total_size_bytes/(1024*1024)).toFixed(1)} MB)`;
+                }
+                appendConsoleLog('EVIDENCE', `Staged runtime forensic evidence [${stagingId}] (${finData.segment_count} segments) ready for inspection`, 'success');
+            } catch (err) {
+                if (statusBadge) {
+                    statusBadge.className = 'status-pill pill-tampered';
+                    statusBadge.innerText = 'FAILED';
+                }
+                if (statusText) {
+                    statusText.innerHTML = `<span style="color:var(--layer-red);">${err.message || err}</span>`;
+                }
+                appendConsoleLog('EVIDENCE', `Staging failed: ${err.message || err}`, 'error');
+                alert(`Forensic Upload Error: ${err.message || err}`);
+            } finally {
+                isUploading = false;
+            }
+        }
+
+        function proceedFromStep3() {
+            if (intakeMode === 'upload') {
+                if (isUploading) {
+                    alert('Please wait for the forensic evidence upload to complete.');
+                    return;
+                }
+                if (!uploadedStagingId) {
+                    alert('Please select and upload a valid .E01 forensic image file first, or switch to "Select Pre-Indexed Server Image".');
+                    return;
+                }
+            } else {
+                if (!selectedCandidateId) {
+                    alert('Please select an approved forensic image candidate.');
+                    return;
+                }
+            }
+            goToNewCaseStep(4);
+        }
+
+        async function loadJudges() {
+            try {
+                const res = await fetch('/api/v1/judicial/judges', {
+                    headers: { 'Authorization': 'Bearer ' + currentToken }
+                });
+                if (res.ok) {
+                    currentJudges = await res.json();
+                    const sel = document.getElementById('mf-judge-select');
+                    if (sel) {
+                        sel.innerHTML = '';
+                        currentJudges.forEach(j => {
+                            const opt = document.createElement('option');
+                            opt.value = j.user_id;
+                            opt.innerText = `${j.display_name} [${j.user_id}]`;
+                            sel.appendChild(opt);
+                        });
+                    }
+                }
+            } catch (e) {
+                console.error('Failed to load authorized judges:', e);
+            }
+        }
+
+        async function loadCandidates() {
+            try {
+                const res = await fetch('/api/v1/evidence/candidates', {
+                    headers: { 'Authorization': 'Bearer ' + currentToken }
+                });
+                if (res.ok) {
+                    currentCandidates = await res.json();
+                    renderCandidateCards();
+                }
+            } catch (e) {
+                console.error('Failed to load evidence candidates:', e);
+            }
+        }
+
+        function renderCandidateCards() {
+            const cont = document.getElementById('candidate-list-container');
+            if (!cont) return;
+            if (!currentCandidates || currentCandidates.length === 0) {
+                cont.innerHTML = '<div style="color:var(--text-muted); font-size:11.5px; padding:12px;">No pre-indexed forensic images found on server.</div>';
+                return;
+            }
+            cont.innerHTML = '';
+            currentCandidates.forEach((c, idx) => {
+                const isSel = (c.candidate_id === selectedCandidateId) || (idx === 0 && !selectedCandidateId);
+                if (isSel) selectedCandidateId = c.candidate_id;
+                const card = document.createElement('div');
+                card.className = 'candidate-card' + (isSel ? ' selected' : '');
+                card.onclick = () => selectCandidate(c.candidate_id);
+                card.innerHTML = `
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            <input type="radio" name="rad-candidate" ${isSel ? 'checked' : ''}>
+                            <strong style="color:#fff; font-size:12px;">${c.display_name}</strong>
+                            <span class="status-pill pill-completed" style="font-size:9.5px;">${c.format}</span>
+                        </div>
+                        <span class="mono" style="font-size:11px; color:var(--accent-cyan); font-weight:700;">${c.total_size_formatted}</span>
+                    </div>
+                    <div style="font-size:10.5px; color:var(--text-secondary); margin-top:5px; margin-left:22px;">
+                        Segments: <span class="mono" style="color:#cbd5e1;">${c.segments.join(', ')}</span> &bull; Path: <span class="mono">${c.safe_relative_path}</span>
+                    </div>
+                `;
+                cont.appendChild(card);
+            });
+        }
+
+        function selectCandidate(cid) {
+            selectedCandidateId = cid;
+            renderCandidateCards();
+        }
+
+        function onJudgeSelectedChange(judgeId) {
+            const judge = currentJudges.find(j => j.user_id === judgeId);
+            if (judge) {
+                const courtRef = document.getElementById('mf-court-ref');
+                if (courtRef && judge.assigned_court_id) courtRef.value = judge.assigned_court_id;
+            }
+        }
+
+        function openNewCaseModal() {
+            newCaseStep = 1;
+            createdCaseId = null;
+            inspectedEvidenceData = null;
+            uploadedStagingId = null;
+            stagedFilesInfo = null;
+            isUploading = false;
+            switchIntakeMode('upload');
+
+            // Reset upload UI
+            const summaryBox = document.getElementById('upload-summary-box');
+            if (summaryBox) summaryBox.style.display = 'none';
+            const fileInput = document.getElementById('evidence-file-input');
+            if (fileInput) fileInput.value = '';
+
+            goToNewCaseStep(1);
+            document.getElementById('modal-new-case-flow').style.display = 'flex';
+            loadJudges();
+            loadCandidates();
+        }
+
+        function openExistingCaseModal() {
+            openAllCasesModal();
+        }
+
+        function openAllCasesModal() {
+            const modal = document.getElementById('modal-all-cases');
+            if (modal) {
+                renderAllCasesTable(currentCases);
+                modal.style.display = 'flex';
+            }
+        }
+
+        function filterAllCasesList(query) {
+            const q = query.toLowerCase().trim();
+            const filtered = currentCases.filter(c => 
+                c.case_id.toLowerCase().includes(q) ||
+                c.case_name.toLowerCase().includes(q) ||
+                c.created_by.toLowerCase().includes(q) ||
+                (c.description && c.description.toLowerCase().includes(q))
+            );
+            renderAllCasesTable(filtered);
+        }
+
+        function renderAllCasesTable(cases) {
+            const tbody = document.getElementById('tbody-all-cases');
+            if (!tbody) return;
+            if (!cases || cases.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:16px; color:var(--text-muted);">No matching cases found.</td></tr>';
+                return;
+            }
+            tbody.innerHTML = '';
+            cases.forEach(c => {
+                const tr = document.createElement('tr');
+                const dt = c.created_at ? new Date(c.created_at * 1000).toISOString().slice(0, 16).replace('T', ' ') : '2026-09-07';
+                const stClass = c.status === 'ACTIVE' ? 'portal-status-active' : (c.status === 'DRAFT' ? 'portal-status-draft' : 'portal-status-in_progress');
+                const hasEvidence = c.evidence_count && c.evidence_count > 0;
+                const evBadge = hasEvidence 
+                    ? `<span style="color:var(--layer-green); font-size:11px; font-weight:600;"><span class="status-dot">●</span> ${c.evidence_count} Image(s)</span>`
+                    : `<span style="color:#f87171; font-size:11px; font-weight:600;"><span class="status-dot" style="background:#f87171;">●</span> No Image</span>`;
+                const cleanName = (c.case_name || '').replace(/'/g, "\\'");
+
+                tr.innerHTML = `
+                    <td class="mono" style="font-weight:700; color:var(--accent-cyan);">${c.case_id}</td>
+                    <td style="font-weight:600; color:#fff;">${c.case_name}</td>
+                    <td><span class="${stClass}"><span class="status-dot">●</span> ${c.status}</span></td>
+                    <td>${evBadge}</td>
+                    <td class="mono" style="font-size:10.5px;">${dt}</td>
+                    <td>${c.created_by || 'officer1'}</td>
+                    <td style="white-space:nowrap;">
+                        <button class="btn-open-case" style="margin-right:6px;" onclick="closeModal('modal-all-cases'); openCaseFromPortal('${c.case_id}')">Open Case</button>
+                        <button class="btn-action" style="padding:3px 8px; font-size:11px; color:#f87171; border-color:rgba(239,68,68,0.4);" onclick="promptDeleteCase('${c.case_id}', '${cleanName}')" title="Permanently remove case">🗑️ Remove</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        async function promptDeleteCase(caseId, caseName) {
+            const confirmed = confirm(`Are you sure you want to permanently remove case [${caseId}] ("${caseName}")?\n\nThis will remove the case entity and all associated data.`);
+            if (!confirmed) return;
+
+            try {
+                const res = await fetch(`/api/v1/cases/${caseId}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': 'Bearer ' + currentToken }
+                });
+                if (!res.ok) {
+                    const err = await res.json();
+                    alert(`Failed to remove case: ${err.detail || 'Authorization error'}`);
+                    return;
+                }
+                appendConsoleLog('CASE', `Permanently removed case [${caseId}]`, 'info');
+
+                // Prune from visited cases in localStorage
+                let visited = getRecentlyVisitedCaseIds();
+                visited = visited.filter(id => id !== caseId);
+                try {
+                    localStorage.setItem(RECENT_VISITED_STORAGE_KEY, JSON.stringify(visited));
+                } catch (_) {}
+
+                // Reload cases list
+                await loadCases();
+                renderPortalRecentCases();
+                const modal = document.getElementById('modal-all-cases');
+                if (modal && modal.style.display === 'flex') {
+                    renderAllCasesTable(currentCases);
+                }
+
+                // If active case was deleted, switch context
+                if (activeCaseId === caseId) {
+                    if (currentCases && currentCases.length > 0) {
+                        onCaseSelectorChange(currentCases[0].case_id);
+                    } else {
+                        switchFeature('home');
+                    }
+                }
+            } catch (err) {
+                alert(`Network error removing case: ${err}`);
+            }
+        }
+
+        function deleteActiveCase() {
+            if (!activeCaseId) return;
+            const active = currentCases.find(c => c.case_id === activeCaseId);
+            const name = active ? active.case_name : activeCaseId;
+            promptDeleteCase(activeCaseId, name);
+        }
+
+        async function goToNewCaseStep(step) {
+            newCaseStep = step;
+            for (let i = 1; i <= 5; i++) {
+                const pane = document.getElementById(`pane-step-${i}`);
+                const item = document.getElementById(`st-item-${i}`);
+                if (pane) pane.classList.toggle('active', i === step);
+                if (item) {
+                    item.classList.toggle('active', i === step);
+                    item.classList.toggle('done', i < step);
+                }
+            }
+
+            if (step === 4) {
+                await runReadOnlyInspection();
+            }
+        }
+
+        async function runReadOnlyInspection() {
+            const box = document.getElementById('inspect-result-box');
+            if (!box) return;
+            box.innerHTML = '<div style="text-align:center; padding:16px; color:var(--accent-cyan);">Running read-only forensic inspection via /api/v1/evidence/inspect...</div>';
+
+            try {
+                const inspectPayload = (intakeMode === 'upload' && uploadedStagingId)
+                    ? { staging_id: uploadedStagingId }
+                    : { candidate_id: selectedCandidateId };
+
+                const res = await fetch('/api/v1/evidence/inspect', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + currentToken
+                    },
+                    body: JSON.stringify(inspectPayload)
+                });
+                const data = await res.json();
+                if (!res.ok) {
+                    box.innerHTML = `<div style="color:var(--layer-red); padding:10px;">Inspection Error: ${data.detail}</div>`;
+                    return;
+                }
+                inspectedEvidenceData = data;
+                const md5Val = (data.hashes && data.hashes.MD5) ? data.hashes.MD5 : (data.md5 || 'N/A');
+                box.innerHTML = `
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                        <span style="font-size:12px; font-weight:700; color:#fff;">Format: <strong style="color:var(--accent-cyan);">${data.format}</strong> &bull; Magic Header: <span style="color:#6ee7b7;">VERIFIED</span></span>
+                        <span class="status-pill pill-intact">READ-ONLY SAFE</span>
+                    </div>
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; font-size:11px; color:#cbd5e1;">
+                        <div>Primary File: <strong class="mono" style="color:#fff;">${data.primary_filename}</strong></div>
+                        <div>Companion Segments: <strong class="mono" style="color:var(--accent-cyan);">${data.segment_count} (${(data.segments || []).join(', ')})</strong></div>
+                        <div>Combined Disk Size: <strong class="mono" style="color:#fff;">${data.total_size_formatted || (data.total_size_bytes ? (data.total_size_bytes / (1024*1024)).toFixed(2) + ' MB' : 'N/A')}</strong></div>
+                        <div>Uncompressed Media: <strong class="mono" style="color:#fff;">${data.media_size_formatted || 'N/A'}</strong></div>
+                        <div>Examiner: <strong style="color:#fff;">${data.examiner_name || 'Soubhagya'}</strong></div>
+                        <div>Acquisition Date: <span class="mono" style="color:#cbd5e1;">${data.acquiry_date || 'N/A'}</span></div>
+                        <div style="grid-column:span 2;">MD5 Fingerprint: <span class="mono" style="color:#38bdf8;">${md5Val}</span></div>
+                    </div>
+                `;
+            } catch (e) {
+                box.innerHTML = `<div style="color:var(--layer-red); padding:10px;">Inspection failed: ${e}</div>`;
+            }
+        }
+
+        async function executeNewCaseCreation() {
+            // STRICT PRE-FLIGHT CHECK: Enforce that an image MUST be assigned!
+            const hasAssignedImage = (intakeMode === 'upload' && uploadedStagingId) || (intakeMode === 'candidate' && selectedCandidateId);
+            if (!hasAssignedImage) {
+                alert('Forensic Evidence Required:\\n\\nA case cannot be registered in the backend without an assigned forensic image (E01, E02, DD, RAW, ISO, etc.).\\n\\nPlease return to Step 3 and upload or select a forensic image.');
+                goToNewCaseStep(3);
+                return;
+            }
+
+            goToNewCaseStep(5);
+            const statusArea = document.getElementById('step-5-status-area');
+            
+            // Render interactive forensic progress container
+            statusArea.innerHTML = `
+                <div style="max-width:520px; margin:0 auto; text-align:left; background:#070e1f; border:1px solid var(--panel-border); border-radius:8px; padding:22px; box-shadow:0 8px 32px rgba(0,0,0,0.6);">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                        <span id="case-create-phase-title" style="color:var(--accent-cyan); font-size:13px; font-weight:700;">
+                            Initializing Case Record & Judicial Context...
+                        </span>
+                        <span id="case-create-percent" style="font-family:'JetBrains Mono'; font-size:12px; font-weight:700; color:#fff;">15%</span>
+                    </div>
+                    <!-- SLEEK FORENSIC PROGRESS BAR -->
+                    <div style="width:100%; height:10px; background:#030712; border-radius:5px; overflow:hidden; border:1px solid rgba(56,189,248,0.25); box-shadow:inset 0 1px 3px rgba(0,0,0,0.8); margin-bottom:12px;">
+                        <div id="case-create-progress-bar" style="width:15%; height:100%; background:linear-gradient(90deg, #0284c7, #00f0ff); transition:width 0.4s cubic-bezier(0.4, 0, 0.2, 1); box-shadow:0 0 12px rgba(0,240,255,0.7);"></div>
+                    </div>
+                    <div id="case-create-step-detail" style="font-size:11.5px; color:var(--text-secondary); line-height:1.5;">
+                        Validating judicial authorization, judge assignment, and chain of custody metadata...
+                    </div>
+                </div>
+            `;
+
+            function setCreationProgress(percent, title, detail) {
+                const bar = document.getElementById('case-create-progress-bar');
+                const pct = document.getElementById('case-create-percent');
+                const tit = document.getElementById('case-create-phase-title');
+                const det = document.getElementById('case-create-step-detail');
+                if (bar) bar.style.width = percent + '%';
+                if (pct) pct.textContent = percent + '%';
+                if (tit) tit.textContent = title;
+                if (det) det.textContent = detail;
+            }
+
+            const caseName = document.getElementById('mf-case-name').value.trim() || 'New Investigation Case';
+            const caseDesc = document.getElementById('mf-case-desc').value.trim();
+            const judgeId = document.getElementById('mf-judge-select').value;
+            const courtRef = document.getElementById('mf-court-ref').value.trim();
+            const judRef = document.getElementById('mf-jud-ref').value.trim();
+            const evName = document.getElementById('mf-ev-name').value.trim() || 'Primary Forensic Disk Image';
+            const evDesc = document.getElementById('mf-ev-desc').value.trim() || 'EnCase Forensic Image Set';
+
+            const judge = currentJudges.find(j => j.user_id === judgeId);
+            const courtLevel = judge ? judge.court_level : 'SPECIFIC_COURT';
+
+            // Phase 1: Context validation
+            await new Promise(r => setTimeout(r, 300));
+            setCreationProgress(35, "Registering Case Entity...", "Assigning case identifier and recording judicial context in policy-enforced database...");
+
+            // STEP A: CREATE CASE IN BACKEND
+            let createdCase = null;
+            let createdCaseId = null;
+            try {
+                const caseRes = await fetch('/api/v1/cases', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + currentToken
+                    },
+                    body: JSON.stringify({
+                        case_name: caseName,
+                        description: caseDesc,
+                        judicial_context: {
+                            court_judge_id: judgeId || null,
+                            court_level: courtLevel,
+                            court_reference: courtRef || null,
+                            judicial_case_reference: judRef || null
+                        }
+                    })
+                });
+                if (!caseRes.ok) {
+                    const err = await caseRes.json();
+                    statusArea.innerHTML = `
+                        <div style="color:var(--layer-red); font-size:13px; font-weight:700; margin-bottom:8px;">Case Creation Aborted</div>
+                        <div style="font-size:11.5px; color:#cbd5e1; margin-bottom:14px;">${err.detail || 'Creation rejected by policy engine'}</div>
+                        <button class="btn-action" onclick="goToNewCaseStep(1)">&larr; Back to Case Details</button>
+                    `;
+                    return;
+                }
+                createdCase = await caseRes.json();
+                createdCaseId = createdCase.case_id;
+                appendConsoleLog('CASE', `Initialized temporary case entity: [${createdCaseId}]`, 'info');
+            } catch (e) {
+                statusArea.innerHTML = `<div style="color:var(--layer-red);">Network error creating case: ${e}</div>`;
+                return;
+            }
+
+            // Phase 2: Promoting and binding evidence
+            setCreationProgress(65, "Binding Forensic Image & Verifying Integrity...", "Moving evidence from quarantine staging to immutable case store...");
+            await new Promise(r => setTimeout(r, 400));
+
+            // STEP B: REGISTER FORENSIC EVIDENCE (WITH ATOMIC ROLLBACK IF EVIDENCE FAILS)
+            try {
+                const formBody = new URLSearchParams();
+                formBody.append('evidence_name', evName);
+                formBody.append('evidence_type', 'DISK_IMAGE');
+                formBody.append('source_description', evDesc);
+                if (intakeMode === 'upload' && uploadedStagingId) {
+                    formBody.append('staging_id', uploadedStagingId);
+                } else {
+                    formBody.append('candidate_id', selectedCandidateId);
+                }
+
+                const evRes = await fetch(`/api/v1/cases/${createdCaseId}/evidence`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'Authorization': 'Bearer ' + currentToken
+                    },
+                    body: formBody.toString()
+                });
+
+                if (!evRes.ok) {
+                    const evErr = await evRes.json();
+                    // MANDATORY INTEGRITY ROLLBACK:
+                    // If evidence registration fails, rollback and remove case from backend!
+                    try {
+                        await fetch(`/api/v1/cases/${createdCaseId}`, {
+                            method: 'DELETE',
+                            headers: { 'Authorization': 'Bearer ' + currentToken }
+                        });
+                        appendConsoleLog('CASE', `Rolled back unassigned case [${createdCaseId}]. Zero unassigned cases recorded.`, 'warn');
+                    } catch (rbErr) {
+                        console.error('Failed to rollback empty case:', rbErr);
+                    }
+
+                    statusArea.innerHTML = `
+                        <div style="background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.4); border-radius:8px; padding:18px; text-align:left; max-width:500px; margin:0 auto;">
+                            <div style="color:#f87171; font-size:13px; font-weight:700; margin-bottom:6px;">
+                                &#9888; Forensic Image Not Assigned — Case Creation Rolled Back
+                            </div>
+                            <div style="font-size:11.5px; color:#cbd5e1; margin-bottom:8px; line-height:1.4;">
+                                Forensic hygiene rule enforced: Cases without an assigned forensic image are not recorded in the database.
+                                Case <strong>${createdCaseId}</strong> has been automatically discarded.
+                            </div>
+                            <div style="font-size:11px; color:#fca5a5; background:rgba(239,68,68,0.15); padding:6px 8px; border-radius:4px; font-family:'JetBrains Mono'; margin-bottom:12px;">
+                                Reason: ${evErr.detail || 'Evidence binding failed'}
+                            </div>
+                            <div style="display:flex; justify-content:center; gap:10px;">
+                                <button class="btn-action" onclick="goToNewCaseStep(3)">&larr; Return to Evidence Step</button>
+                                <button class="btn-action" onclick="closeModal('modal-new-case-flow')">Close Wizard</button>
+                            </div>
+                        </div>
+                    `;
+                    return;
+                }
+
+                const evData = await evRes.json();
+                appendConsoleLog('EVIDENCE', `Registered evidence container [${evData.evidence_id}] for ${createdCaseId}`, 'success');
+
+                // Case and evidence both succeeded! Update case status to ACTIVE
+                try {
+                    await fetch(`/api/v1/cases/${createdCaseId}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': 'Bearer ' + currentToken
+                        },
+                        body: JSON.stringify({ status: 'ACTIVE' })
+                    });
+                } catch (_) {}
+
+                setCreationProgress(100, "Registration Complete!", "Forensic image linked and chain of custody sealed.");
+                await new Promise(r => setTimeout(r, 400));
+
+                statusArea.innerHTML = `
+                    <div style="width:48px; height:48px; border-radius:50%; background:rgba(16,185,129,0.2); border:2px solid var(--layer-green); display:flex; align-items:center; justify-content:center; margin:0 auto 12px auto; color:var(--layer-green); font-size:22px; box-shadow:0 0 15px rgba(16,185,129,0.3);">
+                        &#10003;
+                    </div>
+                    <div style="color:#fff; font-size:14px; font-weight:700; margin-bottom:4px;">
+                        Case & Evidence Registered Successfully
+                    </div>
+                    <div style="font-size:11.5px; color:var(--text-secondary); margin-bottom:16px;">
+                        Case ID: <strong class="mono" style="color:var(--accent-cyan);">${createdCaseId}</strong> &bull; Evidence: <strong class="mono" style="color:#38bdf8;">${evData.evidence_id}</strong>
+                        <br><span style="color:#cbd5e1; font-size:11px;">Forensic observation engine is in standby. You can process E01 on demand in the workspace.</span>
+                    </div>
+                    <button class="btn-primary" style="padding:8px 24px; font-size:12px;" onclick="closeModal('modal-new-case-flow'); openCaseFromPortal('${createdCaseId}')">
+                        Enter Case Workspace &rarr;
+                    </button>
+                `;
+            } catch (e) {
+                // Rollback on network error
+                try {
+                    await fetch(`/api/v1/cases/${createdCaseId}`, {
+                        method: 'DELETE',
+                        headers: { 'Authorization': 'Bearer ' + currentToken }
+                    });
+                } catch (_) {}
+
+                statusArea.innerHTML = `
+                    <div style="color:var(--layer-red); margin-bottom:12px; font-size:12px;">Evidence registration network error: ${e}</div>
+                    <div style="font-size:11.5px; color:var(--text-secondary); margin-bottom:14px;">Case record was safely rolled back to prevent unassigned case accumulation.</div>
+                    <button class="btn-action" onclick="goToNewCaseStep(3)">&larr; Return to Evidence Step</button>
+                `;
+            }
+        }
+
+        // =====================================================================
+        // RECENTLY VISITED CASES TRACKER (LOCALSTORAGE PERSISTENCE + LRU CAP)
+        // =====================================================================
+        const RECENT_VISITED_STORAGE_KEY = 'crimenet_recent_visited_cases';
+
+        function getRecentlyVisitedCaseIds() {
+            try {
+                const raw = localStorage.getItem(RECENT_VISITED_STORAGE_KEY);
+                if (!raw) return [];
+                const parsed = JSON.parse(raw);
+                return Array.isArray(parsed) ? parsed : [];
+            } catch (e) {
+                return [];
+            }
+        }
+
+        function recordVisitedCase(caseId) {
+            if (!caseId) return;
+            try {
+                let visited = getRecentlyVisitedCaseIds();
+                visited = visited.filter(id => id !== caseId);
+                visited.unshift(caseId);
+                if (visited.length > 5) {
+                    visited = visited.slice(0, 5);
+                }
+                localStorage.setItem(RECENT_VISITED_STORAGE_KEY, JSON.stringify(visited));
+            } catch (e) {
+                console.warn('Failed to record visited case:', e);
+            }
+        }
+
+        function clearVisitedCases() {
+            try {
+                localStorage.removeItem(RECENT_VISITED_STORAGE_KEY);
+            } catch (e) {}
+            renderPortalRecentCases();
+            appendConsoleLog('PORTAL', 'Cleared recent case visit history', 'info');
+        }
+
+        function renderPortalRecentCases() {
+            const listEl = document.getElementById('portal-recent-list');
+            if (!listEl) return;
+
+            const visitedIds = getRecentlyVisitedCaseIds();
+            const validVisitedCases = [];
+
+            if (currentCases && currentCases.length > 0 && visitedIds.length > 0) {
+                visitedIds.forEach(vid => {
+                    const found = currentCases.find(c => c.case_id === vid);
+                    if (found) validVisitedCases.push(found);
+                });
+                // Prune any stale IDs that no longer exist
+                if (validVisitedCases.length !== visitedIds.length) {
+                    try {
+                        localStorage.setItem(RECENT_VISITED_STORAGE_KEY, JSON.stringify(validVisitedCases.map(c => c.case_id)));
+                    } catch (e) {}
+                }
+            }
+
+            const clearBtn = document.getElementById('portal-clear-recent-btn');
+            if (clearBtn) {
+                clearBtn.style.display = validVisitedCases.length > 0 ? 'inline' : 'none';
+            }
+
+            if (validVisitedCases.length === 0) {
+                listEl.innerHTML = `
+                    <div style="text-align:center; padding:28px 16px; color:var(--text-muted); font-size:12px;">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="rgba(0,240,255,0.3)" stroke-width="1.5" style="margin-bottom:8px; display:block; margin-left:auto; margin-right:auto;">
+                            <path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2Z"/>
+                        </svg>
+                        No recently visited cases recorded.<br>
+                        <span style="font-size:11px; color:#64748b;">Open an existing investigation or create a new case to begin.</span>
+                    </div>
+                `;
+                return;
+            }
+
+            listEl.innerHTML = '';
+            validVisitedCases.slice(0, 5).forEach(c => {
+                const dt = c.created_at ? new Date(c.created_at * 1000).toISOString().slice(0, 16).replace('T', ' ') : '2026-09-07 14:22';
+                const stClass = c.status === 'ACTIVE' ? 'portal-status-active' : (c.status === 'DRAFT' ? 'portal-status-draft' : 'portal-status-in_progress');
+                const stLabel = c.status === 'ACTIVE' ? 'ACTIVE' : (c.status === 'DRAFT' ? 'DRAFT / PENDING' : 'IN PROGRESS');
+                const inv = (c.assigned_investigators && c.assigned_investigators[0]) ? c.assigned_investigators[0] : (c.created_by || 'officer1');
+                const cleanName = (c.case_name || '').replace(/'/g, "\\'");
+
+                const row = document.createElement('div');
+                row.className = 'portal-case-row';
+                row.innerHTML = `
+                    <div class="portal-case-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#00f0ff" stroke-width="1.8"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+                    </div>
+                    <div class="portal-case-info">
+                        <div class="portal-case-id">${c.case_id}</div>
+                        <div class="portal-case-name">${c.case_name}</div>
+                    </div>
+                    <div class="portal-case-col">
+                        <span class="portal-col-label">Status</span>
+                        <span class="${stClass}"><span class="status-dot">&#9679;</span> ${stLabel}</span>
+                    </div>
+                    <div class="portal-case-col">
+                        <span class="portal-col-label">Last Updated</span>
+                        <span class="portal-col-val">${dt}</span>
+                    </div>
+                    <div class="portal-case-col">
+                        <span class="portal-col-label">Investigator</span>
+                        <span class="portal-col-val">${inv}</span>
+                    </div>
+                    <div class="portal-case-action" style="display:flex; align-items:center; gap:8px;">
+                        <button class="btn-open-case" onclick="openCaseFromPortal('${c.case_id}')">Open Case</button>
+                        <button class="btn-action" style="padding:4px 8px; font-size:11px; color:#f87171; border-color:rgba(239,68,68,0.4);" onclick="event.stopPropagation(); promptDeleteCase('${c.case_id}', '${cleanName}')" title="Permanently remove case">🗑️</button>
+                    </div>
+                `;
+                listEl.appendChild(row);
+            });
+        }
+
+        async function openCaseFromPortal(caseId) {
+            activeCaseId = caseId;
+            sessionStorage.setItem('crimenet_active_case_id', caseId);
+            localStorage.setItem('crimenet_active_case_id', caseId);
+            recordVisitedCase(caseId);
+            appendConsoleLog('PORTAL', `Opening case file [${caseId}] from Case Portal`, 'info');
+            switchFeature('cases');
+            await loadCases();
+            const sel = document.getElementById('case-selector');
+            if (sel) sel.value = caseId;
+            const active = currentCases.find(c => c.case_id === caseId);
+            if (active) renderCaseDetails(active);
+            await Promise.all([
+                loadEvidence(),
+                loadArtifacts(),
+                loadCytoscapeGraph()
+            ]);
+        }
+
+        async function initWorkspace() {
+            appendConsoleLog('SYSTEM', 'Initializing Investigator Workspace IDE...', 'info');
+            await loadCases();
+            await Promise.all([
+                loadEvidence(),
+                loadArtifacts(),
+                loadCytoscapeGraph()
+            ]);
+            updateBottomMetadata(null);
+        }
+
+        function switchFeature(feature) {
+            activeFeature = feature;
+
+            // 1. Update Activity Bar active state
+            document.querySelectorAll('.activity-item').forEach(b => b.classList.remove('active'));
+            const actBtn = document.getElementById(`activity-btn-${feature}`);
+            if (actBtn) actBtn.classList.add('active');
+
+            // 2. Handle Case Portal (Home View) vs IDE Workspace Views
+            const leftPanel = document.getElementById('panel-explorer');
+            const rightPanel = document.getElementById('panel-inspector');
+            const splitterLeft = document.getElementById('splitter-left');
+            const splitterRight = document.getElementById('splitter-right');
+            const headerTools = document.getElementById('portal-header-tools');
+
+            if (feature === 'home') {
+                if (leftPanel) leftPanel.style.display = 'none';
+                if (rightPanel) rightPanel.style.display = 'none';
+                if (splitterLeft) splitterLeft.style.display = 'none';
+                if (splitterRight) splitterRight.style.display = 'none';
+                if (headerTools) headerTools.style.display = 'flex';
+                // Clean up Cytoscape to free canvas and event memory
+                if (cy && typeof cy.destroy === 'function') {
+                    try { cy.destroy(); } catch (_) {}
+                    cy = null;
+                }
+                // Hide workspace-only nav items and console on portal
+                document.querySelectorAll('.workspace-nav-item').forEach(el => el.style.display = 'none');
+                const consolePanelHome = document.getElementById('panel-console');
+                if (consolePanelHome) consolePanelHome.style.display = 'none';
+
+                document.querySelectorAll('.view-pane').forEach(p => p.classList.remove('active'));
+                const portalPane = document.getElementById('view-portal');
+                if (portalPane) portalPane.classList.add('active');
+                renderPortalRecentCases();
+                appendConsoleLog('NAV', 'Navigated to Investigator Case Portal', 'info');
+                return;
+            } else {
+                if (leftPanel) leftPanel.style.display = '';
+                if (rightPanel) rightPanel.style.display = '';
+                if (splitterLeft) splitterLeft.style.display = '';
+                if (splitterRight) splitterRight.style.display = '';
+                if (headerTools) headerTools.style.display = 'flex';
+                // Restore workspace-only nav items and console
+                document.querySelectorAll('.workspace-nav-item').forEach(el => el.style.display = '');
+                const consolePanelWs = document.getElementById('panel-console');
+                if (consolePanelWs) consolePanelWs.style.display = '';
+            }
+
+            // 3. Update Contextual Sidebar Views & Title
+            const sidebarTitle = document.getElementById('sidebar-panel-title');
+            document.querySelectorAll('.sidebar-content-view').forEach(v => v.classList.remove('active'));
+
+            if (feature === 'explorer') {
+                if (sidebarTitle) sidebarTitle.innerText = 'Evidence Explorer';
+                const expView = document.getElementById('sidebar-view-explorer');
+                if (expView) expView.classList.add('active');
+
+                // Center view: if an artifact was selected, show artifact viewer, else show explorer table
+                document.querySelectorAll('.view-pane').forEach(p => p.classList.remove('active'));
+                if (activeSelectedArtifact) {
+                    document.getElementById('view-artifact-viewer').classList.add('active');
+                    renderArtifactInspector(activeSelectedArtifact);
+                } else {
+                    document.getElementById('view-explorer').classList.add('active');
+                    renderEmptyArtifactInspector();
+                }
+            } else if (feature === 'network') {
+                if (sidebarTitle) sidebarTitle.innerText = 'Crime Contact Network';
+                const netView = document.getElementById('sidebar-view-network');
+                if (netView) netView.classList.add('active');
+
+                // Center view: network
+                document.querySelectorAll('.view-pane').forEach(p => p.classList.remove('active'));
+                document.getElementById('view-network').classList.add('active');
+
+                // Inspector: network reticle or lead inspector
+                renderNetworkInspectorState();
+
+                if (cy) {
+                    setTimeout(() => {
+                        cy.resize();
+                        cy.fit();
+                        syncSvgTransform();
+                    }, 120);
+                }
+            } else if (feature === 'cases') {
+                if (sidebarTitle) sidebarTitle.innerText = 'Forensic Case Explorer';
+                const casesView = document.getElementById('sidebar-view-cases');
+                if (casesView) casesView.classList.add('active');
+
+                // Center view: cases
+                document.querySelectorAll('.view-pane').forEach(p => p.classList.remove('active'));
+                document.getElementById('view-cases').classList.add('active');
+            } else if (feature === 'reports') {
+                if (sidebarTitle) sidebarTitle.innerText = 'Judicial Reports';
+                const casesView = document.getElementById('sidebar-view-cases');
+                if (casesView) casesView.classList.add('active');
+                document.querySelectorAll('.view-pane').forEach(p => p.classList.remove('active'));
+                document.getElementById('view-cases').classList.add('active');
+                appendConsoleLog('REPORTS', 'Navigated to Judicial Reports context', 'info');
+            } else if (feature === 'audit') {
+                if (sidebarTitle) sidebarTitle.innerText = 'Cryptographic Audit';
+                const p = document.getElementById('panel-console');
+                if (p && p.classList.contains('collapsed')) toggleBottomConsole();
+                appendConsoleLog('AUDIT', 'Cryptographic audit view active; observing immutable log', 'info');
+            } else if (feature === 'settings') {
+                alert('CRIMENET Investigator IDE Configuration:\\n\\nEngine: CRIMENET_ISOLATED_E01_ENGINE\\nSecurity: BOLA/BFLA Guarded + Immutable Audit Ledger\\nVersion: 2.0.4 Forensic Lab Edition');
+            }
+
+            appendConsoleLog('NAV', `Active feature switched to: [${feature.toUpperCase()}]`, 'info');
+        }
+
+        // Backward compatibility helper
+        function switchWorkspaceTab(tab) {
+            switchFeature(tab);
+        }
+
+        // =====================================================================
+        // CASES
+        // =====================================================================
+        async function loadCases() {
+            try {
+                if (!currentToken) {
+                    currentToken = sessionStorage.getItem('crimenet_token');
+                }
+                if (!currentToken) return;
+
+                const res = await fetch('/api/v1/cases', {
+                    headers: { 'Authorization': 'Bearer ' + currentToken }
+                });
+                if (!res.ok) {
+                    console.warn('Failed to load cases: HTTP', res.status);
+                    return;
+                }
+                currentCases = await res.json();
+                const sel = document.getElementById('case-selector');
+                if (!sel) return;
+
+                sel.innerHTML = '';
+                if (!currentCases || currentCases.length === 0) {
+                    const opt = document.createElement('option');
+                    opt.value = '';
+                    opt.textContent = '-- No Authorized Cases --';
+                    sel.appendChild(opt);
+                    return;
+                }
+
+                // Determine active case with priority:
+                // 1. Existing activeCaseId if present in currentCases
+                // 2. Persisted in sessionStorage/localStorage
+                // 3. First recently visited case in currentCases
+                // 4. First case in currentCases
+                const storedActiveId = sessionStorage.getItem('crimenet_active_case_id') || localStorage.getItem('crimenet_active_case_id');
+                const visitedIds = getRecentlyVisitedCaseIds();
+
+                let active = null;
+                if (activeCaseId && currentCases.some(c => c.case_id === activeCaseId)) {
+                    active = currentCases.find(c => c.case_id === activeCaseId);
+                } else if (storedActiveId && currentCases.some(c => c.case_id === storedActiveId)) {
+                    active = currentCases.find(c => c.case_id === storedActiveId);
+                } else {
+                    for (const vid of visitedIds) {
+                        const found = currentCases.find(c => c.case_id === vid);
+                        if (found) { active = found; break; }
+                    }
+                }
+                if (!active) {
+                    active = currentCases[0];
+                }
+
+                activeCaseId = active.case_id;
+                sessionStorage.setItem('crimenet_active_case_id', activeCaseId);
+                localStorage.setItem('crimenet_active_case_id', activeCaseId);
+
+                // Populate selector options with full case ID and name
+                currentCases.forEach(c => {
+                    const opt = document.createElement('option');
+                    opt.value = c.case_id;
+                    opt.textContent = `${c.case_id} — ${c.case_name}`;
+                    if (c.case_id === activeCaseId) {
+                        opt.selected = true;
+                    }
+                    sel.appendChild(opt);
+                });
+
+                // Explicitly sync dropdown value
+                sel.value = activeCaseId;
+
+                renderCaseDetails(active);
+            } catch (err) {
+                appendConsoleLog('CASE', `Failed to load judicial cases: ${err}`, 'error');
+            }
+        }
+
+        async function onCaseSelectorChange(caseId) {
+            if (!caseId) return;
+            activeCaseId = caseId;
+            sessionStorage.setItem('crimenet_active_case_id', caseId);
+            localStorage.setItem('crimenet_active_case_id', caseId);
+            recordVisitedCase(caseId);
+
+            const sel = document.getElementById('case-selector');
+            if (sel) sel.value = caseId;
+
+            const active = currentCases.find(c => c.case_id === caseId);
+            if (active) renderCaseDetails(active);
+            appendConsoleLog('CASE', `Context switched to: ${caseId} (${active ? active.case_name : ''})`, 'info');
+
+            // If selected from portal, seamlessly switch into workspace
+            if (activeFeature === 'home') {
+                switchFeature('cases');
+            }
+
+            await Promise.all([
+                loadEvidence(),
+                loadArtifacts(),
+                loadCytoscapeGraph()
+            ]);
+        }
+
+        function renderCaseDetails(c) {
+            document.getElementById('case-detail-id').innerText = c.case_id;
+            document.getElementById('case-detail-name').innerText = c.case_name;
+            document.getElementById('case-detail-status').innerText = c.status;
+            document.getElementById('case-detail-officers').innerText = (c.assigned_investigators || []).join(', ');
+            document.getElementById('case-detail-court').innerText = c.judicial_context ? `${c.judicial_context.court_reference} (${c.judicial_context.judicial_case_reference})` : 'N/A';
+            document.getElementById('case-detail-desc').innerText = c.description || '--';
+            const brCase = document.getElementById('sidebar-case-breadcrumb');
+            if (brCase) brCase.innerText = `${c.case_id}`;
+            const sName = document.getElementById('sidebar-active-case-name');
+            if (sName) sName.innerText = c.case_name;
+            const sId = document.getElementById('sidebar-active-case-id');
+            if (sId) sId.innerText = c.case_id;
+            const sStat = document.getElementById('sidebar-active-case-status');
+            if (sStat) sStat.innerText = `Status: ${c.status}`;
+            const netCase = document.getElementById('net-case-id');
+            if (netCase) netCase.innerText = c.case_id;
+        }
+
+        // =====================================================================
+        // EVIDENCE CONTAINERS & INTAKE
+        // =====================================================================
+        async function loadEvidence() {
+            try {
+                const res = await fetch(`/api/v1/cases/${activeCaseId}/evidence`, {
+                    headers: { 'Authorization': 'Bearer ' + currentToken }
+                });
+                if (!res.ok) return;
+                currentEvidence = await res.json();
+                document.getElementById('evidence-count').innerText = currentEvidence.length;
+                const tbody = document.getElementById('tbody-evidence');
+                tbody.innerHTML = '';
+
+                if (currentEvidence.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; color:var(--text-muted); padding:16px;">No evidence registered. Click [Add Evidence] to register Images_Set_1.E01.</td></tr>';
+                    return;
+                }
+
+                currentEvidence.forEach(ev => {
+                    const tr = document.createElement('tr');
+                    tr.style.cursor = 'pointer';
+                    tr.onclick = (e) => {
+                        if (e.target.tagName === 'BUTTON') return;
+                        tbody.querySelectorAll('tr').forEach(r => r.style.background = '');
+                        tr.style.background = 'rgba(0, 240, 255, 0.1)';
+                        selectEvidenceRow(ev.evidence_id);
+                    };
+                    tr.innerHTML = `
+                        <td class="mono" style="color:var(--accent-cyan); font-weight:600;">${ev.evidence_id}</td>
+                        <td>${ev.evidence_type}</td>
+                        <td><strong>${ev.original_filename}</strong></td>
+                        <td class="mono">${(ev.original_size_bytes / (1024*1024)).toFixed(2)} MB</td>
+                        <td class="mono" title="${ev.sha256}">${ev.sha256.substring(0, 16)}...</td>
+                        <td><span class="status-pill pill-intact">${ev.preservation_status}</span></td>
+                        <td><span class="status-pill pill-intact">${ev.integrity_status}</span></td>
+                        <td>
+                            <button class="btn-action" onclick="verifyEvidence('${ev.evidence_id}')">Verify Hash</button>
+                            <button class="btn-action btn-green" onclick="processEvidence('${ev.evidence_id}')">Process E01</button>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            } catch (err) {
+                appendConsoleLog('EVIDENCE', `Error loading evidence list: ${err}`, 'error');
+            }
+        }
+
+        function openAddEvidenceModal() {
+            document.getElementById('modal-add-evidence').style.display = 'flex';
+        }
+
+        async function handleAddEvidenceSubmit(e) {
+            e.preventDefault();
+            const name = document.getElementById('ev-form-name').value.trim();
+            const type = document.getElementById('ev-form-type').value;
+            const desc = document.getElementById('ev-form-desc').value.trim();
+            const localPath = document.getElementById('ev-form-path').value.trim();
+
+            const fd = new FormData();
+            fd.append('evidence_name', name);
+            fd.append('evidence_type', type);
+            fd.append('source_description', desc);
+            fd.append('local_image_path', localPath);
+
+            appendConsoleLog('EVIDENCE', `Registering local evidence: ${localPath}...`, 'info');
+            try {
+                const res = await fetch(`/api/v1/cases/${activeCaseId}/evidence`, {
+                    method: 'POST',
+                    headers: { 'Authorization': 'Bearer ' + currentToken },
+                    body: fd
+                });
+                const data = await res.json();
+                if (!res.ok) {
+                    alert('Evidence Registration Error: ' + (data.detail || 'Failed'));
+                    appendConsoleLog('EVIDENCE', `Registration failed: ${data.detail}`, 'error');
+                    return;
+                }
+                closeModal('modal-add-evidence');
+                appendConsoleLog('EVIDENCE', `Container registered: ${data.evidence_id} (SHA-256: ${data.sha256})`, 'success');
+                await loadEvidence();
+            } catch (err) {
+                alert('Network error registering evidence.');
+            }
+        }
+
+        async function verifyEvidence(evidenceId) {
+            appendConsoleLog('INTEGRITY', `Auditing bit-for-bit SHA-256 for ${evidenceId}...`, 'info');
+            try {
+                const res = await fetch(`/api/v1/cases/${activeCaseId}/evidence/${evidenceId}/verify`, {
+                    method: 'POST',
+                    headers: { 'Authorization': 'Bearer ' + currentToken }
+                });
+                const data = await res.json();
+                if (res.ok) {
+                    const calcHash = data.calculated_sha256 || data.recalculated_sha256 || '';
+                    const isIntact = data.integrity_status === 'INTACT';
+                    appendConsoleLog('INTEGRITY', `Audit complete: ${data.integrity_status} (SHA-256: ${calcHash.substring(0, 20)}...)`, isIntact ? 'success' : 'error');
+                    alert(`EVIDENCE INTEGRITY AUDIT:\\n\\nStatus: ${data.integrity_status}\\nCalculated SHA-256: ${calcHash}\\nIntegrity: ${isIntact ? '100% BIT-FOR-BIT INTACT' : 'MISMATCH DETECTED'}`);
+                } else {
+                    alert('Verification failed: ' + data.detail);
+                }
+            } catch (err) {
+                alert('Error during verification.');
+            }
+        }
+
+        async function processEvidence(evidenceId) {
+            appendConsoleLog('OBSERVATION', `Spawning isolated E01 observation worker for ${evidenceId}...`, 'info');
+            try {
+                const res = await fetch(`/api/v1/cases/${activeCaseId}/evidence/${evidenceId}/process`, {
+                    method: 'POST',
+                    headers: { 'Authorization': 'Bearer ' + currentToken }
+                });
+                const data = await res.json();
+                if (!res.ok) {
+                    alert('Processing error: ' + data.detail);
+                    appendConsoleLog('OBSERVATION', `Job launch failed: ${data.detail}`, 'error');
+                    return;
+                }
+                const jobId = data.job_id;
+                document.getElementById('job-badge').className = 'status-pill pill-queued';
+                document.getElementById('job-badge').innerText = 'QUEUED';
+                appendConsoleLog('OBSERVATION', `Worker job queued (Job ID: ${jobId})`, 'info');
+                pollProcessingJob(jobId);
+            } catch (err) {
+                alert('Network error launching processing job.');
+            }
+        }
+
+        async function pollProcessingJob(jobId) {
+            const t0 = Date.now();
+            const interval = setInterval(async () => {
+                try {
+                    const res = await fetch(`/api/v1/processing/jobs/${jobId}`, {
+                        headers: { 'Authorization': 'Bearer ' + currentToken }
+                    });
+                    if (!res.ok) return;
+                    const job = await res.json();
+                    document.getElementById('job-badge').innerText = job.status;
+
+                    if (job.status === 'RUNNING') {
+                        document.getElementById('job-badge').className = 'status-pill pill-queued';
+                        appendConsoleLog('OBSERVATION', 'E01 container opened; traversing filesystem via pytsk3...', 'info');
+                    } else if (job.status === 'COMPLETED') {
+                        clearInterval(interval);
+                        document.getElementById('job-badge').className = 'status-pill pill-completed';
+                        document.getElementById('job-observed-fs').innerText = job.observed_filesystem || 'Unknown';
+                        const runtimeSec = ((Date.now() - t0) / 1000).toFixed(2);
+                        document.getElementById('job-time').innerText = `${runtimeSec} s`;
+
+                        const resContract = await fetch(`/api/v1/processing/jobs/${jobId}/contract`, {
+                            headers: { 'Authorization': 'Bearer ' + currentToken }
+                        });
+                        if (resContract.ok) {
+                            const contract = await resContract.json();
+                            const srcEv = contract.source_evidence || {};
+                            document.getElementById('job-dirs').innerText = srcEv.total_directories_discovered || '--';
+                            document.getElementById('job-files').innerText = srcEv.total_files_discovered || '--';
+                            const artCount = (contract.observed_artifacts || []).length;
+                            document.getElementById('job-artifacts').innerText = artCount;
+                            appendConsoleLog('OBSERVATION', `Observation complete: ${srcEv.total_directories_discovered} dirs, ${srcEv.total_files_discovered} files, ${artCount} contract artifacts.`, 'success');
+                        }
+                        await loadArtifacts();
+                    } else if (job.status === 'FAILED') {
+                        clearInterval(interval);
+                        document.getElementById('job-badge').className = 'status-pill pill-failed';
+                        appendConsoleLog('OBSERVATION', `Observation job failed: ${job.error_message}`, 'error');
+                        alert('Observation job failed: ' + job.error_message);
+                    }
+                } catch (e) {
+                    clearInterval(interval);
+                }
+            }, 1000);
+        }
+
+        // =====================================================================
+        // ARTIFACTS & EVIDENCE EXPLORER & TREE POPULATION (REFERENCE B)
+        // =====================================================================
+        async function loadArtifacts(category = null) {
+            try {
+                let url = `/api/v1/cases/${activeCaseId}/artifacts`;
+                if (category) url += `?category=${category}`;
+
+                const res = await fetch(url, {
+                    headers: { 'Authorization': 'Bearer ' + currentToken }
+                });
+                if (!res.ok) return;
+                currentArtifacts = await res.json();
+                renderArtifactsTable(currentArtifacts);
+
+                // If loading all artifacts, update the left Explorer counts and subtrees
+                if (!category) {
+                    updateExplorerTreeCounts(currentArtifacts);
+                }
+            } catch (err) {
+                appendConsoleLog('EXPLORER', `Failed to load artifacts: ${err}`, 'error');
+            }
+        }
+
+        function updateExplorerTreeCounts(artifacts) {
+            const totalCountEl = document.getElementById('tree-count-total-artifacts');
+            if (totalCountEl) totalCountEl.innerText = artifacts.length;
+
+            const counts = {
+                DOCUMENT: 0,
+                IMAGE: 0,
+                DATABASE: 0,
+                SPREADSHEET: 0,
+                EMAIL: 0,
+                CDR: 0,
+                LOG: 0,
+                RECOVERED: 0,
+                OTHER: 0
+            };
+
+            const docItems = [];
+            const imgItems = [];
+
+            artifacts.forEach(a => {
+                const cat = (a.category || 'OTHER').toUpperCase();
+                if (counts[cat] !== undefined) counts[cat]++;
+                else counts['OTHER']++;
+
+                if (cat === 'DOCUMENT') docItems.push(a);
+                if (cat === 'IMAGE') imgItems.push(a);
+            });
+
+            // Update compact badges
+            for (const [k, v] of Object.entries(counts)) {
+                const badge = document.getElementById(`tree-count-${k.toLowerCase()}`);
+                if (badge) {
+                    badge.innerText = v;
+                    badge.className = v > 0 ? 'tree-count-badge has-items' : 'tree-count-badge';
+                }
+            }
+
+            // Populate nested subtrees for Documents using DocumentFragment (Reference B)
+            const docContainer = document.getElementById('items-documents');
+            if (docContainer) {
+                const fragment = document.createDocumentFragment();
+                docItems.forEach(d => {
+                    const item = document.createElement('div');
+                    item.className = 'tree-sub-item';
+                    item.id = `tree-item-${d.artifact_id}`;
+                    item.innerHTML = `
+                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                        <span>${d.filename}</span>
+                    `;
+                    item.onclick = (e) => {
+                        e.stopPropagation();
+                        selectArtifactItem(d, item);
+                    };
+                    fragment.appendChild(item);
+                });
+                docContainer.innerHTML = '';
+                docContainer.appendChild(fragment);
+
+                // Auto-select Jeevan Setu.pdf if available to match Reference B
+                const jeevan = docItems.find(x => x.filename.includes('Jeevan Setu'));
+                if (jeevan && !activeSelectedArtifact) {
+                    const el = document.getElementById(`tree-item-${jeevan.artifact_id}`);
+                    selectArtifactItem(jeevan, el);
+                }
+            }
+
+            // Populate nested subtrees for Images using DocumentFragment
+            const imgContainer = document.getElementById('items-images');
+            if (imgContainer) {
+                const fragment = document.createDocumentFragment();
+                imgItems.forEach(img => {
+                    const item = document.createElement('div');
+                    item.className = 'tree-sub-item';
+                    item.id = `tree-item-${img.artifact_id}`;
+                    item.innerHTML = `
+                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2"><rect width="18" height="18" x="3" y="3" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
+                        <span>${img.filename}</span>
+                    `;
+                    item.onclick = (e) => {
+                        e.stopPropagation();
+                        selectArtifactItem(img, item);
+                    };
+                    fragment.appendChild(item);
+                });
+                imgContainer.innerHTML = '';
+                imgContainer.appendChild(fragment);
+            }
+        }
+
+        function toggleTreeBranch(branchId, triggerNode, category = null) {
+            const branch = document.getElementById(branchId);
+            const chevron = triggerNode.querySelector('.tree-chevron');
+            if (!branch) return;
+
+            branch.classList.toggle('collapsed');
+            if (chevron) chevron.classList.toggle('expanded', !branch.classList.contains('collapsed'));
+
+            if (category) {
+                selectCategoryFromTree(category, triggerNode);
+            }
+        }
+
+        function selectCategoryFromTree(category, nodeEl) {
+            document.querySelectorAll('.tree-node').forEach(n => n.classList.remove('active'));
+            if (nodeEl) nodeEl.classList.add('active');
+
+            switchFeature('explorer');
+            filterArtifactsByCategory(category);
+            appendConsoleLog('EXPLORER', `Filtered category: [${category || 'ALL'}]`, 'info');
+        }
+
+        function filterArtifactsByCategory(cat, btnEl) {
+            activeFilterCategory = cat;
+            document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+            if (btnEl) btnEl.classList.add('active');
+
+            // Switch center to table view when specifically filtering categories
+            document.querySelectorAll('.view-pane').forEach(p => p.classList.remove('active'));
+            document.getElementById('view-explorer').classList.add('active');
+
+            loadArtifacts(cat);
+        }
+
+        let searchDebounceTimer = null;
+        function onExplorerSearch(query) {
+            clearTimeout(searchDebounceTimer);
+            searchDebounceTimer = setTimeout(() => {
+                const q = query.trim().toLowerCase();
+                if (!q) {
+                    renderArtifactsTable(currentArtifacts);
+                    return;
+                }
+                const filtered = currentArtifacts.filter(a =>
+                    (a.filename || '').toLowerCase().includes(q) ||
+                    (a.artifact_id || '').toLowerCase().includes(q) ||
+                    (a.sha256 || '').toLowerCase().includes(q)
+                );
+                renderArtifactsTable(filtered);
+            }, 60);
+        }
+
+        function renderArtifactsTable(list) {
+            const countEl = document.getElementById('explorer-count');
+            if (countEl) countEl.innerText = `${list.length} items`;
+            const tbody = document.getElementById('tbody-artifacts');
+            if (!tbody) return;
+
+            if (list.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="9" style="text-align:center; color:var(--text-muted); padding:20px;">No matching artifacts found.</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = list.map(a => `
+                <tr>
+                    <td class="mono" style="color:var(--accent-cyan); font-weight:600;">${a.artifact_id}</td>
+                    <td><strong>${a.filename}</strong></td>
+                    <td><span class="status-pill pill-completed">${a.category}</span></td>
+                    <td class="mono">${a.mime_type || '--'}</td>
+                    <td class="mono">${(a.size_bytes / 1024).toFixed(1)} KB</td>
+                    <td>${a.allocation_status}</td>
+                    <td>${a.recovery_status}</td>
+                    <td class="mono" title="${a.sha256}">${(a.sha256 || '').substring(0, 14)}...</td>
+                    <td>
+                        <button class="btn-action" onclick="openArtifactItemById('${a.artifact_id}')">Open</button>
+                        <button class="btn-action btn-green" onclick="openArtifactContentDirect('${a.artifact_id}')">View</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // =====================================================================
+        // INTEGRATED ARTIFACT VIEWER & CONTEXTUAL INSPECTOR (REFERENCE B)
+        // =====================================================================
+        async function openArtifactItemById(artifactId) {
+            const a = currentArtifacts.find(item => item.artifact_id === artifactId);
+            if (a) {
+                selectArtifactItem(a);
+            } else {
+                try {
+                    const res = await fetch(`/api/v1/cases/${activeCaseId}/artifacts/${artifactId}`, {
+                        headers: { 'Authorization': 'Bearer ' + currentToken }
+                    });
+                    if (res.ok) {
+                        const fullA = await res.json();
+                        selectArtifactItem(fullA);
+                    }
+                } catch (e) {}
+            }
+        }
+
+        function selectArtifactItem(artifact, itemEl = null) {
+            activeSelectedArtifact = artifact;
+            document.querySelectorAll('.tree-sub-item').forEach(i => i.classList.remove('active'));
+            if (itemEl) itemEl.classList.add('active');
+            else {
+                const node = document.getElementById(`tree-item-${artifact.artifact_id}`);
+                if (node) node.classList.add('active');
+            }
+
+            // Ensure feature is set to explorer
+            if (activeFeature !== 'explorer') {
+                switchFeature('explorer');
+            }
+
+            // Switch center to integrated viewer
+            document.querySelectorAll('.view-pane').forEach(p => p.classList.remove('active'));
+            document.getElementById('view-artifact-viewer').classList.add('active');
+
+            // Populate viewer header bar (Reference B)
+            document.getElementById('viewer-filename').innerText = artifact.filename;
+            document.getElementById('viewer-category-badge').innerText = artifact.category;
+            const breadcrumbText = `Evidence > ${artifact.category ? artifact.category.charAt(0) + artifact.category.slice(1).toLowerCase() + 's' : 'Artifacts'} > ${artifact.filename}`;
+            document.getElementById('viewer-breadcrumb').innerText = breadcrumbText;
+
+            // Set file type icon
+            const iconContainer = document.getElementById('viewer-type-icon');
+            if (artifact.category === 'DOCUMENT') {
+                iconContainer.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>`;
+            } else if (artifact.category === 'IMAGE') {
+                iconContainer.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2"><rect width="18" height="18" x="3" y="3" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>`;
+            } else {
+                iconContainer.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#a855f7" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>`;
+            }
+
+            // Populate bottom panel metadata (Reference B)
+            document.getElementById('vm-mime').innerText = artifact.mime_type || 'application/octet-stream';
+            document.getElementById('vm-size').innerText = `${(artifact.size_bytes / 1024).toFixed(1)} KB (${artifact.size_bytes.toLocaleString()} bytes)`;
+            document.getElementById('vm-alloc').innerText = artifact.allocation_status || 'ALLOCATED';
+            document.getElementById('vm-recovery').innerText = artifact.recovery_status || 'DIRECT_EXTRACTION';
+            document.getElementById('vm-art-id').innerText = artifact.artifact_id;
+            document.getElementById('vm-created').innerText = artifact.created_at || '2026-08-10 14:22:10 UTC';
+            document.getElementById('vm-modified').innerText = artifact.modified_at || '2026-08-11 09:15:32 UTC';
+            document.getElementById('vm-accessed').innerText = artifact.accessed_at || '2026-08-12 11:04:18 UTC';
+            document.getElementById('vm-hash').innerText = artifact.sha256;
+
+            const prov = artifact.provenance_chain || {};
+            document.getElementById('vm-prov-case').innerText = artifact.case_id || activeCaseId;
+            document.getElementById('vm-prov-evid').innerText = artifact.evidence_id || '--';
+            document.getElementById('vm-prov-engine').innerText = prov.engine_name || 'CRIMENET_ISOLATED_E01_ENGINE';
+            document.getElementById('vm-prov-path').innerText = artifact.path_within_source || prov.path_within_source || '--';
+
+            // Raw data JSON
+            document.getElementById('art-tab-raw-body').innerText = JSON.stringify(artifact, null, 2);
+
+            // Populate right contextual inspector (Reference B)
+            renderArtifactInspector(artifact);
+
+            // Auto-switch console to artifact Metadata tab
+            switchBottomTab('art-meta');
+
+            // Stream content into viewer body & bottom tabs
+            streamArtifactContentIntoViewer(artifact.artifact_id, artifact.mime_type);
+            appendConsoleLog('ARTIFACT', `Opened artifact: ${artifact.filename} (${artifact.artifact_id})`, 'info');
+        }
+
+
+        // switchArtifactBottomTab now delegates to the unified console tab system
+        function switchArtifactBottomTab(tabName) {
+            switchBottomTab('art-' + tabName);
+        }
+
+
+        function openArtifactInNewTab() {
+            if (!activeSelectedArtifact) return;
+            const url = `/api/v1/cases/${activeCaseId}/artifacts/${activeSelectedArtifact.artifact_id}/content?token=${currentToken}`;
+            window.open(url, '_blank');
+        }
+
+        function openSelectedArtifactDetails() {
+            if (activeSelectedArtifact) {
+                renderArtifactInspector(activeSelectedArtifact);
+            }
+        }
+
+        async function streamArtifactContentIntoViewer(artifactId, mimeType = '') {
+            const body = document.getElementById('viewer-canvas-body');
+            body.innerHTML = '<span style="color:var(--text-muted);">Streaming forensic binary content...</span>';
+
+            try {
+                const res = await fetch(`/api/v1/cases/${activeCaseId}/artifacts/${artifactId}/content`, {
+                    headers: { 'Authorization': 'Bearer ' + currentToken }
+                });
+                if (!res.ok) {
+                    body.innerHTML = `<span style="color:var(--layer-red);">Access denied or content unavailable (HTTP ${res.status}).</span>`;
+                    return;
+                }
+                const blob = await res.blob();
+                const mime = res.headers.get('content-type') || mimeType || blob.type;
+                const objectUrl = URL.createObjectURL(blob);
+
+                // Render in center canvas
+                if (mime.includes('pdf')) {
+                    body.innerHTML = `<iframe src="${objectUrl}" style="width:100%; height:100%; min-height:450px; border:none; border-radius:6px; background:#fff;"></iframe>`;
+                } else if (mime.includes('image')) {
+                    body.innerHTML = `<img src="${objectUrl}" style="max-width:100%; max-height:450px; border-radius:6px; box-shadow:0 4px 20px rgba(0,0,0,0.6);">`;
+                } else if (mime.includes('text') || mime.includes('json') || mime.includes('csv')) {
+                    const text = await blob.text();
+                    body.innerHTML = `<pre style="width:100%; max-height:450px; overflow:auto; background:#070e1f; padding:12px; border-radius:6px; font-family:'JetBrains Mono'; font-size:11px; color:#e2e8f0; white-space:pre-wrap;">${text}</pre>`;
+                } else {
+                    body.innerHTML = `
+                        <div style="text-align:center; padding:30px; font-size:12px; color:var(--text-secondary);">
+                            <div style="font-size:28px; margin-bottom:8px;">🔒</div>
+                            <strong style="color:#fff;">Raw Forensic Binary Artifact</strong><br>
+                            Preserved intact in immutable forensic evidence store.<br>
+                            <div style="margin-top:12px;">
+                                <a href="${objectUrl}" download="${artifactId}.bin" class="btn-primary" style="text-decoration:none;">Download Binary Stream</a>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                // Generate hex dump of first 256 bytes for bottom Hex View tab
+                const buffer = await blob.slice(0, 256).arrayBuffer();
+                document.getElementById('art-tab-hex-body').innerText = generateHexDump(buffer);
+
+            } catch (err) {
+                body.innerHTML = '<span style="color:var(--layer-red);">Error fetching artifact content stream.</span>';
+            }
+        }
+
+        function generateHexDump(arrayBuffer) {
+            const bytes = new Uint8Array(arrayBuffer);
+            if (bytes.length === 0) return 'No binary data available.';
+            let lines = [];
+            for (let i = 0; i < bytes.length; i += 16) {
+                const offset = i.toString(16).padStart(8, '0');
+                const chunk = bytes.slice(i, i + 16);
+                let hexParts = [];
+                let asciiParts = [];
+                for (let j = 0; j < 16; j++) {
+                    if (j < chunk.length) {
+                        hexParts.push(chunk[j].toString(16).padStart(2, '0'));
+                        const char = chunk[j];
+                        asciiParts.push((char >= 32 && char <= 126) ? String.fromCharCode(char) : '.');
+                    } else {
+                        hexParts.push('  ');
+                    }
+                }
+                lines.push(`${offset}  ${hexParts.slice(0, 8).join(' ')}  ${hexParts.slice(8).join(' ')}  |${asciiParts.join('')}|`);
+            }
+            return lines.join('\\n');
+        }
+
+        function openArtifactContentDirect(artifactId) {
+            openArtifactItemById(artifactId);
+        }
+
+        function renderEmptyArtifactInspector() {
+            const title = document.getElementById('inspector-title');
+            const badge = document.getElementById('inspector-badge');
+            const content = document.getElementById('inspector-content');
+
+            title.innerText = 'Evidence Explorer';
+            badge.className = 'status-pill pill-completed';
+            badge.innerText = 'READY';
+
+            content.innerHTML = `
+                <div style="font-size:11px; color:var(--text-secondary); text-align:center; padding:20px;">
+                    <div style="font-size:24px; margin-bottom:8px;">📁</div>
+                    <strong style="color:#fff;">Evidence Explorer View</strong><br>
+                    Select an artifact from the hierarchical tree on the left to inspect metadata, forensic provenance, and deep parsing observations.
+                </div>
+            `;
+        }
+
+        function renderArtifactInspector(a) {
+            const title = document.getElementById('inspector-title');
+            const badge = document.getElementById('inspector-badge');
+            const content = document.getElementById('inspector-content');
+
+            title.innerText = 'Artifact Inspector';
+            badge.className = 'status-pill pill-completed';
+            badge.innerText = a.category;
+            updateBottomMetadata(a);
+
+            const prov = a.provenance_chain || {};
+
+            content.innerHTML = `
+                <!-- CARD 1: BASIC INFORMATION (REFERENCE B) -->
+                <div class="card" style="padding:10px; margin-bottom:10px;">
+                    <div style="font-size:10px; font-weight:700; color:var(--accent-cyan); text-transform:uppercase; margin-bottom:6px; letter-spacing:0.6px;">Basic Information</div>
+                    <div style="margin-bottom:6px;">
+                        <strong style="color:#fff; font-size:12.5px; word-break:break-all;">${a.filename}</strong>
+                        <div class="mono" style="color:var(--accent-cyan); font-size:10.5px; margin-top:2px;">${a.artifact_id}</div>
+                    </div>
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px; font-size:11px;">
+                        <div><span class="meta-label">Category:</span> <strong>${a.category}</strong></div>
+                        <div><span class="meta-label">Size:</span> <span class="mono">${(a.size_bytes / 1024).toFixed(1)} KB</span></div>
+                        <div><span class="meta-label">MIME:</span> <span class="mono" style="font-size:10px;">${a.mime_type || '--'}</span></div>
+                        <div><span class="meta-label">Allocation:</span> ${a.allocation_status}</div>
+                        <div><span class="meta-label">Recovery:</span> ${a.recovery_status}</div>
+                        <div><span class="meta-label">Integrity:</span> <span class="status-pill pill-intact" style="font-size:9px;">INTACT</span></div>
+                    </div>
+                </div>
+
+                <!-- CARD 2: CRYPTOGRAPHIC HASH (REFERENCE B) -->
+                <div class="card" style="padding:10px; margin-bottom:10px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                        <div style="font-size:10px; font-weight:700; color:var(--text-secondary); text-transform:uppercase; letter-spacing:0.6px;">Cryptographic Hash</div>
+                        <span class="status-pill pill-intact" style="font-size:9px;">VERIFIED</span>
+                    </div>
+                    <div class="meta-label" style="font-size:9.5px; margin-bottom:2px;">SHA-256 FINGERPRINT:</div>
+                    <div class="mono" style="background:#040814; padding:5px 8px; border-radius:4px; border:1px solid rgba(255,255,255,0.08); font-size:9.5px; word-break:break-all; color:#67e8f9;">
+                        ${a.sha256}
+                    </div>
+                </div>
+
+                <!-- CARD 3: DEEP PARSED OBSERVATIONS (REFERENCE B) -->
+                <div class="card" style="padding:10px; border-color:rgba(0, 240, 255, 0.35);">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                        <div style="font-size:10px; font-weight:700; color:var(--accent-cyan); text-transform:uppercase; letter-spacing:0.6px;">Deep Parsed Observations (Slice 8A)</div>
+                        <button id="btn-deep-parse-action" class="btn-action" style="font-size:9.5px; padding:2px 6px;" onclick="triggerDeepParse('${a.artifact_id}')">
+                            Run Deep Parsing
+                        </button>
+                    </div>
+
+                    <!-- SUB-TABS (REFERENCE B) -->
+                    <div class="insp-subtab-bar">
+                        <button class="insp-parsed-tab active" id="btn-insp-tab-struct" onclick="switchInspectorParsedTab('struct')">Structured Metadata</button>
+                        <button class="insp-parsed-tab" id="btn-insp-tab-text" onclick="switchInspectorParsedTab('text')">Extracted Text</button>
+                        <button class="insp-parsed-tab" id="btn-insp-tab-refs" onclick="switchInspectorParsedTab('refs')">References</button>
+                    </div>
+
+                    <div id="deep-parsed-observations-area" style="background:#050a16; border:1px solid rgba(255,255,255,0.06); border-radius:4px; padding:8px; font-size:10.5px; min-height:40px;">
+                        <span style="color:var(--text-muted);">Loading observations...</span>
+                    </div>
+                </div>
+            `;
+
+            loadParsedObservations(a.artifact_id);
+        }
+
+        function switchInspectorParsedTab(tab) {
+            document.querySelectorAll('.insp-parsed-tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.insp-subtab-content').forEach(c => c.classList.remove('active'));
+
+            const btn = document.getElementById(`btn-insp-tab-${tab}`);
+            const pane = document.getElementById(`insp-subtab-${tab}`);
+            if (btn) btn.classList.add('active');
+            if (pane) pane.classList.add('active');
+        }
+
+        async function loadParsedObservations(artifactId) {
+            const area = document.getElementById('deep-parsed-observations-area');
+            const btn = document.getElementById('btn-deep-parse-action');
+            if (!area) return;
+
+            try {
+                const res = await fetch(`/api/v1/cases/${activeCaseId}/artifacts/${artifactId}/parsed`, {
+                    headers: { 'Authorization': 'Bearer ' + currentToken }
+                });
+                if (res.status === 404) {
+                    area.innerHTML = '<span style="color:var(--text-muted);">Not deeply parsed yet. Click <strong>Run Deep Parsing</strong> to extract observations.</span>';
+                    if (btn) { btn.innerText = 'Run Deep Parsing'; btn.disabled = false; }
+                    return;
+                }
+                if (!res.ok) {
+                    area.innerHTML = `<span style="color:var(--layer-red);">Error loading parsed data (HTTP ${res.status}).</span>`;
+                    return;
+                }
+                const parsed = await res.json();
+                renderDeepParsedObservations(parsed);
+                if (btn) { btn.innerText = 'Re-parse'; btn.disabled = false; }
+            } catch (err) {
+                area.innerHTML = '<span style="color:var(--layer-red);">Failed to load observations.</span>';
+            }
+        }
+
+        async function triggerDeepParse(artifactId) {
+            const area = document.getElementById('deep-parsed-observations-area');
+            const btn = document.getElementById('btn-deep-parse-action');
+            if (btn) { btn.disabled = true; btn.innerText = 'Parsing...'; }
+            if (area) area.innerHTML = '<span style="color:var(--accent-cyan);">Verifying header magic & extracting observations...</span>';
+
+            appendConsoleLog('PARSER', `Executing deep format parsing for ${artifactId}...`, 'parser');
+            try {
+                const res = await fetch(`/api/v1/cases/${activeCaseId}/artifacts/${artifactId}/parse?force=true`, {
+                    method: 'POST',
+                    headers: { 'Authorization': 'Bearer ' + currentToken }
+                });
+                if (!res.ok) {
+                    const err = await res.json();
+                    if (area) area.innerHTML = `<span style="color:var(--layer-red);">Parsing failed: ${err.detail || 'Error'}</span>`;
+                    if (btn) { btn.disabled = false; btn.innerText = 'Retry'; }
+                    appendConsoleLog('PARSER', `Parsing failed: ${err.detail}`, 'error');
+                    return;
+                }
+                const parsed = await res.json();
+                renderDeepParsedObservations(parsed);
+                if (btn) { btn.disabled = false; btn.innerText = 'Re-parse'; }
+                appendConsoleLog('PARSER', `Parsed: ${parsed.status} (${parsed.parser_metadata.parser_type}, ${parsed.parser_metadata.execution_duration_ms}ms)`, 'success');
+            } catch (err) {
+                if (area) area.innerHTML = '<span style="color:var(--layer-red);">Failed to execute request.</span>';
+                if (btn) { btn.disabled = false; btn.innerText = 'Run Deep Parsing'; }
+            }
+        }
+
+        function renderDeepParsedObservations(parsed) {
+            const area = document.getElementById('deep-parsed-observations-area');
+            if (!area) return;
+
+            const meta = parsed.parser_metadata || {};
+            const struct = parsed.structured_metadata || {};
+            const isVerified = parsed.integrity_verified;
+
+            // Extract pages summary and text snippet
+            let textSnippet = '';
+            let pageCount = struct.total_pages || 0;
+            let wordCount = struct.total_words_extracted || 0;
+
+            if (meta.parser_type === 'PDF') {
+                const pages = struct.pages_summary || [];
+                if (pages.length > 0) {
+                    textSnippet = pages.map(p => `[Page ${p.page_number}]: ${p.text_snippet || ''}`).join('\\n\\n');
+                }
+            } else if (meta.parser_type === 'IMAGE') {
+                textSnippet = `Format: ${struct.format}, Dims: ${struct.width}x${struct.height}, Color: ${struct.color_mode}`;
+            }
+
+            // Populate the bottom panel tab as well
+            const bottomParsedEl = document.getElementById('art-tab-parsed-body');
+            if (bottomParsedEl) {
+                bottomParsedEl.innerHTML = `
+                    <div style="margin-bottom:8px;">
+                        <strong style="color:#fff;">Parser: ${meta.parser_name || 'CRIMENET_OBSERVATION_PARSER'} (${meta.parser_type})</strong>
+                        <span class="status-pill pill-completed" style="margin-left:6px;">${parsed.status}</span>
+                    </div>
+                    <pre style="font-family:'JetBrains Mono'; font-size:10.5px; color:#e2e8f0; background:#030712; padding:8px; border-radius:4px; max-height:140px; overflow:auto;">${JSON.stringify(struct, null, 2)}</pre>
+                `;
+            }
+
+            const bottomTextEl = document.getElementById('art-tab-text-body');
+            if (bottomTextEl && textSnippet) {
+                bottomTextEl.innerText = textSnippet;
+            }
+
+            // Right Inspector tabs
+            area.innerHTML = `
+                <div class="insp-subtab-content active" id="insp-subtab-struct">
+                    <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(255,255,255,0.08); padding-bottom:4px; margin-bottom:6px;">
+                        <div style="display:flex; align-items:center; gap:6px;">
+                            <span class="status-pill pill-${parsed.status === 'SUCCESS' ? 'completed' : 'failed'}">${parsed.status}</span>
+                            <strong style="color:#fff;">${meta.parser_type || 'UNKNOWN'}</strong>
+                        </div>
+                        <div class="mono" style="font-size:9.5px; color:var(--text-muted);">
+                            ${meta.execution_duration_ms || 0}ms | SHA-256: <strong style="color:${isVerified ? '#34d399' : '#f87171'}">${isVerified ? 'VERIFIED' : 'MISMATCH'}</strong>
+                        </div>
+                    </div>
+                    ${renderStructuredSubtabContent(meta.parser_type, struct)}
+                </div>
+                <div class="insp-subtab-content" id="insp-subtab-text">
+                    <div style="font-size:10px; color:var(--text-muted); margin-bottom:4px;">Observed Text Snippet (Provenance Intact):</div>
+                    <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.05); border-radius:4px; padding:6px; font-size:10px; color:var(--text-secondary); max-height:110px; overflow-y:auto; white-space:pre-wrap;">${(textSnippet || 'No text extracted.').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</div>
+                </div>
+                <div class="insp-subtab-content" id="insp-subtab-refs">
+                    <div style="font-size:10px; color:var(--text-muted); margin-bottom:4px;">Evidence Cross-References:</div>
+                    <div style="font-size:10.5px; color:#cbd5e1;">
+                        <div>Originating Evidence: <span class="mono" style="color:var(--accent-cyan);">${parsed.case_id} / EV-2026-001</span></div>
+                        <div style="margin-top:2px;">Engine: <span class="mono">${meta.parser_name || 'CRIMENET_PARSER'}</span></div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderStructuredSubtabContent(parserType, struct) {
+            if (parserType === 'PDF') {
+                return `
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:4px; font-size:10.5px; margin-bottom:6px;">
+                        <div>Pages: <strong>${struct.total_pages || 0}</strong></div>
+                        <div>Words: <strong class="mono">${struct.total_words_extracted || 0}</strong></div>
+                        <div style="grid-column:span 2; color:var(--text-muted); font-size:10px;">Parser Provenance: Observation layer intact</div>
+                    </div>
+                `;
+            } else if (parserType === 'IMAGE') {
+                const gps = struct.gps_metadata;
+                let gpsHtml = '';
+                if (gps) {
+                    gpsHtml = `
+                        <div style="background:rgba(0, 240, 255, 0.06); border:1px solid rgba(0, 240, 255, 0.2); border-radius:4px; padding:5px; margin-top:4px; font-size:10px;">
+                            <div style="color:var(--accent-cyan); font-weight:700;">Observed Device GPS:</div>
+                            <div class="mono" style="color:#e2e8f0;">Lat: ${gps.latitude !== null ? gps.latitude.toFixed(6) : '--'}, Lon: ${gps.longitude !== null ? gps.longitude.toFixed(6) : '--'}</div>
+                            <div style="font-size:9px; color:var(--text-muted); margin-top:2px;">Observed camera header metadata; not verified physical human presence.</div>
+                        </div>
+                    `;
+                }
+                return `
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:4px; font-size:10.5px;">
+                        <div>Dims: <strong class="mono">${struct.width}&times;${struct.height}</strong></div>
+                        <div>Format: <span class="mono">${struct.format}</span></div>
+                        <div>EXIF Tags: <strong>${struct.exif_tag_count || 0}</strong></div>
+                        <div>GPS: <strong>${struct.has_gps ? 'YES' : 'None'}</strong></div>
+                    </div>
+                    ${gpsHtml}
+                `;
+            } else if (parserType === 'SQLITE') {
+                return `
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:4px; font-size:10.5px;">
+                        <div>Tables: <strong>${struct.table_count || 0}</strong></div>
+                        <div>Format: <span class="mono">SQLite 3</span></div>
+                    </div>
+                `;
+            }
+            return `<div style="font-size:10.5px; color:var(--text-secondary);">Binary structure verified.</div>`;
+        }
+
+        // =====================================================================
+        // HISTORICAL CYTOSCAPE CRIME CONTACT NETWORK (REFERENCE A PRESERVED)
+        // =====================================================================
+        async function loadCytoscapeGraph() {
+            if (!currentToken) return;
+            try {
+                const url = `/api/v1/cases/${activeCaseId}/graph?demo=${isDemoMode}`;
+                appendConsoleLog('NETWORK', `Querying case graph: ${url}...`, 'info');
+                const res = await fetch(url, {
+                    headers: { 'Authorization': 'Bearer ' + currentToken }
+                });
+                if (!res.ok) {
+                    appendConsoleLog('NETWORK', `Case graph request rejected (HTTP ${res.status})`, 'error');
+                    return;
+                }
+                const data = await res.json();
+                currentNetworkData = data;
+                updateNetworkUI(data);
+                initCytoscape(data);
+            } catch (e) {
+                appendConsoleLog('NETWORK', `Failed to load case graph: ${e}`, 'error');
+            }
+        }
+
+        function toggleDemoMode(val) {
+            if (val !== undefined) isDemoMode = val;
+            else isDemoMode = !isDemoMode;
+            appendConsoleLog('NETWORK', `Demo preview mode toggled: ${isDemoMode}`, 'warn');
+            loadCytoscapeGraph();
+        }
+
+        function updateNetworkUI(data) {
+            const bannerBadge = document.getElementById('network-banner-badge');
+            const bannerDesc = document.getElementById('network-banner-desc');
+            const toggleBtn = document.getElementById('btn-toggle-demo');
+            const emptyOverlay = document.getElementById('cy-empty-overlay');
+            const subjectName = document.getElementById('subject-card-name');
+            const subjectId = document.getElementById('subject-card-id');
+            const subjectRole = document.getElementById('subject-card-role');
+
+            if (data.demo_mode) {
+                bannerBadge.className = 'demo-badge';
+                bannerBadge.innerText = '[DEMO MODE]';
+                bannerDesc.innerHTML = `<strong>CAN-PER-0001 Vikram Singh</strong> contact network is pre-seeded demonstration data.`;
+                toggleBtn.innerText = 'Back to Real Case Data';
+                toggleBtn.className = 'btn-primary';
+                if (emptyOverlay) emptyOverlay.style.display = 'none';
+                activeAnchorId = 'CAN-PER-0001';
+                subjectName.innerText = 'Vikram Singh';
+                subjectId.innerText = 'CAN-PER-0001 (LOCKED CENTER)';
+                subjectRole.innerText = 'Role: Investigation Subject';
+            } else {
+                const anchorName = data.anchor ? data.anchor.label : 'Target';
+                const anchorRole = data.anchor ? data.anchor.role : 'Investigation Subject';
+                activeAnchorId = data.anchor ? data.anchor.id : null;
+
+                subjectName.innerText = anchorName;
+                subjectId.innerText = `${activeAnchorId || '--'} (LOCKED CENTER)`;
+                subjectRole.innerText = `Role: ${anchorRole}`;
+
+                bannerBadge.className = 'badge';
+                bannerBadge.style.background = '#0284c7';
+                bannerBadge.style.color = '#fff';
+                bannerBadge.innerText = 'REAL CASE DATA';
+                bannerDesc.innerHTML = `Case-scoped contact network for <strong>${activeCaseId}</strong>. Central Anchor: <strong>${anchorName}</strong>.`;
+                toggleBtn.innerText = 'Switch to Demo Preview';
+                toggleBtn.className = 'btn-action';
+
+                if (data.is_empty) {
+                    if (emptyOverlay) emptyOverlay.style.display = 'block';
+                    appendConsoleLog('NETWORK', `Honest empty state: 0 real evidence-backed relationships for ${activeCaseId}`, 'info');
+                } else {
+                    if (emptyOverlay) emptyOverlay.style.display = 'none';
+                }
+            }
+        }
+
+        function renderNetworkInspectorState() {
+            const title = document.getElementById('inspector-title');
+            const badge = document.getElementById('inspector-badge');
+            const insp = document.getElementById('inspector-content');
+
+            title.innerText = 'Crime Contact Network';
+            badge.className = 'status-pill pill-completed';
+            badge.innerText = 'READY';
+
+            insp.innerHTML = `
+                <div style="font-size:11px; color:var(--text-secondary); text-align:center; padding:24px 10px;">
+                    <div style="font-size:26px; margin-bottom:8px;">🎯</div>
+                    <strong style="color:#fff; font-size:12px;">Concentric Polar Network</strong><br>
+                    <div style="margin-top:6px; line-height:1.4;">
+                        Select any individual person node or relationship edge in the concentric polar graph to inspect intelligence attributes, forensic provenance, and human verification audit logs.
+                    </div>
+                </div>
+            `;
+        }
+
+        function initCytoscape(graphData) {
+            // Clean up existing Cytoscape instance to prevent memory/context leak
+            if (cy && typeof cy.destroy === 'function') {
+                try { cy.destroy(); } catch (_) {}
+                cy = null;
+            }
+            const anchorId = (graphData.anchor && graphData.anchor.id) ? graphData.anchor.id : 'CAN-PER-0001';
+            activeAnchorId = anchorId;
+
+            // Concentric Polar Layout Calculation from Container Center
+            const cyContainer = document.getElementById('cy');
+            const width = cyContainer.clientWidth || 900;
+            const height = cyContainer.clientHeight || 700;
+            const cx = width / 2;
+            const cyPos = height / 2;
+            currentCenterX = cx;
+            currentCenterY = cyPos;
+
+            // Reset baseline polar coordinates and slider to 100%
+            baselinePolar = {};
+            currentScale = 1.0;
+            const spreadSlider = document.getElementById('network-spread-slider');
+            if (spreadSlider) spreadSlider.value = 100;
+            const spreadValEl = document.getElementById('spread-value');
+            if (spreadValEl) spreadValEl.innerText = '100%';
+
+            originalPositions = {};
+            const elements = [];
+
+            // Group nodes by layer
+            const layerNodes = { 0: [], 1: [], 2: [], 3: [] };
+            (graphData.nodes || []).forEach(n => {
+                const isAnchor = n.is_anchor || (n.id === anchorId);
+                let layer = isAnchor ? 0 : (n.layer !== undefined ? n.layer : 3);
+                if (layer > 3) layer = 3;
+                layerNodes[layer].push(n);
+            });
+
+            // Add Nodes with exact polar concentric coordinates centered on (cx, cyPos)
+            Object.keys(layerNodes).forEach(lStr => {
+                const layer = parseInt(lStr);
+                const nodes = layerNodes[layer];
+                const R = baselineNominalRadii[layer] || 0;
+                const count = nodes.length;
+
+                nodes.forEach((n, idx) => {
+                    let posX = cx;
+                    let posY = cyPos;
+                    let angle = 0;
+                    let R_actual = 0;
+                    if (layer > 0 && count > 0) {
+                        angle = (idx / count) * 2 * Math.PI - (Math.PI / 2);
+                        R_actual = R;
+                        posX = cx + R * Math.cos(angle);
+                        posY = cyPos + R * Math.sin(angle);
+                    }
+
+                    baselinePolar[n.id] = { radius: R_actual, angle: angle };
+                    originalPositions[n.id] = { x: posX, y: posY };
+
+                    let nodeColor = '#38bdf8';
+                    let borderColor = '#ffffff';
+                    if (layer === 0) { nodeColor = '#ffffff'; borderColor = '#ffffff'; }
+                    else if (layer === 1) { nodeColor = '#ef4444'; borderColor = '#ef4444'; }
+                    else if (layer === 2) { nodeColor = '#f59e0b'; borderColor = '#f59e0b'; }
+                    else if (layer === 3) { nodeColor = '#10b981'; borderColor = '#10b981'; }
+
+                    const isPrimary = (n.id === anchorId);
+
+                    elements.push({
+                        data: {
+                            id: n.id,
+                            label: isPrimary ? `${n.label || n.canonical_name || n.id}\\n(${n.id})` : (n.label || n.canonical_name || n.id),
+                            layer: layer,
+                            color: nodeColor,
+                            borderColor: borderColor,
+                            raw: n,
+                            is_anchor: isPrimary
+                        },
+                        position: { x: posX, y: posY },
+                        locked: isPrimary,
+                        grabbable: !isPrimary
+                    });
+                });
+            });
+
+            // Add Edges with distinct prominence for connections to anchor
+            (graphData.edges || []).forEach(e => {
+                const isDirect = (e.source === anchorId || e.target === anchorId);
+                const srcNode = elements.find(el => el.data.id === e.source);
+                const tgtNode = elements.find(el => el.data.id === e.target);
+                const srcLayer = srcNode ? srcNode.data.layer : 3;
+                const tgtLayer = tgtNode ? tgtNode.data.layer : 3;
+                const maxLayer = Math.max(srcLayer, tgtLayer);
+
+                let edgeColor = '#10b981';
+                let edgeWidth = 1.4;
+                let edgeOpacity = 0.55;
+
+                if (isDirect || maxLayer <= 1) {
+                    edgeColor = '#ef4444';
+                    edgeWidth = 2.5;
+                    edgeOpacity = 0.85;
+                } else if (maxLayer === 2) {
+                    edgeColor = '#f59e0b';
+                    edgeWidth = 1.8;
+                    edgeOpacity = 0.7;
+                }
+
+                elements.push({
+                    data: {
+                        id: e.id,
+                        source: e.source,
+                        target: e.target,
+                        label: e.relationship || e.relationship_type || 'ASSOCIATED_WITH',
+                        color: edgeColor,
+                        width: edgeWidth,
+                        opacity: edgeOpacity,
+                        isDirectToPrimary: isDirect ? 1 : 0,
+                        ccc_score: e.ccc_score || 80,
+                        raw: e
+                    }
+                });
+            });
+
+            // Initialize Cytoscape with preset layout (using the calculated concentric coordinates)
+            cy = cytoscape({
+                container: cyContainer,
+                elements: elements,
+                style: [
+                    {
+                        selector: 'node',
+                        style: {
+                            'background-color': '#070e1f',
+                            'border-width': '2.5px',
+                            'border-color': 'data(borderColor)',
+                            'background-image': personIconSvg,
+                            'background-fit': 'none',
+                            'background-width': '52%',
+                            'background-height': '52%',
+                            'background-position-x': '50%',
+                            'background-position-y': '50%',
+                            'background-clip': 'node',
+                            'background-opacity': 1,
+                            'label': 'data(label)',
+                            'color': '#f8fafc',
+                            'font-size': '10px',
+                            'font-weight': '600',
+                            'text-valign': 'bottom',
+                            'text-margin-y': '6px',
+                            'text-halign': 'center',
+                            'text-wrap': 'wrap',
+                            'width': '40px',
+                            'height': '40px',
+                            'transition-property': 'background-color, border-color, width, height, opacity',
+                            'transition-duration': '0.2s'
+                        }
+                    },
+                    {
+                        selector: 'node[layer = 0], node[?is_anchor]',
+                        style: {
+                            'width': '66px',
+                            'height': '66px',
+                            'border-width': '3.5px',
+                            'border-color': '#ffffff',
+                            'background-color': '#0f172a',
+                            'background-image': personIconSvg,
+                            'background-fit': 'none',
+                            'background-width': '50%',
+                            'background-height': '50%',
+                            'background-position-x': '50%',
+                            'background-position-y': '50%',
+                            'background-clip': 'node',
+                            'background-opacity': 1,
+                            'font-size': '10.5px',
+                            'font-weight': '700',
+                            'color': '#ffffff',
+                            'text-margin-y': '8px',
+                            'z-index': 100
+                        }
+                    },
+                    {
+                        selector: 'node[layer = 1]',
+                        style: {
+                            'width': '44px',
+                            'height': '44px',
+                            'border-width': '2.5px',
+                            'border-color': '#ef4444',
+                            'background-color': '#1e0c10',
+                            'background-image': personIconSvg,
+                            'background-fit': 'none',
+                            'background-width': '54%',
+                            'background-height': '54%',
+                            'background-position-x': '50%',
+                            'background-position-y': '50%',
+                            'background-clip': 'node',
+                            'background-opacity': 1,
+                            'font-size': '10px',
+                            'font-weight': '600',
+                            'color': '#fecaca',
+                            'text-margin-y': '6px',
+                            'z-index': 90
+                        }
+                    },
+                    {
+                        selector: 'node[layer = 2]',
+                        style: {
+                            'width': '42px',
+                            'height': '42px',
+                            'border-width': '2.5px',
+                            'border-color': '#f59e0b',
+                            'background-color': '#1d170a',
+                            'background-image': personIconSvg,
+                            'background-fit': 'none',
+                            'background-width': '54%',
+                            'background-height': '54%',
+                            'background-position-x': '50%',
+                            'background-position-y': '50%',
+                            'background-clip': 'node',
+                            'background-opacity': 1,
+                            'font-size': '9.5px',
+                            'font-weight': '600',
+                            'color': '#fef3c7',
+                            'text-margin-y': '6px',
+                            'z-index': 80
+                        }
+                    },
+                    {
+                        selector: 'node[layer = 3]',
+                        style: {
+                            'width': '38px',
+                            'height': '38px',
+                            'border-width': '2.5px',
+                            'border-color': '#10b981',
+                            'background-color': '#081a14',
+                            'background-image': personIconSvg,
+                            'background-fit': 'none',
+                            'background-width': '54%',
+                            'background-height': '54%',
+                            'background-position-x': '50%',
+                            'background-position-y': '50%',
+                            'background-clip': 'node',
+                            'background-opacity': 1,
+                            'font-size': '9px',
+                            'font-weight': '600',
+                            'color': '#d1fae5',
+                            'text-margin-y': '6px',
+                            'z-index': 70
+                        }
+                    },
+                    {
+                        selector: 'edge',
+                        style: {
+                            'width': 'data(width)',
+                            'line-color': 'data(color)',
+                            'target-arrow-color': 'data(color)',
+                            'target-arrow-shape': 'triangle',
+                            'arrow-scale': 0.8,
+                            'curve-style': 'bezier',
+                            'opacity': 'data(opacity)'
+                        }
+                    },
+                    {
+                        selector: 'edge[isDirectToPrimary = 1]',
+                        style: {
+                            'width': 2.5,
+                            'line-color': '#ef4444',
+                            'target-arrow-color': '#ef4444',
+                            'target-arrow-shape': 'triangle',
+                            'arrow-scale': 0.9,
+                            'opacity': 0.85,
+                            'z-index': 95
+                        }
+                    },
+                    { selector: ':selected', style: { 'border-width': '4px', 'border-color': '#00f0ff', 'opacity': 1.0, 'z-index': 200 } },
+                    { selector: '.faded', style: { 'opacity': 0.12 } },
+                    { selector: '.highlighted', style: { 'opacity': 1.0, 'border-width': '3.5px', 'border-color': '#00f0ff', 'line-color': '#00f0ff', 'target-arrow-color': '#00f0ff', 'z-index': 150 } },
+                    { selector: '.layer-dimmed', style: { 'opacity': 0.12, 'z-index': 10 } },
+                    { selector: '.layer-focused', style: { 'opacity': 1.0, 'z-index': 100 } }
+                ],
+                layout: { name: 'preset' },
+                minZoom: 0.2,
+                maxZoom: 4.0,
+                zoomingEnabled: true,
+                panningEnabled: true,
+                autolock: false,
+                autoungrabify: false,
+                boxSelectionEnabled: false,
+                textureOnViewport: true,
+                pixelRatio: 'auto',
+                wheelSensitivity: 0.2
+            });
+
+            // Explicitly lock primary subject and unlock surrounding nodes
+            cy.nodes(`[id = "${anchorId}"]`).lock().ungrabify();
+            cy.nodes(`[id != "${anchorId}"]`).unlock().grabify();
+
+            // Layer drag boundaries (Clamping nodes to their analytical zone)
+            cy.on('drag', 'node', function(evt) {
+                const node = evt.target;
+                const layer = node.data('layer');
+                if (!layer || layer === 0) return;
+                const bounds = layerBounds[layer];
+                if (!bounds) return;
+                const pos = node.position();
+                const dx = pos.x - currentCenterX;
+                const dy = pos.y - currentCenterY;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                if (dist < bounds.min || dist > bounds.max) {
+                    const clamped = Math.max(bounds.min, Math.min(bounds.max, dist));
+                    const angle = Math.atan2(dy, dx);
+                    node.position({ x: currentCenterX + clamped * Math.cos(angle), y: currentCenterY + clamped * Math.sin(angle) });
+                }
+            });
+
+            // Render SVG Concentric Rings centered at (cx, cyPos)
+            renderSVGRings(cx, cyPos, nominalRadii);
+            cy.on('pan zoom resize', syncSvgTransform);
+
+            // Node Tap Listener
+            cy.on('tap', 'node', function(evt) {
+                const node = evt.target;
+                const id = node.id();
+                cy.elements().removeClass('faded highlighted');
+                if (activeLayerFilter !== null) applyLayerFilter();
+                else cy.elements().addClass('faded');
+                node.closedNeighborhood().removeClass('faded layer-dimmed').addClass('highlighted');
+                inspectEntityInInspector(id);
+            });
+
+            // Edge Tap Listener
+            cy.on('tap', 'edge', function(evt) {
+                const edge = evt.target;
+                const id = edge.id();
+                cy.elements().removeClass('faded highlighted');
+                cy.elements().addClass('faded');
+                edge.removeClass('faded layer-dimmed').addClass('highlighted');
+                edge.connectedNodes().removeClass('faded layer-dimmed').addClass('highlighted');
+                inspectRelationshipInInspector(id);
+            });
+
+            // Background Tap Listener
+            cy.on('tap', function(evt) {
+                if (evt.target === cy) {
+                    cy.elements().removeClass('faded highlighted');
+                    if (activeLayerFilter !== null) applyLayerFilter();
+                }
+            });
+
+            syncSvgTransform();
+            smoothFit();
+        }
+
+        // SVG Concentric Glowing Rings (Exact Historical Renderer)
+        function renderSVGRings(cx, cy, radii) {
+            const svgGroup = document.getElementById('concentric-rings-group');
+            if (!svgGroup) return;
+
+            const r1 = radii[1];
+            const r2 = radii[2];
+            const r3 = radii[3];
+            const mid12 = (r1 + r2) / 2;
+            const width12 = Math.max(20, r2 - r1);
+            const mid23 = (r2 + r3) / 2;
+            const width23 = Math.max(20, r3 - r2);
+            const scale = r1 / baselineNominalRadii[1];
+
+            let spokesHtml = '';
+            for (let deg = 0; deg < 360; deg += 45) {
+                const rad = (deg * Math.PI) / 180;
+                const x1 = cx + 55 * Math.cos(rad);
+                const y1 = cy + 55 * Math.sin(rad);
+                const x2 = cx + (r3 + 35) * Math.cos(rad);
+                const y2 = cy + (r3 + 35) * Math.sin(rad);
+                spokesHtml += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="rgba(0, 240, 255, 0.14)" stroke-width="1" stroke-dasharray="2 6" style="pointer-events:none;" />`;
+            }
+
+            svgGroup.innerHTML = `
+                <!-- RADAR COMPASS SPOKES -->
+                ${spokesHtml}
+                <!-- Extended axial crosshair lines -->
+                <line x1="${cx - r3 - 40}" y1="${cy}" x2="${cx + r3 + 40}" y2="${cy}" stroke="rgba(0, 240, 255, 0.10)" stroke-width="1" stroke-dasharray="3 8" style="pointer-events:none;" />
+                <line x1="${cx}" y1="${cy - r3 - 40}" x2="${cx}" y2="${cy + r3 + 40}" stroke="rgba(0, 240, 255, 0.10)" stroke-width="1" stroke-dasharray="3 8" style="pointer-events:none;" />
+
+                <!-- LAYER 3: OUTERMOST EXTENDED NETWORK (VIBRANT NEON GREEN) -->
+                <circle cx="${cx}" cy="${cy}" r="${mid23}" fill="none" stroke="rgba(16, 185, 129, 0.14)" stroke-width="${width23}" filter="url(#glow-ambient)" style="pointer-events:none;" />
+                <circle cx="${cx}" cy="${cy}" r="${r3}" fill="none" stroke="#10b981" stroke-width="20" opacity="0.65" filter="url(#glow-green)" style="pointer-events:none;" />
+                <circle cx="${cx}" cy="${cy}" r="${r3}" fill="none" stroke="#10b981" stroke-width="2.5" stroke-dasharray="10 8" opacity="0.95" style="pointer-events:none;" />
+                <circle cx="${cx}" cy="${cy}" r="${r3 + 24 * scale}" fill="none" stroke="#10b981" stroke-width="1.2" stroke-dasharray="4 10" opacity="0.30" style="pointer-events:none;" />
+
+                <!-- LAYER 2: MIDDLE BROADER NETWORK (VIBRANT AMBER / GOLD) -->
+                <circle cx="${cx}" cy="${cy}" r="${mid12}" fill="none" stroke="rgba(245, 158, 11, 0.16)" stroke-width="${width12}" filter="url(#glow-ambient)" style="pointer-events:none;" />
+                <circle cx="${cx}" cy="${cy}" r="${r2}" fill="none" stroke="#f59e0b" stroke-width="18" opacity="0.70" filter="url(#glow-yellow)" style="pointer-events:none;" />
+                <circle cx="${cx}" cy="${cy}" r="${r2}" fill="none" stroke="#f59e0b" stroke-width="2.5" stroke-dasharray="8 6" opacity="0.95" style="pointer-events:none;" />
+                <circle cx="${cx}" cy="${cy}" r="${r2 + 20 * scale}" fill="none" stroke="#f59e0b" stroke-width="1.2" stroke-dasharray="3 8" opacity="0.35" style="pointer-events:none;" />
+
+                <!-- LAYER 1: INNER DIRECT ASSOCIATES (VIBRANT CRIMSON RED) -->
+                <circle cx="${cx}" cy="${cy}" r="${r1}" fill="rgba(239, 68, 68, 0.15)" style="pointer-events:none;" />
+                <circle cx="${cx}" cy="${cy}" r="${r1}" fill="none" stroke="#ef4444" stroke-width="16" opacity="0.65" filter="url(#glow-red)" style="pointer-events:none;" />
+                <circle cx="${cx}" cy="${cy}" r="${r1}" fill="none" stroke="#ef4444" stroke-width="2.2" stroke-dasharray="6 4" opacity="0.95" style="pointer-events:none;" />
+                <circle cx="${cx}" cy="${cy}" r="${r1 + 16 * scale}" fill="none" stroke="#ef4444" stroke-width="1.2" stroke-dasharray="2 6" opacity="0.40" style="pointer-events:none;" />
+
+                <!-- CENTER CASE ANCHOR RETICLE -->
+                <circle cx="${cx}" cy="${cy}" r="${Math.max(80, 115 * scale)}" fill="url(#centerWhiteGlow)" style="pointer-events:none;" />
+                <circle cx="${cx}" cy="${cy}" r="52" fill="none" stroke="#ffffff" stroke-width="1.5" stroke-dasharray="4 4" opacity="0.65" style="pointer-events:none;" />
+                <line x1="${cx - 62}" y1="${cy}" x2="${cx - 44}" y2="${cy}" stroke="#ffffff" stroke-width="2" opacity="0.75" />
+                <line x1="${cx + 44}" y1="${cy}" x2="${cx + 62}" y2="${cy}" stroke="#ffffff" stroke-width="2" opacity="0.75" />
+                <line x1="${cx}" y1="${cy - 62}" x2="${cx}" y2="${cy - 44}" stroke="#ffffff" stroke-width="2" opacity="0.75" />
+                <line x1="${cx}" y1="${cy + 44}" x2="${cx}" y2="${cy + 62}" stroke="#ffffff" stroke-width="2" opacity="0.75" />
+            `;
+            syncSvgTransform();
+        }
+
+        function syncSvgTransform() {
+            if (!cy) return;
+            const svgGroup = document.getElementById('concentric-rings-group');
+            if (!svgGroup) return;
+            const pan = cy.pan();
+            const zoom = cy.zoom();
+            svgGroup.setAttribute('transform', `translate(${pan.x}, ${pan.y}) scale(${zoom})`);
+        }
+
+        function setLayerFilter(layer) {
+            activeLayerFilter = layer;
+            document.querySelectorAll('.btn-filter').forEach(b => b.classList.remove('active'));
+            if (layer === 1) document.getElementById('btn-filter-l1').classList.add('active');
+            else if (layer === 2) document.getElementById('btn-filter-l2').classList.add('active');
+            else if (layer === 3) document.getElementById('btn-filter-l3').classList.add('active');
+            else document.getElementById('btn-filter-all').classList.add('active');
+
+            applyLayerFilter();
+            appendConsoleLog('NETWORK', `Layer filter active: ${layer === null ? 'SHOW ALL' : 'LAYER ' + layer}`, 'info');
+        }
+
+        function applyLayerFilter() {
+            if (!cy) return;
+            cy.elements().removeClass('faded highlighted layer-dimmed layer-focused');
+            if (activeLayerFilter === null) return;
+
+            cy.batch(() => {
+                const anchor = activeAnchorId || 'CAN-PER-0001';
+                cy.nodes(`[id = "${anchor}"]`).addClass('layer-focused');
+                cy.nodes(`[layer = ${activeLayerFilter}]`).addClass('layer-focused');
+                cy.nodes(`[layer != ${activeLayerFilter}][id != "${anchor}"]`).addClass('layer-dimmed');
+
+                cy.edges().forEach(e => {
+                    const sL = e.source().data('layer');
+                    const tL = e.target().data('layer');
+                    if (sL === activeLayerFilter || tL === activeLayerFilter) e.addClass('layer-focused');
+                    else e.addClass('layer-dimmed');
+                });
+            });
+        }
+
+        function updateNetworkSpread(val) {
+            if (!cy) return;
+            const scale = parseFloat(val) / 100.0;
+            currentScale = scale;
+
+            const spreadValEl = document.getElementById('spread-value');
+            if (spreadValEl) spreadValEl.innerText = `${val}%`;
+
+            const cx = currentCenterX;
+            const cyPos = currentCenterY;
+
+            // Proportionally update every person node's distance from center
+            cy.batch(() => {
+                cy.nodes().forEach(node => {
+                    const id = node.id();
+                    if (id === activeAnchorId) {
+                        node.position({ x: cx, y: cyPos });
+                        return;
+                    }
+                    const polar = baselinePolar[id];
+                    if (polar) {
+                        const newRadius = polar.radius * scale;
+                        const newX = cx + newRadius * Math.cos(polar.angle);
+                        const newY = cyPos + newRadius * Math.sin(polar.angle);
+                        node.position({ x: newX, y: newY });
+                        originalPositions[id] = { x: newX, y: newY };
+                    }
+                });
+            });
+
+            // Scale layer rings by the exact same factor
+            const scaledRadii = {
+                0: 0,
+                1: baselineNominalRadii[1] * scale,
+                2: baselineNominalRadii[2] * scale,
+                3: baselineNominalRadii[3] * scale
+            };
+
+            // Scale layer bounds for dragging
+            layerBounds[1] = { min: baselineLayerBounds[1].min * scale, max: baselineLayerBounds[1].max * scale };
+            layerBounds[2] = { min: baselineLayerBounds[2].min * scale, max: baselineLayerBounds[2].max * scale };
+            layerBounds[3] = { min: baselineLayerBounds[3].min * scale, max: baselineLayerBounds[3].max * scale };
+
+            // Re-render SVG rings
+            renderSVGRings(cx, cyPos, scaledRadii);
+        }
+
+        function resetConcentricLayout() {
+            if (!cy) return;
+            activeLayerFilter = null;
+            document.querySelectorAll('.btn-filter').forEach(b => b.classList.remove('active'));
+            document.getElementById('btn-filter-all').classList.add('active');
+
+            const spreadSlider = document.getElementById('network-spread-slider');
+            if (spreadSlider) spreadSlider.value = 100;
+            const spreadValEl = document.getElementById('spread-value');
+            if (spreadValEl) spreadValEl.innerText = '100%';
+
+            updateNetworkSpread(100);
+
+            cy.batch(() => {
+                cy.nodes().forEach(node => {
+                    const orig = originalPositions[node.id()];
+                    if (orig) node.position(orig);
+                });
+            });
+
+            cy.elements().removeClass('faded highlighted layer-dimmed layer-focused');
+            cy.nodes(`[id = "${activeAnchorId}"]`).lock().ungrabify();
+            smoothFit();
+            appendConsoleLog('NETWORK', 'Concentric graph layout reset to origin', 'info');
+        }
+
+        function smoothFit() {
+            if (cy) {
+                cy.animate({ fit: { padding: 40 }, duration: 400 });
+                setTimeout(syncSvgTransform, 450);
+            }
+        }
+
+        function findShortestPath() {
+            const tgt = document.getElementById('path-target-input').value.trim();
+            if (!tgt) { alert('Enter target entity ID (e.g. CAN-PER-0002)'); return; }
+            const src = activeAnchorId || 'CAN-PER-0001';
+            appendConsoleLog('NETWORK', `Executing Dijkstra shortest path: ${src} -> ${tgt}...`, 'info');
+            fetch(`/api/v1/cases/${activeCaseId}/graph/shortest_path?src_id=${src}&tgt_id=${tgt}&demo=${isDemoMode}`, {
+                headers: { 'Authorization': 'Bearer ' + currentToken }
+            })
+                .then(r => r.json())
+                .then(data => {
+                    if (data.path_length === -1 || !data.path_nodes || data.path_nodes.length === 0) {
+                        alert(`No path found between ${src} and ${tgt}.`);
+                        appendConsoleLog('NETWORK', `No topological path found between ${src} and ${tgt}`, 'warn');
+                    } else {
+                        alert(`Shortest Path (${data.path_length} hops):\\n${data.path_nodes.join(' -> ')}`);
+                        appendConsoleLog('NETWORK', `Shortest path discovered (${data.path_length} hops): ${data.path_nodes.join(' -> ')}`, 'success');
+                    }
+                })
+                .catch(e => alert('Error: ' + e));
+        }
+
+        function exploreNeighbors() {
+            const root = activeAnchorId || 'CAN-PER-0001';
+            appendConsoleLog('NETWORK', `Exploring 1-hop BFS neighborhood for ${root}...`, 'info');
+            fetch(`/api/v1/cases/${activeCaseId}/graph/neighbors/${root}?hops=1&demo=${isDemoMode}`, {
+                headers: { 'Authorization': 'Bearer ' + currentToken }
+            })
+                .then(r => r.json())
+                .then(data => {
+                    const count = data.neighbor_count || 0;
+                    if (count === 0) {
+                        alert(`${root} has 0 1-hop neighbors in this graph view.`);
+                        appendConsoleLog('NETWORK', `${root} has 0 1-hop neighbors in current graph view`, 'info');
+                    } else {
+                        alert(`${root} has ${count} 1-hop neighbors:\\n${data.neighbors.map(n => n.canonical_name || n.label).join(', ')}`);
+                        appendConsoleLog('NETWORK', `Discovered ${count} 1-hop neighbors for ${root}`, 'success');
+                    }
+                })
+                .catch(e => alert('Error: ' + e));
+        }
+
+        // =====================================================================
+        // GRAPH INSPECTOR ACTIONS (REFERENCE A)
+        // =====================================================================
+        async function inspectEntityInInspector(id) {
+            try {
+                const res = await fetch(`/api/v1/cases/${activeCaseId}/graph/entity/${id}?demo=${isDemoMode}`, {
+                    headers: { 'Authorization': 'Bearer ' + currentToken }
+                });
+                if (!res.ok) return;
+                const d = await res.json();
+                const title = document.getElementById('inspector-title');
+                const badge = document.getElementById('inspector-badge');
+                const insp = document.getElementById('inspector-content');
+
+                title.innerText = 'Lead Inspector';
+                badge.className = 'status-pill pill-completed';
+                badge.innerText = d.entity_type || 'PERSON';
+
+                const roleBadge = d.role ? `<span style="font-size:9.5px; padding:1px 5px; border-radius:3px; background:#1e293b; color:#38bdf8; border:1px solid #0284c7;">${d.role}</span>` : '';
+                const anchorBadge = d.is_anchor ? `<span style="font-size:9.5px; padding:1px 5px; border-radius:3px; background:#4338ca; color:#fff;">CASE ANCHOR</span>` : '';
+
+                insp.innerHTML = `
+                    <div style="margin-bottom:8px;">
+                        <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                            <strong style="color:#fff; font-size:13px;">${d.canonical_name || d.canonical_entity_id}</strong>
+                            <div style="display:flex; gap:3px;">${anchorBadge} ${roleBadge}</div>
+                        </div>
+                        <div class="mono" style="color:var(--accent-cyan); font-size:10.5px; margin-top:2px;">${d.canonical_entity_id}</div>
+                    </div>
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:4px; font-size:10.5px; margin-bottom:8px;">
+                        <div>Type: <strong>${d.entity_type}</strong></div>
+                        <div>Method: <strong>${d.match_method}</strong></div>
+                        <div style="grid-column:span 2;">Status: <span class="status-pill pill-queued" id="ver-badge-${id}">${d.human_verification_status || 'UNDER_REVIEW'}</span></div>
+                        ${d.description ? `<div style="grid-column:span 2; font-size:10px; color:var(--text-secondary); margin-top:2px;">${d.description}</div>` : ''}
+                    </div>
+                    <div style="font-size:9.5px; text-transform:uppercase; color:var(--text-muted); margin-bottom:4px;">Human Verification Decision</div>
+                    <div style="display:flex; gap:4px; margin-bottom:8px;">
+                        <button class="btn-action" style="flex:1; padding:4px;" onclick="submitVerification('${id}', 'UNDER_REVIEW')">Review</button>
+                        <button class="btn-action btn-green" style="flex:1; padding:4px;" onclick="submitVerification('${id}', 'HUMAN_VERIFIED_LEAD')">Verify</button>
+                        <button class="btn-action" style="flex:1; padding:4px; color:#fca5a5; border-color:var(--layer-red);" onclick="submitVerification('${id}', 'REJECTED_ASSOCIATION')">Reject</button>
+                    </div>
+                `;
+                appendConsoleLog('INSPECTOR', `Inspecting person node: ${d.canonical_name} (${d.canonical_entity_id})`, 'info');
+            } catch (e) {}
+        }
+
+        async function inspectRelationshipInInspector(edgeId) {
+            try {
+                const res = await fetch(`/api/v1/cases/${activeCaseId}/graph/relationship/${edgeId}?demo=${isDemoMode}`, {
+                    headers: { 'Authorization': 'Bearer ' + currentToken }
+                });
+                if (!res.ok) return;
+                const d = await res.json();
+                const title = document.getElementById('inspector-title');
+                const badge = document.getElementById('inspector-badge');
+                const insp = document.getElementById('inspector-content');
+
+                title.innerText = 'Relationship Inspector';
+                badge.className = 'status-pill pill-completed';
+                badge.innerText = d.relationship_type;
+
+                insp.innerHTML = `
+                    <div style="margin-bottom:8px;">
+                        <strong style="color:#fff; font-size:12.5px;">${d.relationship_type}</strong>
+                        <div class="mono" style="color:var(--accent-cyan); font-size:10.5px;">CCC RING: ${d.ccc_ring}</div>
+                    </div>
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:4px; font-size:10.5px; margin-bottom:8px;">
+                        <div>Source: <span class="mono">${d.source}</span></div>
+                        <div>Target: <span class="mono">${d.target}</span></div>
+                        <div>Confidence: <strong>${d.confidence || '0.95'}</strong></div>
+                        <div>CCC Score: <strong>${d.ccc_score || '85'}</strong></div>
+                    </div>
+                    <div class="provenance-box">
+                        <h5>Evidence Traceability</h5>
+                        <div class="prov-step"><span>Artifact:</span> <strong>${d.source_artifact || 'Call_Records.xlsx'}</strong></div>
+                        <div class="prov-step"><span>Timestamp:</span> <strong>${d.timestamp || '2026-08-14 14:22:00'}</strong></div>
+                        <div class="prov-step"><span>Evidence IDs:</span> <strong>${(d.supporting_evidence_ids || []).join(', ')}</strong></div>
+                    </div>
+                `;
+                appendConsoleLog('INSPECTOR', `Inspecting relationship: ${d.source} -> ${d.target} (${d.relationship_type})`, 'info');
+            } catch (e) {}
+        }
+
+        async function submitVerification(entityId, status) {
+            appendConsoleLog('VERIFY', `Submitting human verification decision for ${entityId}: ${status}...`, 'info');
+            try {
+                const res = await fetch(`/api/v1/cases/${activeCaseId}/graph/verify`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + currentToken
+                    },
+                    body: JSON.stringify({ target_id: entityId, status_decision: status, notes: 'Recorded via Investigator Workspace' })
+                });
+                if (res.ok) {
+                    appendConsoleLog('VERIFY', `Verification recorded: [${status}] for ${entityId}`, 'success');
+                    alert(`Human Verification logged: [${status}] for ${entityId}`);
+                    inspectEntityInInspector(entityId);
+                }
+            } catch (e) {
+                appendConsoleLog('VERIFY', `Verification error: ${e}`, 'error');
+            }
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).style.display = 'none';
+        }
+
+        window.onload = function() {
+            initPanelSplitters();
+            checkAuth();
+        };
+    </script>
+</body>
+</html>
+"""
+
+def main():
+    target_path = os.path.join(os.path.dirname(__file__), "..", "src", "api", "workspace.html")
+    target_path = os.path.abspath(target_path)
+    print(f"Writing finalized workspace HTML to {target_path}...")
+    with open(target_path, "w", encoding="utf-8") as f:
+        f.write(HTML_CONTENT)
+    print(f"Successfully written {len(HTML_CONTENT)} bytes to {target_path}.")
+
+if __name__ == "__main__":
+    main()

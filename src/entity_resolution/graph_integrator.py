@@ -9,18 +9,15 @@ from typing import List, Dict, Any
 import kuzu
 
 class KuzuEntityGraphIntegrator:
-    def __init__(self, db_path: str = "BENCHMARKS/kuzu_resolved_graph_db"):
+    def __init__(self, db_path: str = "BENCHMARKS/kuzu_slice5_graph_db"):
         self.db_path = db_path
         self.db = None
         self.conn = None
 
     def setup(self):
-        self.teardown()
-        if os.path.exists(self.db_path):
-            shutil.rmtree(self.db_path, ignore_errors=True)
-            
-        self.db = kuzu.Database(self.db_path)
-        self.conn = kuzu.Connection(self.db)
+        if not self.db:
+            self.db = kuzu.Database(self.db_path)
+            self.conn = kuzu.Connection(self.db)
         
         # Node Schemas
         for label in ["Person", "PhoneNumber", "Vehicle", "Location", "Organization"]:

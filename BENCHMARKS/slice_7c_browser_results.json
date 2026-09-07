@@ -1,0 +1,11 @@
+{
+  "step1_portal_landing": "PASSED",
+  "step2_wizard_step1": "PASSED",
+  "step3_judicial_assignment": "PASSED (3 judges)",
+  "step4_dropzone_chunk_upload": "PASSED",
+  "step5_read_only_inspect": "PASSED",
+  "step6_case_creation_promotion": "PASSED",
+  "step7_workspace_entry": "PASSED (Active: CASE-2026-29F0)",
+  "step8_process_e01": "PASSED (COMPLETED, FS: NTFS, Time: 10.01 s)",
+  "step9_evidence_explorer": "PASSED"
+}

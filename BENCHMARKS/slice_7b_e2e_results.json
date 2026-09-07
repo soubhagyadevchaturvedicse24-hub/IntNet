@@ -1,0 +1,68 @@
+{
+  "pre_test_e01_hash": "733948eee283af8e0dc9c6e389039569a41c4522172e8cdfcebf34e86f1cd21a",
+  "pre_test_e02_hash": "1da71529a72d2e10e060efe900616f098691c65787ada11c95cefed7f8e0f84d",
+  "step_1_ui_status": 200,
+  "step_2_auth": {
+    "officer1_role": "INVESTIGATION_OFFICER",
+    "officer1_auth_status": 200,
+    "bad_login_status": 401
+  },
+  "step_3_cases": {
+    "cases_count": 1,
+    "target_case_id": "CASE-2026-001"
+  },
+  "step_4_evidence": {
+    "evidence_id": "EV-2026-15F0",
+    "storage_reference": "CASE-2026-001/EV-2026-15F0_Images_Set_1.E01",
+    "sha256": "733948eee283af8e0dc9c6e389039569a41c4522172e8cdfcebf34e86f1cd21a"
+  },
+  "step_5_integrity": {
+    "evidence_id": "EV-2026-15F0",
+    "case_id": "CASE-2026-001",
+    "expected_sha256": "733948eee283af8e0dc9c6e389039569a41c4522172e8cdfcebf34e86f1cd21a",
+    "calculated_sha256": "733948eee283af8e0dc9c6e389039569a41c4522172e8cdfcebf34e86f1cd21a",
+    "integrity_status": "INTACT",
+    "verified_at": 1788726102.0798397,
+    "verified_by": "USER-OFFICER-001"
+  },
+  "step_6_observation": {
+    "job_id": "JOB-2026-76137A",
+    "elapsed_seconds": 9.71,
+    "observed_filesystem": "NTFS",
+    "total_directories": 1122,
+    "total_files": 2898,
+    "contract_artifacts_count": 23
+  },
+  "step_7_artifacts": {
+    "total_case_artifacts": 119,
+    "categories": {
+      "DOCUMENT": 20,
+      "IMAGE": 2,
+      "PARTITION_TABLE": 96,
+      "OTHER": 1
+    }
+  },
+  "step_8_artifact_detail": {
+    "artifact_id": "ART-2026-001-1E6EA53D",
+    "filename": "Jeevan Setu.pdf",
+    "category": "DOCUMENT",
+    "size": 8298577,
+    "sha256": "1e6ea53d82f0e8aa2e6122fd5f3d2038757b5fc88d8dd6a1a8cba93f020d18c1"
+  },
+  "step_9_content": {
+    "stream_status": 200,
+    "bytes_streamed": 8298577,
+    "content_type": "application/pdf"
+  },
+  "step_10_security": {
+    "cross_case_bola_status": 403,
+    "unauthorized_content_stream_status": 403,
+    "not_found_status": 404
+  },
+  "step_11_graph": {
+    "nodes_count": 36,
+    "edges_count": 39
+  },
+  "post_test_e01_hash": "733948eee283af8e0dc9c6e389039569a41c4522172e8cdfcebf34e86f1cd21a",
+  "post_test_e02_hash": "1da71529a72d2e10e060efe900616f098691c65787ada11c95cefed7f8e0f84d"
+}
