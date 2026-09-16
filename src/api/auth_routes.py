@@ -3,7 +3,7 @@ API Endpoints for Authentication, Role-Based Access Control, and Policy-Driven A
 Exposes protected case, evidence, report, judicial, and audit endpoints with BOLA and BFLA security controls.
 """
 
-from fastapi import APIRouter, Depends, HTTPException, Header, status
+from fastapi import APIRouter, Depends, HTTPException, Header, Query, status
 from typing import Optional, List, Dict, Any
 
 from src.auth.models import LoginRequest, TokenResponse, UserPublic, TokenPayload
@@ -19,24 +19,31 @@ policy_engine = PolicyEngine()
 audit_service = AuditService()
 
 
-def get_current_user(authorization: Optional[str] = Header(None)) -> TokenPayload:
-    if not authorization:
+def get_current_user(
+    authorization: Optional[str] = Header(None),
+    token: Optional[str] = Query(None)
+) -> TokenPayload:
+    raw_token = None
+    if authorization:
+        parts = authorization.split()
+        if len(parts) != 2 or parts[0].lower() != "bearer":
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Invalid Authorization Header scheme. Must be Bearer token.",
+                headers={"WWW-Authenticate": "Bearer"},
+            )
+        raw_token = parts[1]
+    elif token:
+        raw_token = token
+
+    if not raw_token:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Missing Authorization Header. Authentication required.",
+            detail="Missing Authorization Header or token query param. Authentication required.",
             headers={"WWW-Authenticate": "Bearer"},
         )
     
-    parts = authorization.split()
-    if len(parts) != 2 or parts[0].lower() != "bearer":
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid Authorization Header scheme. Expected 'Bearer <token>'.",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
-    
-    token = parts[1]
-    payload = auth_service.verify_access_token(token)
+    payload = auth_service.verify_access_token(raw_token)
     if not payload:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -179,23 +186,6 @@ def get_case_evidence(case_id: str, evidence_id: str, current_user: TokenPayload
         "media_type": "FORENSIC_RAW_IMAGE",
         "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
         "status": "PRESERVED"
-    }
-
-
-@router.get("/cases/{case_id}/reports/{report_id}")
-def get_case_report(case_id: str, report_id: str, current_user: TokenPayload = Depends(get_current_user)):
-    verify_authorization(
-        action="READ_REPORT",
-        resource_type="report",
-        resource_id=report_id,
-        target_case_id=case_id,
-        actor=current_user
-    )
-    return {
-        "report_id": report_id,
-        "case_id": case_id,
-        "report_type": "FORENSIC_LINKAGE_SUMMARY",
-        "status": "FINAL"
     }
 
 

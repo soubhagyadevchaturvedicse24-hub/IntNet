@@ -26,8 +26,9 @@ def main():
     parser.add_argument("--case-id", required=True, help="Case identifier")
     parser.add_argument("--evidence-id", required=True, help="Evidence identifier")
     parser.add_argument("--job-id", required=True, help="Processing job identifier")
-    parser.add_argument("--max-artifacts", type=int, default=25, help="Maximum representative files to extract")
-    parser.add_argument("--max-file-size", type=int, default=50 * 1024 * 1024, help="Maximum individual file size in bytes")
+    parser.add_argument("--max-artifacts", type=int, default=250, help="Maximum representative files to extract")
+    parser.add_argument("--max-file-size", type=int, default=100 * 1024 * 1024, help="Maximum individual file size in bytes")
+    parser.add_argument("--priority-targets", nargs="*", default=["autopsy.db"], help="Priority target filenames to extract first")
 
     args = parser.parse_args()
 
@@ -37,7 +38,8 @@ def main():
     try:
         engine = E01ForensicObservationEngine(
             max_artifacts=args.max_artifacts,
-            max_file_size=args.max_file_size
+            max_file_size=args.max_file_size,
+            priority_targets=args.priority_targets
         )
 
         contract_v1, observed_filesystem = engine.process(

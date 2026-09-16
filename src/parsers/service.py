@@ -92,24 +92,10 @@ class DeepParsingService:
         Authenticates caller, checks BOLA, safely resolves internal file path,
         and executes format parser. Caches results to prevent redundant expensive parses.
         """
-        # 1. Fetch artifact metadata and verify BOLA ownership
+        # 1. Fetch artifact metadata and verify BOLA & ID manipulation ownership
         artifact = self.artifact_service.get_artifact(actor=actor, case_id=case_id, artifact_id=artifact_id)
         if not artifact:
             raise KeyError(f"Artifact '{artifact_id}' not found under case '{case_id}'.")
-
-        if artifact.case_id != case_id:
-            raise PermissionError(
-                f"ID MANIPULATION DENIED: Artifact '{artifact_id}' belongs to case '{artifact.case_id}', not '{case_id}'."
-            )
-
-        # 2. Authorize parsing action
-        self._verify_auth(
-            actor=actor,
-            action="VIEW_ARTIFACT",  # Investigators with artifact view permission can inspect
-            resource_id=artifact_id,
-            target_case_id=case_id,
-            resource_owner_case_id=artifact.case_id,
-        )
 
         # 3. Check cache (idempotency check)
         if not force_reparse:
@@ -128,6 +114,8 @@ class DeepParsingService:
         artifact_dict = {
             "artifact_id": artifact.artifact_id,
             "case_id": artifact.case_id,
+            "evidence_id": artifact.evidence_id,
+            "job_id": artifact.processing_job_id,
             "filename": artifact.filename,
             "sha256": artifact.sha256,
             "category": artifact.category.value,
@@ -152,21 +140,9 @@ class DeepParsingService:
         """
         Retrieves existing parsed observations from repository after BOLA authorization.
         """
+        # 1. Fetch artifact and verify BOLA & ID manipulation ownership
         artifact = self.artifact_service.get_artifact(actor=actor, case_id=case_id, artifact_id=artifact_id)
         if not artifact:
             raise KeyError(f"Artifact '{artifact_id}' not found under case '{case_id}'.")
-
-        if artifact.case_id != case_id:
-            raise PermissionError(
-                f"ID MANIPULATION DENIED: Artifact '{artifact_id}' belongs to case '{artifact.case_id}', not '{case_id}'."
-            )
-
-        self._verify_auth(
-            actor=actor,
-            action="VIEW_ARTIFACT",
-            resource_id=artifact_id,
-            target_case_id=case_id,
-            resource_owner_case_id=artifact.case_id,
-        )
 
         return self.repository.get_by_id(artifact_id)

@@ -150,10 +150,8 @@ class CaseService:
             assigned_investigators=assigned
         )
 
-        # Update creator's authorized cases list in AuthService
-        user = self.auth_service.get_user_by_id(actor.sub)
-        if user and temp_id not in user.authorized_case_ids:
-            user.authorized_case_ids.append(temp_id)
+        # Update creator's authorized cases list in AuthService and persist
+        self.auth_service.authorize_user_for_case(actor.sub, temp_id)
 
         self.repository.save(case)
         return case
@@ -257,25 +255,63 @@ class CaseService:
             context=ctx
         )
 
-        # 1. Clean up file storage directories
+        # 1. Clean up file storage directories on disk
         import shutil
+        import sqlite3
         from pathlib import Path
-        ev_store = Path("DATA/evidence_store") / case_id
-        if ev_store.exists():
-            shutil.rmtree(ev_store, ignore_errors=True)
-        proc_out = Path("DATA/processing_output") / case_id
-        if proc_out.exists():
-            shutil.rmtree(proc_out, ignore_errors=True)
 
-        # 2. Delete from repository
+        for base_path in ["DATA/evidence_store", "DATA/processing_output", "DATA/staging"]:
+            p = Path(base_path) / case_id
+            if p.exists():
+                shutil.rmtree(p, ignore_errors=True)
+
+        # 2. Delete case metadata from repository
         deleted = self.repository.delete(case_id)
 
-        # 3. Update user's authorized cases list in AuthService
-        user = self.auth_service.get_user_by_id(actor.sub)
-        if user and case_id in user.authorized_case_ids:
-            user.authorized_case_ids.remove(case_id)
+        # 3. Clean up related database records in DATA/cases.db (artifacts, evidence, processing_jobs)
+        try:
+            cases_db = Path("DATA/cases.db")
+            if cases_db.exists():
+                with sqlite3.connect(str(cases_db)) as conn:
+                    conn.execute("DELETE FROM artifacts WHERE case_id = ?;", (case_id,))
+                    conn.execute("DELETE FROM evidence WHERE case_id = ?;", (case_id,))
+                    conn.execute("DELETE FROM processing_jobs WHERE case_id = ?;", (case_id,))
+                    conn.commit()
+        except Exception:
+            pass
 
-        # 4. Audit Log
+        # 4. Clean up parsed artifacts in DATA/parsed_artifacts.db
+        try:
+            parsed_db = Path("DATA/parsed_artifacts.db")
+            if parsed_db.exists():
+                with sqlite3.connect(str(parsed_db)) as conn:
+                    conn.execute("DELETE FROM parsed_artifacts WHERE case_id = ?;", (case_id,))
+                    conn.commit()
+        except Exception:
+            pass
+
+        # 5. Clean up PolicyEngine resource mappings for this case
+        purged_resources = [k for k, v in self.policy_engine.resource_case_map.items() if v == case_id]
+        for r in purged_resources:
+            self.policy_engine.resource_case_map.pop(r, None)
+        if hasattr(self.policy_engine, "db_path") and self.policy_engine.db_path and self.policy_engine.db_path != ":memory:":
+            try:
+                import sqlite3
+                conn = sqlite3.connect(self.policy_engine.db_path)
+                conn.execute("DELETE FROM resource_case_bindings WHERE case_id = ?", (case_id,))
+                conn.commit()
+                conn.close()
+            except Exception:
+                pass
+
+        # 6. Update all users' authorized cases list in AuthService and persist revocation
+        for user in getattr(self.auth_service, "_user_db", {}).values():
+            if hasattr(self.auth_service, "revoke_user_case"):
+                self.auth_service.revoke_user_case(user.user_id, case_id)
+            elif case_id in user.authorized_case_ids:
+                user.authorized_case_ids.remove(case_id)
+
+        # 7. Audit Log
         self.audit_service.record_event(
             actor_id=actor.sub,
             actor_role=actor.role.value,

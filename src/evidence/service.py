@@ -94,7 +94,7 @@ class EvidenceService:
         # Verify case status
         ctx = {"target_case_status": case.status.value}
 
-        temp_ev_id = f"EV-{time.strftime('%Y')}-{uuid.uuid4().hex[:4].upper()}"
+        temp_ev_id = f"EV-{time.strftime('%Y')}-{uuid.uuid4().hex[:12].upper()}"
 
         # Verify authorization
         self._verify_auth(
@@ -113,7 +113,7 @@ class EvidenceService:
             content=content
         )
 
-        contract_ref = f"EV-CONTRACT-{time.strftime('%Y')}-{uuid.uuid4().hex[:4].upper()}"
+        contract_ref = f"EV-CONTRACT-{time.strftime('%Y')}-{uuid.uuid4().hex[:12].upper()}"
         now = time.time()
 
         evidence = Evidence(
@@ -154,7 +154,7 @@ class EvidenceService:
 
         # Verify case status
         ctx = {"target_case_status": case.status.value}
-        temp_ev_id = f"EV-{time.strftime('%Y')}-{uuid.uuid4().hex[:4].upper()}"
+        temp_ev_id = f"EV-{time.strftime('%Y')}-{uuid.uuid4().hex[:12].upper()}"
 
         # Verify authorization
         self._verify_auth(
@@ -174,7 +174,7 @@ class EvidenceService:
 
         from pathlib import Path
         raw_filename = Path(local_path).name
-        contract_ref = f"EV-CONTRACT-{time.strftime('%Y')}-{uuid.uuid4().hex[:4].upper()}"
+        contract_ref = f"EV-CONTRACT-{time.strftime('%Y')}-{uuid.uuid4().hex[:12].upper()}"
         now = time.time()
 
         evidence = Evidence(
@@ -217,7 +217,7 @@ class EvidenceService:
             raise KeyError(f"Case '{case_id}' not found.")
 
         ctx = {"target_case_status": case.status.value}
-        temp_ev_id = f"EV-{time.strftime('%Y')}-{uuid.uuid4().hex[:4].upper()}"
+        temp_ev_id = f"EV-{time.strftime('%Y')}-{uuid.uuid4().hex[:12].upper()}"
 
         self._verify_auth(
             actor=actor,
@@ -263,6 +263,16 @@ class EvidenceService:
     def get_evidence(self, actor: TokenPayload, case_id: str, evidence_id: str) -> Optional[Evidence]:
         evidence = self.repository.get_by_id(evidence_id)
         if not evidence:
+            # Check if this evidence ID is registered to another case in policy_engine (to detect cross-case ID manipulation attempts)
+            owner_case = self.policy_engine.resource_case_map.get(evidence_id)
+            if owner_case and owner_case != case_id:
+                self._verify_auth(
+                    actor=actor,
+                    action="READ_EVIDENCE",
+                    resource_id=evidence_id,
+                    target_case_id=case_id,
+                    resource_owner_case_id=owner_case
+                )
             return None
 
         # Verify case binding

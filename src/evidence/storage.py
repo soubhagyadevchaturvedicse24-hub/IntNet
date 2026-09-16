@@ -102,6 +102,9 @@ class LocalFileStorage(EvidenceStorage):
         Path("Images").resolve(),
         Path("D:/Proto SIH/Images").resolve(),
         Path("DATA/test_images").resolve(),
+        Path("D:/Proto SIH/Test_Image3").resolve(),
+        Path("D:/Proto SIH/CRIMENET_DEMO_CASE").resolve(),
+        Path("D:/Proto SIH").resolve(),
     ]
 
     def link_local_evidence(

@@ -176,6 +176,10 @@ class ArtifactParser(abc.ABC):
         # 5. Format-specific execution with crash isolation
         try:
             structured_meta, observations = self._execute_parse(file_path, artifact_metadata)
+            if "evidence_id" in artifact_metadata and "evidence_id" not in structured_meta:
+                structured_meta["evidence_id"] = artifact_metadata["evidence_id"]
+            if "job_id" in artifact_metadata and "job_id" not in structured_meta:
+                structured_meta["job_id"] = artifact_metadata["job_id"]
             status = ParsingStatus.SUCCESS
             error_message = None
         except Exception as e:

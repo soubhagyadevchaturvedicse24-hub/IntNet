@@ -27,7 +27,7 @@ artifact_service = ArtifactService()
 @router.get("", response_model=List[ArtifactResponse])
 def list_case_artifacts(
     case_id: str,
-    category: Optional[ArtifactCategory] = Query(None, description="Filter by Layer 1 artifact category"),
+    category: Optional[str] = Query(None, description="Filter by Layer 1 artifact category or status (e.g. DELETED)"),
     mime_type: Optional[str] = Query(None, description="Filter by MIME type"),
     filename: Optional[str] = Query(None, description="Filter by filename (partial match)"),
     allocation_status: Optional[AllocationStatus] = Query(None, description="Filter by allocation status"),
@@ -133,13 +133,32 @@ def get_artifact_content(
     """
     try:
         path = artifact_service.get_artifact_content_path(actor=actor, case_id=case_id, artifact_id=artifact_id)
-        if not path.exists() or not path.is_file():
-            # Return placeholder byte stream if content file not physically stored
-            return Response(content=b"[CRIMENET SAFE STORAGE: ARTIFACT STREAM AVAILABLE]", media_type="text/plain")
-
         artifact = artifact_service.get_artifact(actor=actor, case_id=case_id, artifact_id=artifact_id)
-        media_type = artifact.mime_type if artifact else "application/octet-stream"
-        return FileResponse(path=str(path), media_type=media_type, filename=path.name)
+
+        # Accurately resolve media type
+        ext = path.suffix.lower()
+        if ext == ".pdf" or (artifact and artifact.category == ArtifactCategory.DOCUMENT and ext in [".pdf", ".docx"]):
+            media_type = "application/pdf"
+        elif ext in [".png", ".jpg", ".jpeg", ".webp", ".gif"] or (artifact and artifact.category == ArtifactCategory.IMAGE):
+            media_type = f"image/{ext.replace('.', '').replace('jpg', 'jpeg')}" if ext in [".png", ".jpg", ".jpeg", ".webp", ".gif"] else "image/png"
+        elif ext in [".txt", ".log", ".json", ".csv"]:
+            media_type = "text/plain; charset=utf-8"
+        elif artifact and artifact.mime_type and artifact.mime_type != "application/octet-stream":
+            media_type = artifact.mime_type
+        else:
+            media_type = "application/octet-stream"
+
+        if path.exists() and path.is_file():
+            filename = artifact.filename if artifact else path.name
+            return FileResponse(
+                path=str(path),
+                media_type=media_type,
+                filename=filename,
+                content_disposition_type="inline"
+            )
+
+        # Fallback if somehow file is missing
+        return Response(content=b"[CRIMENET SAFE STORAGE: ARTIFACT STREAM AVAILABLE]", media_type=media_type)
     except PermissionError as pe:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=str(pe))
     except KeyError as ke:

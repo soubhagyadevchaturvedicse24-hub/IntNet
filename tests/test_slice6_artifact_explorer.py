@@ -323,3 +323,57 @@ def test_slice6_original_evidence_sha256_remains_unchanged():
     assert v_data["expected_sha256"] == original_sha256
     assert v_data["calculated_sha256"] == original_sha256
     assert v_data["integrity_status"] == "INTACT"
+
+
+def test_deleted_file_classification_and_category_filtering():
+    """Validates that deleted files/artifacts are classified, filtered by category=DELETED, and content accessible."""
+    srv = ArtifactService()
+    cat, mime, ext, viewer = srv.classify_artifact("deleted_document.pdf", "DELETED_FILE")
+    assert cat == ArtifactCategory.DELETED_FILE
+    assert viewer == ViewerType.HEX
+
+    token = get_token("officer1")
+    headers = {"Authorization": f"Bearer {token}"}
+
+    # Save a test deleted artifact directly
+    deleted_art = Artifact(
+        artifact_id="ART-DEL-TEST-001",
+        case_id="CASE-2026-001",
+        evidence_id="EV-TEST-DEL",
+        processing_job_id="JOB-TEST-DEL",
+        filename="unallocated_confession.txt",
+        path_within_source="/lost+found/unallocated_confession.txt",
+        category=ArtifactCategory.DELETED_FILE,
+        mime_type="text/plain",
+        file_extension=".txt",
+        size_bytes=128,
+        allocation_status=AllocationStatus.DELETED,
+        recovery_status=RecoveryStatus.NONE,
+        provenance_chain=ProvenanceEnvelope(
+            case_id="CASE-2026-001",
+            evidence_id="EV-TEST-DEL",
+            processing_job_id="JOB-TEST-DEL",
+            engine_name="TEST_E01_ENGINE",
+            engine_version="1.0",
+            source_reference="EV-TEST-DEL",
+            observation_reference="LOST_FOUND"
+        )
+    )
+    srv.repository.save(deleted_art)
+
+    # Filter by category=DELETED
+    res_del_cat = client.get("/api/v1/cases/CASE-2026-001/artifacts?category=DELETED", headers=headers)
+    assert res_del_cat.status_code == 200
+    del_ids = [a["artifact_id"] for a in res_del_cat.json()]
+    assert "ART-DEL-TEST-001" in del_ids
+
+    # Filter by allocation_status=DELETED
+    res_del_alloc = client.get("/api/v1/cases/CASE-2026-001/artifacts?allocation_status=DELETED", headers=headers)
+    assert res_del_alloc.status_code == 200
+    alloc_ids = [a["artifact_id"] for a in res_del_alloc.json()]
+    assert "ART-DEL-TEST-001" in alloc_ids
+
+    # Secure content access for deleted artifact works smoothly
+    res_content = client.get("/api/v1/cases/CASE-2026-001/artifacts/ART-DEL-TEST-001/content", headers=headers)
+    assert res_content.status_code == 200
+    assert len(res_content.content) > 0

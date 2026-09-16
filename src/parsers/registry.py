@@ -18,6 +18,7 @@ from src.parsers.models import (
 from src.parsers.pdf_parser import PdfParser
 from src.parsers.image_parser import ImageParser
 from src.parsers.sqlite_parser import SqliteParser
+from src.parsers.autopsy_adapter import AutopsySqliteAdapter
 
 
 class UnsupportedParser(ArtifactParser):
@@ -66,6 +67,7 @@ class ParserRegistry:
             self._parsers = [
                 PdfParser(max_file_size_bytes=max_file_size_bytes),
                 ImageParser(max_file_size_bytes=max_file_size_bytes),
+                AutopsySqliteAdapter(max_file_size_bytes=max(max_file_size_bytes, 150 * 1024 * 1024)),
                 SqliteParser(max_file_size_bytes=max_file_size_bytes),
             ]
         self._fallback_parser = UnsupportedParser(max_file_size_bytes=max_file_size_bytes)

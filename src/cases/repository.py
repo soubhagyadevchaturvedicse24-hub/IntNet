@@ -143,7 +143,10 @@ class SQLiteCaseRepository(CaseRepository):
             cursor = self._conn.cursor()
             cursor.execute("DELETE FROM cases WHERE case_id = ?", (case_id,))
             affected = cursor.rowcount
-            cursor.execute("DELETE FROM evidence WHERE case_id = ?", (case_id,))
+            try:
+                cursor.execute("DELETE FROM evidence WHERE case_id = ?", (case_id,))
+            except sqlite3.OperationalError:
+                pass
             self._conn.commit()
             return affected > 0
 

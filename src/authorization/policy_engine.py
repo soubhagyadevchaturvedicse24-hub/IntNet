@@ -3,6 +3,9 @@ Centralized Policy Decision Point (PDP) and Policy Enforcement Engine for CRIMEN
 Enforces BOLA, BFLA, Role Capabilities, Judicial Court Scope, Resource Binding, and Closed Case Modification rules.
 """
 
+import sqlite3
+import time
+from pathlib import Path
 from typing import Optional, Dict, Any, List
 from pydantic import BaseModel
 
@@ -30,9 +33,10 @@ class AuthorizationDecision(BaseModel):
 
 
 class PolicyEngine:
-    def __init__(self, resource_case_map: Optional[Dict[str, str]] = None):
-        # Mock resource registry mapping resource_id -> true_case_id
-        self.resource_case_map = resource_case_map or {
+    def __init__(self, resource_case_map: Optional[Dict[str, str]] = None, db_path: str = "DATA/cases.db"):
+        self.db_path = db_path
+        # Seed default mappings
+        self.resource_case_map = {
             # Evidence
             "EV-2026-9001": "CASE-2026-001",
             "EV-2026-9002": "CASE-2026-001",
@@ -44,9 +48,107 @@ class PolicyEngine:
             "REP-2026-002": "CASE-2026-002",
             "REP-2026-003": "CASE-2026-003",
         }
+        if resource_case_map:
+            self.resource_case_map.update(resource_case_map)
 
-    def register_resource_case(self, resource_id: str, case_id: str):
+        self._init_db()
+        self._load_persisted_bindings()
+
+    def _init_db(self):
+        if not self.db_path or self.db_path == ":memory:":
+            return
+        try:
+            Path(self.db_path).parent.mkdir(parents=True, exist_ok=True)
+            conn = sqlite3.connect(self.db_path)
+            conn.execute("""
+                CREATE TABLE IF NOT EXISTS resource_case_bindings (
+                    resource_id TEXT PRIMARY KEY,
+                    case_id TEXT NOT NULL,
+                    resource_type TEXT NOT NULL,
+                    created_at REAL NOT NULL
+                );
+            """)
+            conn.commit()
+            conn.close()
+        except Exception:
+            pass
+
+    def _load_persisted_bindings(self):
+        if not self.db_path or self.db_path == ":memory:":
+            return
+        try:
+            conn = sqlite3.connect(self.db_path)
+            conn.row_factory = sqlite3.Row
+            cursor = conn.cursor()
+            cursor.execute("SELECT resource_id, case_id FROM resource_case_bindings")
+            for row in cursor.fetchall():
+                self.resource_case_map[row["resource_id"]] = row["case_id"]
+            conn.close()
+        except Exception:
+            pass
+
+    def get_resource_case(self, resource_id: str) -> Optional[str]:
+        if resource_id in self.resource_case_map:
+            return self.resource_case_map[resource_id]
+        if self.db_path and self.db_path != ":memory:":
+            try:
+                conn = sqlite3.connect(self.db_path)
+                cursor = conn.cursor()
+                cursor.execute("SELECT case_id FROM resource_case_bindings WHERE resource_id=?", (resource_id,))
+                row = cursor.fetchone()
+                conn.close()
+                if row:
+                    self.resource_case_map[resource_id] = row[0]
+                    return row[0]
+            except Exception:
+                pass
+        return None
+
+    def register_resource_case(self, resource_id: str, case_id: str, resource_type: str = "general"):
         self.resource_case_map[resource_id] = case_id
+        if self.db_path and self.db_path != ":memory:":
+            try:
+                Path(self.db_path).parent.mkdir(parents=True, exist_ok=True)
+                conn = sqlite3.connect(self.db_path)
+                conn.execute("""
+                    INSERT INTO resource_case_bindings (resource_id, case_id, resource_type, created_at)
+                    VALUES (?, ?, ?, ?)
+                    ON CONFLICT(resource_id) DO UPDATE SET
+                        case_id = excluded.case_id,
+                        resource_type = excluded.resource_type,
+                        created_at = excluded.created_at;
+                """, (resource_id, case_id, resource_type, time.time()))
+                conn.commit()
+                conn.close()
+            except Exception:
+                pass
+
+    def register_resources_batch(self, items: List[Any]):
+        """
+        High-performance bulk registration of resource-to-case bindings in a single transaction.
+        """
+        now = time.time()
+        for item in items:
+            res_id, cid = item[0], item[1]
+            self.resource_case_map[res_id] = cid
+
+        if self.db_path and self.db_path != ":memory:":
+            try:
+                Path(self.db_path).parent.mkdir(parents=True, exist_ok=True)
+                conn = sqlite3.connect(self.db_path)
+                params = [(item[0], item[1], item[2] if len(item) > 2 else "general", now) for item in items]
+                conn.executemany("""
+                    INSERT INTO resource_case_bindings (resource_id, case_id, resource_type, created_at)
+                    VALUES (?, ?, ?, ?)
+                    ON CONFLICT(resource_id) DO UPDATE SET
+                        case_id = excluded.case_id,
+                        resource_type = excluded.resource_type,
+                        created_at = excluded.created_at;
+                """, params)
+                conn.commit()
+                conn.close()
+            except Exception:
+                pass
 
     def evaluate(self, req: AuthorizationRequest, user_authorized_cases: List[str]) -> AuthorizationDecision:
         actor = req.actor
@@ -125,7 +227,7 @@ class PolicyEngine:
         # 2. Closed Case Modification Protection
         target_status = ctx.get("target_case_status")
         if target_status == "CLOSED":
-            if req.action != "REOPEN_CASE":
+            if req.action not in ["REOPEN_CASE", "DELETE_CASE"]:
                 return AuthorizationDecision(
                     allowed=False,
                     reason="CLOSED CASE DENY: Modifications to closed cases are prohibited unless reopened.",
@@ -148,6 +250,31 @@ class PolicyEngine:
 
         # 3. Resource ID Binding Validation (ID Manipulation Protection)
         owner_case_id = req.resource_owner_case_id or self.resource_case_map.get(req.resource_id)
+        if not owner_case_id and self.db_path and self.db_path != ":memory:":
+            try:
+                conn = sqlite3.connect(self.db_path)
+                conn.row_factory = sqlite3.Row
+                cursor = conn.cursor()
+                cursor.execute("SELECT case_id FROM resource_case_bindings WHERE resource_id = ?", (req.resource_id,))
+                row = cursor.fetchone()
+                if row:
+                    owner_case_id = row["case_id"]
+                    self.resource_case_map[req.resource_id] = owner_case_id
+                else:
+                    cursor.execute("SELECT case_id FROM evidence WHERE evidence_id = ?", (req.resource_id,))
+                    row_ev = cursor.fetchone()
+                    if row_ev:
+                        owner_case_id = row_ev["case_id"]
+                        self.resource_case_map[req.resource_id] = owner_case_id
+                    else:
+                        cursor.execute("SELECT case_id FROM artifacts WHERE artifact_id = ?", (req.resource_id,))
+                        row_art = cursor.fetchone()
+                        if row_art:
+                            owner_case_id = row_art["case_id"]
+                            self.resource_case_map[req.resource_id] = owner_case_id
+                conn.close()
+            except Exception:
+                pass
         if owner_case_id and owner_case_id != req.target_case_id:
             return AuthorizationDecision(
                 allowed=False,

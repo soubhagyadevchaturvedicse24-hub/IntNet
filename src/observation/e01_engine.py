@@ -43,9 +43,15 @@ class E01ForensicObservationEngine(ObservationEngine):
     representative file extraction, cryptographic provenance, and EvidenceContract_v1 output.
     """
 
-    def __init__(self, max_artifacts: int = 25, max_file_size: int = 50 * 1024 * 1024):
+    def __init__(
+        self,
+        max_artifacts: int = 250,
+        max_file_size: int = 100 * 1024 * 1024,
+        priority_targets: Optional[List[str]] = None,
+    ):
         self.max_artifacts = max_artifacts
-        self.max_file_size = max_file_size  # 50 MB default ceiling per artifact
+        self.max_file_size = max_file_size
+        self.priority_targets = [t.lower() for t in (priority_targets or ["autopsy.db"])]
 
     def get_engine_name(self) -> str:
         return "CRIMENET_E01_OBSERVATION_ENGINE"
@@ -254,13 +260,31 @@ class E01ForensicObservationEngine(ObservationEngine):
             extracted_relationships = []
 
             # Prioritize candidate files for extraction:
-            # 1) Non-empty files
-            # 2) Target document, image, or config extensions
-            priority_exts = {".png", ".jpg", ".jpeg", ".pdf", ".txt", ".docx", ".xlsx", ".csv", ".db", ".sqlite", ".log"}
-            candidates = [f for f in all_files if f["size"] > 0 and Path(f["name"]).suffix.lower() in priority_exts]
+            # 1) Targeted forensic database/container files (e.g. autopsy.db)
+            # 2) Standard document, image, audio, or forensic evidence extensions
+            priority_exts = {".png", ".jpg", ".jpeg", ".bmp", ".gif", ".webp", ".pdf", ".txt", ".docx", ".doc", ".xlsx", ".xls", ".csv", ".db", ".sqlite", ".log", ".eml", ".msg", ".bin", ".json", ".md"}
+            targeted_candidates = []
+            regular_candidates = []
+            for f in all_files:
+                if f["size"] <= 0 or f["size"] > self.max_file_size:
+                    continue
+                fpath_lower = f["path"].lower()
+                fname_lower = f["name"].lower()
+                # Skip Windows internal volume telemetry
+                if "system volume information" in fpath_lower or "$orphanfiles" in fpath_lower:
+                    continue
+                if any(pt in fname_lower or pt in fpath_lower for pt in self.priority_targets):
+                    targeted_candidates.append(f)
+                elif Path(f["name"]).suffix.lower() in priority_exts:
+                    regular_candidates.append(f)
+
+            candidates = targeted_candidates + regular_candidates
             if len(candidates) < self.max_artifacts:
-                # Fill remaining slots with other non-empty files
-                other_files = [f for f in all_files if f["size"] > 0 and f not in candidates]
+                other_files = [
+                    f for f in all_files
+                    if f["size"] > 0 and f["size"] <= self.max_file_size and f not in candidates
+                    and "system volume information" not in f["path"].lower()
+                ]
                 candidates.extend(other_files[:(self.max_artifacts - len(candidates))])
 
             extraction_targets = candidates[:self.max_artifacts]
@@ -293,14 +317,37 @@ class E01ForensicObservationEngine(ObservationEngine):
                     # Relative content path for Slice 6 storage resolution
                     rel_content_path = f"{case_id}/{job_id}/extracted_artifacts/{safe_filename}"
 
-                    art_id = f"ART-{case_id.replace('CASE-', '')}-{art_sha256[:8].upper()}"
+                    clean_job = re.sub(r'[^A-Za-z0-9_-]', '_', job_id)
+                    clean_case = re.sub(r'[^A-Za-z0-9_-]', '_', case_id).replace('CASE_', '')
+                    art_id = f"ART-{clean_case}-{clean_job}-{idx+1:03d}-{art_sha256[:12].upper()}"
                     alloc_status = "ALLOCATED" if target["allocated"] else "DELETED"
 
-                    # Infer artifact type
+                    # Infer artifact type with intelligent forensic tagging
                     ext = Path(target["name"]).suffix.lower()
-                    if ext in [".png", ".jpg", ".jpeg", ".bmp", ".gif", ".webp"]:
+                    fname_lower = target["name"].lower()
+                    fpath_lower = target["path"].lower()
+
+                    recovery_status = "NONE"
+                    if "carved" in fname_lower or "carved" in fpath_lower:
+                        recovery_status = "CARVED"
+                        alloc_status = "DELETED"
+                    elif "recovered" in fname_lower or "recovered" in fpath_lower:
+                        recovery_status = "RECOVERED"
+                        alloc_status = "DELETED"
+                    elif "deleted" in fname_lower or "deleted" in fpath_lower:
+                        alloc_status = "DELETED"
+
+                    if "cdr" in fname_lower or "cdr" in fpath_lower:
+                        art_type = "CDR"
+                    elif ext in [".eml", ".msg", ".mbox"] or "email" in fname_lower or "email" in fpath_lower:
+                        art_type = "EMAIL"
+                    elif recovery_status in ["CARVED", "RECOVERED"]:
+                        art_type = "RECOVERED_FILE"
+                    elif alloc_status == "DELETED":
+                        art_type = "DELETED_FILE"
+                    elif ext in [".png", ".jpg", ".jpeg", ".bmp", ".gif", ".webp"]:
                         art_type = "IMAGE"
-                    elif ext in [".pdf", ".docx", ".doc", ".txt", ".rtf"]:
+                    elif ext in [".pdf", ".docx", ".doc", ".txt", ".rtf", ".md"]:
                         art_type = "DOCUMENT"
                     elif ext in [".db", ".sqlite", ".sqlite3"]:
                         art_type = "DATABASE"
@@ -318,7 +365,7 @@ class E01ForensicObservationEngine(ObservationEngine):
                         "size_bytes": f_size,
                         "sha256": art_sha256,
                         "allocation_status": alloc_status,
-                        "recovery_status": "NONE",
+                        "recovery_status": recovery_status,
                         "provenance_trace": f"{image_path.name}:{target_path}",
                         "content_path": rel_content_path,
                         "created_at": datetime.fromtimestamp(target["crtime"], timezone.utc).isoformat() if target["crtime"] else None,
@@ -332,10 +379,17 @@ class E01ForensicObservationEngine(ObservationEngine):
                     # Never extract from E01 container headers!
                     if art_type in ["DOCUMENT", "LOG"]:
                         text_sample = content_bytes[:65536].decode("ascii", errors="ignore")
-                        phones = re.findall(r"\+?[1-9]\d{1,14}", text_sample)
+                        # High-confidence phone extraction: E.164 or formatted/national mobile numbers (10+ digits)
+                        # Rejects 2-digit to 9-digit false positives (ports, years, inodes, sizes)
+                        raw_candidates = re.findall(r"(?:\+?\d{1,3}[\-\s]?)?\(?\d{3}\)?[\-\s]?\d{3}[\-\s]?\d{4}|\+?[6-9]\d{9,11}", text_sample)
+                        valid_phones = []
+                        for cand in raw_candidates:
+                            clean_digits = re.sub(r"\D", "", cand)
+                            if 10 <= len(clean_digits) <= 15 and len(set(clean_digits)) > 2:
+                                valid_phones.append(cand.strip())
                         emails = re.findall(r"[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}", text_sample)
 
-                        for p_idx, phone in enumerate(list(set(phones))[:2]):
+                        for p_idx, phone in enumerate(list(set(valid_phones))[:2]):
                             ent_id = f"ENT-{art_sha256[:6].upper()}-P{p_idx+1}"
                             extracted_entities.append({
                                 "entity_id": ent_id,

@@ -24,6 +24,7 @@ from src.api.processing_routes import router as processing_router
 from src.api.graph_resolution_routes import router as graph_res_router
 from src.api.artifact_routes import router as artifact_router
 from src.api.parsing_routes import router as parsing_router
+from src.api.report_routes import router as report_router
 
 app = FastAPI(
     title="CRIMENET Investigator Graph Intelligence API",
@@ -48,6 +49,7 @@ app.include_router(processing_router)
 app.include_router(graph_res_router)
 app.include_router(artifact_router)
 app.include_router(parsing_router)
+app.include_router(report_router)
 
 class VerificationRequest(BaseModel):
     entity_id: str

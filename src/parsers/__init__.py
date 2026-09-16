@@ -15,6 +15,7 @@ from src.parsers.base import ArtifactParser
 from src.parsers.pdf_parser import PdfParser
 from src.parsers.image_parser import ImageParser
 from src.parsers.sqlite_parser import SqliteParser
+from src.parsers.autopsy_adapter import AutopsySqliteAdapter
 from src.parsers.registry import ParserRegistry
 from src.parsers.repository import SQLiteParsedArtifactRepository
 from src.parsers.service import DeepParsingService
@@ -30,6 +31,7 @@ __all__ = [
     "PdfParser",
     "ImageParser",
     "SqliteParser",
+    "AutopsySqliteAdapter",
     "ParserRegistry",
     "SQLiteParsedArtifactRepository",
     "DeepParsingService",

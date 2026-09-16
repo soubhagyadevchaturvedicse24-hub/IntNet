@@ -35,7 +35,17 @@ from src.parsers.service import DeepParsingService
 # Fixture directories
 DATA_DIR = Path("DATA")
 FIXTURES_DIR = DATA_DIR / "test_fixtures"
-REAL_EXTRACTED_DIR = DATA_DIR / "processing_output" / "CASE-2026-001" / "JOB-2026-752377" / "extracted_artifacts"
+
+
+def get_extracted_file(filename_suffix: str) -> Path:
+    """Finds an extracted artifact matching the suffix across processing_output directories."""
+    candidates = list(DATA_DIR.glob(f"**/extracted_artifacts/*{filename_suffix}"))
+    if candidates and candidates[0].exists():
+        return candidates[0]
+    fixture_candidate = FIXTURES_DIR / filename_suffix
+    if fixture_candidate.exists():
+        return fixture_candidate
+    raise FileNotFoundError(f"Could not find artifact matching suffix '{filename_suffix}' in DATA/")
 
 
 @pytest.fixture(scope="module")
@@ -106,7 +116,7 @@ def auth_tokens():
 
 def test_pdf_parser_valid(setup_test_files):
     """Test 1: PDF parser extracts pages, metadata, and bounded text from valid PDF."""
-    real_pdf = REAL_EXTRACTED_DIR / "ART_JOB-2026-752377_014_Crime_Linkage_Detector_Meeting_Minutes.pdf"
+    real_pdf = get_extracted_file("Meeting_Minutes.pdf")
     assert real_pdf.exists(), "Sample PDF missing"
 
     parser = PdfParser()
@@ -352,7 +362,7 @@ def test_bounded_reads_sqlite_rows(setup_test_files):
 
 def test_real_pdf_artifact_from_e01():
     """Test 15: Successfully parses real extracted PDF from Images_Set_1.E01 (Jeevan Setu.pdf)."""
-    real_pdf = REAL_EXTRACTED_DIR / "ART_JOB-2026-752377_018_Jeevan_Setu.pdf"
+    real_pdf = get_extracted_file("Jeevan_Setu.pdf")
     assert real_pdf.exists(), f"Real PDF missing at: {real_pdf}"
 
     parser = PdfParser(max_pages_extract=5)
@@ -374,7 +384,7 @@ def test_real_pdf_artifact_from_e01():
 
 def test_real_image_artifact_from_e01():
     """Test 16: Successfully parses real extracted PNG from Images_Set_1.E01 (Golden Temple Aarti Ceremony.png)."""
-    real_img = REAL_EXTRACTED_DIR / "ART_JOB-2026-752377_015_Golden_Temple_Aarti_Ceremony.png"
+    real_img = get_extracted_file("Golden_Temple_Aarti_Ceremony.png")
     assert real_img.exists(), f"Real Image missing at: {real_img}"
 
     parser = ImageParser()

@@ -22,6 +22,8 @@ class ArtifactCategory(str, Enum):
     FORENSIC_IMAGE = "FORENSIC_IMAGE"
     PARTITION_TABLE = "PARTITION_TABLE"
     RECOVERED_FILE = "RECOVERED_FILE"
+    DELETED_FILE = "DELETED_FILE"
+    DELETED = "DELETED"
     OTHER = "OTHER"
 
 
@@ -111,7 +113,7 @@ class ArtifactResponse(BaseModel):
 
 
 class ArtifactFilterParams(BaseModel):
-    category: Optional[ArtifactCategory] = None
+    category: Optional[str] = None
     mime_type: Optional[str] = None
     filename: Optional[str] = None
     allocation_status: Optional[AllocationStatus] = None

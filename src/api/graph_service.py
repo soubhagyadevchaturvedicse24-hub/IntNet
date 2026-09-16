@@ -215,43 +215,72 @@ class GraphIntelligenceService:
                 })
                 node_ids.add(nid)
                 
-        edges = []
+        raw_pair_map = {}
         rels = ["CALLED", "USED_PHONE", "USED_VEHICLE", "VISITED", "ASSOCIATED_WITH"]
-        edge_idx = 1
         for rel in rels:
             try:
                 res = conn.execute(f"MATCH (a)-[r:{rel}]->(b) RETURN a.id, b.id, r.evidence_id, r.confidence")
                 while res.has_next():
                     src, tgt, ev_id, conf = res.get_next()
-                    
-                    # Frequency & Recency dynamic assignments based on graph distance
-                    freq = 15 if src == "CAN-PER-0001" or tgt == "CAN-PER-0001" else 5
-                    days = 2.0 if src == "CAN-PER-0001" or tgt == "CAN-PER-0001" else 14.0
-                    sources = 3 if conf >= 0.90 else 1
-                    
-                    ccc = calculate_ccc_score(
-                        rel_type=rel,
-                        frequency=freq,
-                        days_elapsed=days,
-                        source_count=sources,
-                        er_confidence=conf,
-                        provenance_valid=True,
-                        evidence_ids=[ev_id]
-                    )
-                    
-                    edges.append({
-                        "id": f"EDGE-{edge_idx:04d}",
-                        "source": src,
-                        "target": tgt,
-                        "relationship_type": rel,
-                        "evidence_id": ev_id,
-                        "confidence": conf,
-                        "ccc_score": ccc["association_score"],
-                        "ccc_ring": ccc["concentric_ring"]
-                    })
-                    edge_idx += 1
+                    if src != tgt:
+                        pair_key = (src, tgt)
+                        if pair_key not in raw_pair_map:
+                            raw_pair_map[pair_key] = []
+                        raw_pair_map[pair_key].append({
+                            "rel": rel,
+                            "ev_id": ev_id,
+                            "conf": conf or 1.0
+                        })
             except Exception:
                 pass
+
+        edges = []
+        edge_idx = 1
+        for (src, tgt), items in raw_pair_map.items():
+            distinct_types = list(dict.fromkeys(it["rel"] for it in items))
+            total_count = len(items)
+            max_conf = max(it["conf"] for it in items)
+            ev_list = [it["ev_id"] for it in items if it.get("ev_id")]
+
+            freq = 15 if src == "CAN-PER-0001" or tgt == "CAN-PER-0001" else 5
+            days = 2.0 if src == "CAN-PER-0001" or tgt == "CAN-PER-0001" else 14.0
+            sources = 3 if max_conf >= 0.90 else 1
+
+            ccc = calculate_ccc_score(
+                rel_type=distinct_types[0],
+                frequency=freq,
+                days_elapsed=days,
+                source_count=sources,
+                er_confidence=max_conf,
+                provenance_valid=True,
+                evidence_ids=ev_list
+            )
+
+            rel_summary = f"{distinct_types[0]} ({total_count}x)" if total_count > 1 else distinct_types[0]
+
+            edges.append({
+                "id": f"EDGE-{edge_idx:04d}",
+                "source": src,
+                "target": tgt,
+                "relationship_type": distinct_types[0] if len(distinct_types) == 1 else "MULTI_LINK",
+                "relationship": rel_summary,
+                "interaction_count": total_count,
+                "is_consolidated": total_count > 1,
+                "distinct_types": distinct_types,
+                "evidence_id": ", ".join(list(dict.fromkeys(ev_list))),
+                "confidence": max_conf,
+                "ccc_score": ccc["association_score"],
+                "ccc_ring": ccc["concentric_ring"],
+                "priority_label": ccc["priority_label"],
+                "connections_breakdown": [
+                    {
+                        "relationship_type": it["rel"],
+                        "evidence_id": it["ev_id"],
+                        "confidence": it["conf"]
+                    } for it in items
+                ]
+            })
+            edge_idx += 1
                 
         return {
             "summary": {

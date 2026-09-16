@@ -93,6 +93,27 @@ class SQLiteArtifactRepository(ArtifactRepository):
     def _row_to_artifact(self, row: sqlite3.Row) -> Artifact:
         provenance_dict = json.loads(row["provenance_chain"])
         provenance = ProvenanceEnvelope(**provenance_dict)
+
+        try:
+            category = ArtifactCategory(row["category"])
+        except ValueError:
+            category = ArtifactCategory.OTHER
+
+        try:
+            alloc_status = AllocationStatus(row["allocation_status"])
+        except ValueError:
+            alloc_status = AllocationStatus.UNKNOWN
+
+        try:
+            rec_status = RecoveryStatus(row["recovery_status"])
+        except ValueError:
+            rec_status = RecoveryStatus.UNKNOWN
+
+        try:
+            rec_viewer = ViewerType(row["recommended_viewer"])
+        except ValueError:
+            rec_viewer = ViewerType.HEX
+
         return Artifact(
             artifact_id=row["artifact_id"],
             case_id=row["case_id"],
@@ -100,7 +121,7 @@ class SQLiteArtifactRepository(ArtifactRepository):
             processing_job_id=row["processing_job_id"],
             filename=row["filename"],
             path_within_source=row["path_within_source"],
-            category=ArtifactCategory(row["category"]),
+            category=category,
             mime_type=row["mime_type"],
             file_extension=row["file_extension"],
             size_bytes=row["size_bytes"],
@@ -108,16 +129,22 @@ class SQLiteArtifactRepository(ArtifactRepository):
             created_at_observed=row["created_at_observed"],
             modified_at_observed=row["modified_at_observed"],
             accessed_at_observed=row["accessed_at_observed"],
-            allocation_status=AllocationStatus(row["allocation_status"]),
-            recovery_status=RecoveryStatus(row["recovery_status"]),
+            allocation_status=alloc_status,
+            recovery_status=rec_status,
             observation_method=row["observation_method"],
-            recommended_viewer=ViewerType(row["recommended_viewer"]),
+            recommended_viewer=rec_viewer,
             provenance_chain=provenance,
             content_reference=row["content_reference"]
         )
 
     def save(self, artifact: Artifact) -> None:
         with self._get_connection() as conn:
+            existing = conn.execute("SELECT case_id FROM artifacts WHERE artifact_id = ?;", (artifact.artifact_id,)).fetchone()
+            if existing and existing["case_id"] != artifact.case_id:
+                raise ValueError(
+                    f"CROSS-CASE OVERWRITE BLOCKED: Artifact '{artifact.artifact_id}' belongs to case '{existing['case_id']}', cannot be saved under case '{artifact.case_id}'."
+                )
+
             conn.execute("""
                 INSERT INTO artifacts (
                     artifact_id, case_id, evidence_id, processing_job_id,
@@ -147,6 +174,7 @@ class SQLiteArtifactRepository(ArtifactRepository):
                     recommended_viewer=excluded.recommended_viewer,
                     provenance_chain=excluded.provenance_chain,
                     content_reference=excluded.content_reference
+                WHERE artifacts.case_id = excluded.case_id
             """, (
                 artifact.artifact_id,
                 artifact.case_id,
@@ -189,8 +217,14 @@ class SQLiteArtifactRepository(ArtifactRepository):
 
             if filters:
                 if filters.category:
-                    query += " AND category = ?"
-                    params.append(filters.category.value)
+                    cat_val = filters.category.value if hasattr(filters.category, "value") else str(filters.category)
+                    if cat_val.upper() in ["DELETED", "DELETED_FILE"]:
+                        query += " AND (allocation_status = 'DELETED' OR category IN ('DELETED', 'DELETED_FILE'))"
+                    elif cat_val.upper() in ["RECOVERED", "RECOVERED_FILE"]:
+                        query += " AND (recovery_status IN ('RECOVERED', 'CARVED', 'PARTIAL') OR category IN ('RECOVERED', 'RECOVERED_FILE'))"
+                    else:
+                        query += " AND category = ?"
+                        params.append(cat_val)
                 if filters.mime_type:
                     query += " AND mime_type = ?"
                     params.append(filters.mime_type)
@@ -238,7 +272,24 @@ class InMemoryArtifactRepository(ArtifactRepository):
         results = [a for a in self._artifacts.values() if a.case_id == case_id]
         if filters:
             if filters.category:
-                results = [a for a in results if a.category == filters.category]
+                cat_val = filters.category.value if hasattr(filters.category, "value") else str(filters.category)
+                if cat_val.upper() in ["DELETED", "DELETED_FILE"]:
+                    results = [
+                        a for a in results
+                        if a.allocation_status == AllocationStatus.DELETED
+                        or a.category in [ArtifactCategory.DELETED, ArtifactCategory.DELETED_FILE]
+                    ]
+                elif cat_val.upper() in ["RECOVERED", "RECOVERED_FILE"]:
+                    results = [
+                        a for a in results
+                        if a.recovery_status in [RecoveryStatus.RECOVERED, RecoveryStatus.CARVED, RecoveryStatus.PARTIAL]
+                        or a.category == ArtifactCategory.RECOVERED_FILE
+                    ]
+                else:
+                    results = [
+                        a for a in results
+                        if (a.category.value if hasattr(a.category, 'value') else str(a.category)) == cat_val
+                    ]
             if filters.mime_type:
                 results = [a for a in results if a.mime_type == filters.mime_type]
             if filters.filename:

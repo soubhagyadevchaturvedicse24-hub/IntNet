@@ -1368,8 +1368,446 @@
             padding: 2px 6px;
             font-size: 10px;
             font-family: 'JetBrains Mono', monospace;
-            margin-right: 4px;
-            margin-top: 4px;
+        /* ============================================================== */
+        /* JUDICIAL REPORTS & VERSIONED DOSSIER STYLES                   */
+        /* ============================================================== */
+        .report-tree-section {
+            margin-bottom: 12px;
+        }
+        .report-section-label {
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .report-tree-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 7px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            border: 1px solid transparent;
+            margin-bottom: 4px;
+            background: rgba(15, 23, 42, 0.5);
+            transition: all 0.15s ease;
+        }
+        .report-tree-item:hover {
+            background: rgba(0, 240, 255, 0.08);
+            border-color: rgba(56, 189, 248, 0.25);
+        }
+        .report-tree-item.active {
+            background: rgba(0, 240, 255, 0.14);
+            border-color: var(--accent-cyan);
+            box-shadow: 0 0 10px var(--accent-cyan-glow);
+        }
+        .report-item-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            overflow: hidden;
+        }
+        .report-item-title {
+            font-size: 11px;
+            font-weight: 600;
+            color: #f8fafc;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .report-item-sub {
+            font-size: 9.5px;
+            color: var(--text-muted);
+        }
+        .report-ver-badge {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 9px;
+            font-weight: 700;
+            padding: 1px 5px;
+            border-radius: 3px;
+            background: rgba(56, 189, 248, 0.2);
+            color: var(--accent-cyan);
+            border: 1px solid rgba(56, 189, 248, 0.3);
+        }
+        .report-current-badge {
+            font-size: 8.5px;
+            font-weight: 800;
+            padding: 1px 5px;
+            border-radius: 3px;
+            background: #0284c7;
+            color: #ffffff;
+            box-shadow: 0 0 6px rgba(2, 132, 199, 0.6);
+            letter-spacing: 0.5px;
+        }
+        .report-viewer-container {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            background: #040814;
+        }
+        .report-canvas-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 24px 32px;
+            display: flex;
+            justify-content: center;
+        }
+        .report-sheet {
+            width: 100%;
+            max-width: 980px;
+            background: #070e1f;
+            border: 1px solid rgba(56, 189, 248, 0.2);
+            border-radius: 8px;
+            padding: 32px 40px;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.7);
+            color: var(--text-primary);
+            transition: all 0.2s ease;
+        }
+        .report-sheet.court-light-theme {
+            background: #ffffff !important;
+            color: #0f172a !important;
+            border: 1px solid #cbd5e1 !important;
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.25) !important;
+        }
+        .report-sheet.court-light-theme .report-header-banner {
+            border-bottom: 2px solid #0f172a !important;
+        }
+        .report-sheet.court-light-theme .report-title-main {
+            color: #0f172a !important;
+        }
+        .report-sheet.court-light-theme .report-subtitle-main {
+            color: #64748b !important;
+        }
+        .report-sheet.court-light-theme .report-meta-grid {
+            background: #f8fafc !important;
+            border-color: #e2e8f0 !important;
+            color: #0f172a !important;
+        }
+        .report-sheet.court-light-theme .meta-label {
+            color: #64748b !important;
+        }
+        .report-sheet.court-light-theme .meta-value strong {
+            color: #0f172a !important;
+        }
+        .report-sheet.court-light-theme .section-title {
+            color: #0f172a !important;
+            border-color: #e2e8f0 !important;
+        }
+        .report-sheet.court-light-theme .summary-card {
+            background: #f8fafc !important;
+            border: 1px solid #e2e8f0 !important;
+            color: #1e293b !important;
+        }
+        .report-sheet.court-light-theme .summary-card p {
+            color: #334155 !important;
+        }
+        .report-sheet.court-light-theme .stat-pill {
+            background: #f1f5f9 !important;
+            color: #0f172a !important;
+            border: 1px solid #cbd5e1 !important;
+        }
+        .report-sheet.court-light-theme .report-table th {
+            background: #f1f5f9 !important;
+            color: #0f172a !important;
+            border-bottom: 2px solid #cbd5e1 !important;
+        }
+        .report-sheet.court-light-theme .report-table td {
+            color: #334155 !important;
+            border-bottom: 1px solid #e2e8f0 !important;
+        }
+        .report-sheet.court-light-theme .legal-draft-card {
+            background: #fffbeb !important;
+            border-color: #f59e0b !important;
+        }
+        .report-sheet.court-light-theme .legal-disclaimer {
+            background: rgba(245, 158, 11, 0.12) !important;
+            color: #92400e !important;
+        }
+        .report-sheet.court-light-theme .draft-lbl {
+            color: #475569 !important;
+        }
+        .report-sheet.court-light-theme .draft-val {
+            color: #0f172a !important;
+        }
+        .report-sheet.court-light-theme .report-crypto-seal {
+            border-top: 2px solid #0f172a !important;
+            color: #475569 !important;
+        }
+        .report-sheet.court-light-theme .report-box {
+            background: #f0fdf4 !important;
+            border-color: #0284c7 !important;
+            color: #0f172a !important;
+        }
+        .report-sheet.court-light-theme .report-box div {
+            color: #0f172a !important;
+        }
+        .report-header-banner {
+            border-bottom: 2px solid rgba(56, 189, 248, 0.3);
+            padding-bottom: 16px;
+            margin-bottom: 20px;
+        }
+        .report-header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .report-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .report-shield {
+            font-size: 32px;
+            filter: drop-shadow(0 0 8px rgba(0,240,255,0.4));
+        }
+        .report-title-main {
+            font-size: 19px;
+            font-weight: 800;
+            letter-spacing: -0.3px;
+            color: #ffffff;
+        }
+        .report-subtitle-main {
+            font-size: 11px;
+            color: var(--accent-cyan);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            margin-top: 2px;
+        }
+        .report-status-badge {
+            background: rgba(16, 185, 129, 0.2);
+            color: #34d399;
+            border: 1px solid rgba(16, 185, 129, 0.4);
+            padding: 2px 7px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 700;
+            margin-left: 6px;
+        }
+        .report-meta-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(56, 189, 248, 0.16);
+            border-radius: 6px;
+            padding: 14px;
+            margin-bottom: 20px;
+            font-size: 11.5px;
+        }
+        .meta-item {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        .meta-label {
+            font-size: 9.5px;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .meta-value {
+            color: var(--text-primary);
+        }
+        .meta-value.accent {
+            color: var(--accent-cyan);
+        }
+        .meta-value.hash {
+            font-size: 10.5px;
+            color: #38bdf8;
+        }
+        .report-section {
+            margin-bottom: 26px;
+        }
+        .section-title {
+            font-size: 14.5px;
+            font-weight: 700;
+            color: #ffffff;
+            border-bottom: 1px solid rgba(56, 189, 248, 0.2);
+            padding-bottom: 6px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .section-note {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+            font-style: italic;
+        }
+        .summary-card {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 6px;
+            padding: 14px;
+            font-size: 11.5px;
+        }
+        .stat-pill {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 3px 9px;
+            border-radius: 12px;
+            font-size: 11px;
+            color: var(--text-secondary);
+        }
+        .table-container {
+            overflow-x: auto;
+            border: 1px solid rgba(56, 189, 248, 0.16);
+            border-radius: 6px;
+            background: #040814;
+        }
+        .report-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 11px;
+            text-align: left;
+        }
+        .report-table th {
+            background: #0b152d;
+            color: #38bdf8;
+            padding: 8px 10px;
+            border-bottom: 1px solid rgba(56, 189, 248, 0.2);
+            font-weight: 600;
+            font-size: 10.5px;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+        }
+        .report-table td {
+            padding: 8px 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            color: #cbd5e1;
+        }
+        .report-table tr:hover {
+            background: rgba(0, 240, 255, 0.03);
+        }
+        .badge-cat, .badge-role {
+            background: rgba(56, 189, 248, 0.12);
+            color: #38bdf8;
+            border: 1px solid rgba(56, 189, 248, 0.25);
+            padding: 1px 6px;
+            border-radius: 3px;
+            font-size: 9.5px;
+            font-weight: 600;
+        }
+        .badge-status {
+            background: rgba(245, 158, 11, 0.15);
+            color: #fbbf24;
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            padding: 1px 6px;
+            border-radius: 3px;
+            font-size: 9.5px;
+            font-weight: 600;
+        }
+        .badge-ccc {
+            background: rgba(16, 185, 129, 0.15);
+            color: #34d399;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            padding: 1px 6px;
+            border-radius: 3px;
+            font-size: 10px;
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 700;
+        }
+        .legal-draft-card {
+            border: 1.5px dashed rgba(245, 158, 11, 0.6);
+            background: rgba(245, 158, 11, 0.05);
+            border-radius: 6px;
+            padding: 16px;
+            margin-top: 10px;
+        }
+        .legal-draft-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .badge-draft {
+            background: #d97706;
+            color: #ffffff;
+            font-size: 10px;
+            font-weight: 800;
+            padding: 2px 7px;
+            border-radius: 3px;
+            letter-spacing: 0.5px;
+        }
+        .legal-disclaimer {
+            font-size: 11px;
+            color: #fef08a;
+            margin-bottom: 12px;
+            padding: 8px 12px;
+            background: rgba(245, 158, 11, 0.12);
+            border-radius: 4px;
+            line-height: 1.5;
+            border-left: 3px solid #f59e0b;
+        }
+        .draft-row {
+            display: flex;
+            gap: 12px;
+            font-size: 11.5px;
+            margin-bottom: 6px;
+        }
+        .draft-lbl {
+            font-weight: 600;
+            color: var(--text-muted);
+            min-width: 170px;
+        }
+        .draft-val {
+            color: #f8fafc;
+        }
+        .signature-block {
+            margin-top: 24px;
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            padding-top: 16px;
+        }
+        .sig-line {
+            flex: 1;
+        }
+        .sig-field {
+            font-family: monospace;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+        .sig-desc {
+            font-size: 10px;
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+        .report-crypto-seal {
+            border-top: 2px solid rgba(56, 189, 248, 0.3);
+            padding-top: 14px;
+            margin-top: 30px;
+        }
+
+        @media print {
+            header, .activity-bar, .ide-panel-left, .ide-splitter, .ide-panel-right, .ide-panel-bottom, .artifact-viewer-header, .portal-header-tools {
+                display: none !important;
+            }
+            .ide-body, .ide-panels-row, .ide-panel-center, .view-pane.active, .report-viewer-container, .report-canvas-body {
+                display: block !important;
+                height: auto !important;
+                overflow: visible !important;
+                background: #ffffff !important;
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+            .report-sheet {
+                box-shadow: none !important;
+                border: none !important;
+                max-width: 100% !important;
+                background: #ffffff !important;
+                color: #0f172a !important;
+                padding: 0 !important;
+            }
         }
 
     </style>
@@ -1425,6 +1863,10 @@
             <div class="case-select-wrapper">
                 <span class="case-select-label">Case:</span>
                 <select id="case-selector" class="case-selector" onchange="onCaseSelectorChange(this.value)"></select>
+                <button id="btn-hdr-delete-case" class="btn-action" style="padding:2px 7px; color:#f87171; border-color:rgba(239,68,68,0.5); font-size:10.5px; background:rgba(239,68,68,0.12); display:flex; align-items:center; gap:4px; cursor:pointer;" onclick="deleteActiveCase()" title="Permanently delete active case and all its data">
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
+                    Delete Case
+                </button>
             </div>
 
             <!-- USER BADGE -->
@@ -1513,10 +1955,12 @@
 
                 <!-- SIDEBAR VIEW 1: EVIDENCE EXPLORER TREE (REFERENCE B) -->
                 <div class="sidebar-content-view" id="sidebar-view-explorer">
-                    <!-- Case Breadcrumb -->
-                    <div class="sidebar-breadcrumb">
-                        <span class="breadcrumb-case" id="sidebar-case-breadcrumb">CASE-2026-001</span>
-                        <span class="breadcrumb-sep">&gt;</span>
+                    <div class="sidebar-breadcrumb" style="display:flex; justify-content:space-between; align-items:center;">
+                        <div style="display:flex; align-items:center; gap:6px;">
+                            <span class="breadcrumb-case" id="sidebar-case-breadcrumb">CASE-2026-001</span>
+                            <span class="breadcrumb-sep">&gt;</span>
+                        </div>
+                        <button class="btn-action" style="padding:1px 6px; font-size:10px; color:#f87171; border-color:rgba(239,68,68,0.4); cursor:pointer;" onclick="deleteActiveCase()" title="Permanently delete active case">🗑️ Delete</button>
                     </div>
 
                     <div class="explorer-tree">
@@ -1601,6 +2045,19 @@
                                         <span>Logs</span>
                                     </div>
                                     <span class="tree-count-badge" id="tree-count-logs">0</span>
+                                </div>
+
+                                <!-- CATEGORY: DELETED FILES -->
+                                <div>
+                                    <div class="tree-node" id="tree-cat-deleted" onclick="toggleTreeBranch('items-deleted', this, 'DELETED')">
+                                        <div class="tree-node-left">
+                                            <svg class="tree-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
+                                            <span style="color:#f87171; font-weight:600;">Deleted Files</span>
+                                        </div>
+                                        <span class="tree-count-badge" id="tree-count-deleted">0</span>
+                                    </div>
+                                    <div class="tree-children collapsed" id="items-deleted"></div>
                                 </div>
 
                                 <!-- CATEGORY: RECOVERED -->
@@ -1707,6 +2164,28 @@
                             <button class="btn-action" onclick="switchFeature('network')">Open Crime Contact Network</button>
                             <button class="btn-action btn-green" onclick="openAddEvidenceModal()">+ Register E01 Image</button>
                         </div>
+                    </div>
+                </div>
+
+                <!-- SIDEBAR VIEW 4: JUDICIAL REPORTS & DOSSIERS (CLEAN WORKFLOW) -->
+                <div class="sidebar-content-view" id="sidebar-view-reports" style="padding:10px; gap:8px;">
+                    <!-- REPORT HEADER & GENERATE TRIGGER -->
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                        <div style="display:flex; align-items:center; gap:6px;">
+                            <span class="breadcrumb-case" id="report-sidebar-case-id">CASE-2026-001</span>
+                        </div>
+                        <button class="btn-primary" style="padding:3px 9px; font-size:10px; font-weight:700;" onclick="openGenerateReportModal()">+ Generate Report</button>
+                    </div>
+
+                    <!-- SEARCH & FILTER BAR -->
+                    <div class="sidebar-search-container" style="margin-bottom:8px;">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" x2="16.65" y1="21" y2="16.65"/></svg>
+                        <input type="text" class="sidebar-search-input" id="report-search-input" placeholder="Search reports..." oninput="onReportsSearch(this.value)">
+                    </div>
+
+                    <!-- REPORT LINEAGE LIST CONTAINER -->
+                    <div id="reports-tree-container" style="overflow-y:auto; flex:1; display:flex; flex-direction:column; gap:10px;">
+                        <!-- Dynamically populated by renderReportsSidebar() -->
                     </div>
                 </div>
             </div>
@@ -1929,6 +2408,8 @@
                             <button class="cat-btn btn-action" onclick="filterArtifactsByCategory('IMAGE', this)">IMAGE</button>
                             <button class="cat-btn btn-action" onclick="filterArtifactsByCategory('SPREADSHEET', this)">SPREADSHEET</button>
                             <button class="cat-btn btn-action" onclick="filterArtifactsByCategory('LOG', this)">LOG</button>
+                            <button class="cat-btn btn-action" onclick="filterArtifactsByCategory('DELETED', this)" style="border-color:rgba(239,68,68,0.4); color:#f87171; font-weight:600;">DELETED</button>
+                            <button class="cat-btn btn-action" onclick="filterArtifactsByCategory('RECOVERED', this)" style="border-color:rgba(0,240,255,0.4); color:#38bdf8;">RECOVERED</button>
                             <button class="cat-btn btn-action" onclick="filterArtifactsByCategory('OTHER', this)">OTHER</button>
                         </div>
                         <div style="display:flex; align-items:center; gap:8px;">
@@ -2077,6 +2558,62 @@
                                     </div>
                                 </div>
                             </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ---------------------------------------------------------- -->
+                <!-- VIEW 5: JUDICIAL REPORTS DOCUMENT CANVAS (CLEAN WORKFLOW)  -->
+                <!-- ---------------------------------------------------------- -->
+                <div id="view-reports" class="view-pane" style="overflow:hidden;">
+                    <div class="report-viewer-container">
+                        <!-- HEADER ACTION BAR -->
+                        <div class="artifact-viewer-header">
+                            <div class="artifact-header-left">
+                                <div class="artifact-file-icon" style="color:var(--accent-cyan); font-size:16px;">
+                                    ⚖️
+                                </div>
+                                <strong class="artifact-file-name" id="repview-title">Forensic Investigation Report</strong>
+                                <span class="artifact-breadcrumb-tag" id="repview-breadcrumbs">Reports &gt; Case Dossier</span>
+                                <span id="repview-version-badge" class="report-ver-badge" style="margin-left:4px;">v1.0</span>
+                                <span id="repview-status-badge" class="report-status-badge">SYSTEM_GENERATED</span>
+                            </div>
+                            <div class="artifact-header-right">
+                                <button class="btn-action" id="btn-rep-theme" onclick="toggleReportTheme()" style="display:flex; align-items:center; gap:4px;" title="Toggle formal court paper preview">
+                                    <span>🌓</span>
+                                    <span id="rep-theme-label">Court Paper Mode</span>
+                                </button>
+                                <button class="btn-action" onclick="copyActiveReportMarkdown()" style="display:flex; align-items:center; gap:4px;" title="Copy markdown to clipboard">
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+                                    Copy MD
+                                </button>
+                                <button class="btn-action" onclick="downloadActiveReport('markdown')" style="display:flex; align-items:center; gap:4px;" title="Download markdown report">
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
+                                    Download MD
+                                </button>
+                                <button class="btn-action" onclick="downloadActiveReport('html')" style="display:flex; align-items:center; gap:4px;" title="Download standalone HTML report">
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
+                                    Download HTML
+                                </button>
+                                <button class="btn-action btn-green" onclick="printActiveReport()" style="display:flex; align-items:center; gap:4px;" title="Print or export to PDF">
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect width="12" height="8" x="6" y="14"/></svg>
+                                    Print / PDF
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- MIDDLE DOCUMENT CANVAS BODY -->
+                        <div class="report-canvas-body" id="repview-canvas-body">
+                            <!-- Populated with report sheet or empty state -->
+                            <div id="repview-empty-state" style="display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:60px 20px; color:var(--text-muted);">
+                                <div style="font-size:36px; margin-bottom:12px;">📄</div>
+                                <strong style="font-size:14px; color:#ffffff;">No Forensic Report Selected</strong>
+                                <p style="font-size:11.5px; max-width:440px; margin-top:6px; line-height:1.5;">
+                                    Select an existing report from the left sidebar, or compile a new cryptographically sealed analytical dossier from live case evidence.
+                                </p>
+                                <button class="btn-primary" style="margin-top:16px; padding:6px 14px; font-weight:700;" onclick="openGenerateReportModal()">+ Generate New Report</button>
+                            </div>
+                            <div class="report-sheet" id="repview-sheet-container" style="display:none;"></div>
                         </div>
                     </div>
                 </div>
@@ -2562,6 +3099,57 @@
                     </tbody>
                 </table>
             </div>
+        </div>
+    <!-- ================================================================== -->
+    <!-- MODAL: GENERATE FORENSIC INVESTIGATION REPORT (CLEAN WORKFLOW)     -->
+    <!-- ================================================================== -->
+    <div id="modal-generate-report" class="modal-backdrop">
+        <div class="modal-card" style="width:580px;">
+            <div class="modal-title">
+                <span>Compile Forensic Investigation Report</span>
+                <span class="close-btn" onclick="closeModal('modal-generate-report')">&times;</span>
+            </div>
+            <p style="font-size:11px; color:var(--text-muted); margin-bottom:14px; line-height:1.4;">
+                Synthesizes live case metadata, extracted evidence artifacts, entity leads, and contact network vectors into a versioned, cryptographically sealed report.
+            </p>
+            <form onsubmit="handleGenerateReportSubmit(event)">
+                <div class="form-group">
+                    <label>Report Template</label>
+                    <select id="gen-rep-template" class="select-input">
+                        <option value="COMPREHENSIVE_DOSSIER" selected>Comprehensive Forensic Analytical Dossier</option>
+                        <option value="EXECUTIVE_BRIEF">Executive Analytical Intelligence Brief</option>
+                        <option value="SECTION_65B_DRAFT">Section 65B Electronic Evidence Review Draft</option>
+                        <option value="NETWORK_LINKAGE">Contact Network & Analytical Linkage Report</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Report Title (Optional)</label>
+                    <input type="text" id="gen-rep-title" class="input-text" placeholder="Auto-generated based on template and case name if blank">
+                </div>
+                <div class="form-group">
+                    <label>Scope & Evidence Inclusion</label>
+                    <div style="display:flex; flex-direction:column; gap:6px; margin-top:4px; font-size:11px;">
+                        <label style="display:flex; align-items:center; gap:6px; cursor:pointer;">
+                            <input type="checkbox" id="gen-rep-include-deleted" checked>
+                            <span>Include Recovered & Deleted Artifacts</span>
+                        </label>
+                        <label style="display:flex; align-items:center; gap:6px; cursor:pointer;">
+                            <input type="checkbox" id="gen-rep-include-unverified" checked>
+                            <span>Include Entity Leads Under Review</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Examiner Review Notes (Optional)</label>
+                    <textarea id="gen-rep-notes" class="input-text" rows="3" placeholder="Contextual observations or investigative focus areas..." style="resize:vertical;"></textarea>
+                </div>
+                <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:16px;">
+                    <button type="button" class="btn-action" onclick="closeModal('modal-generate-report')">Cancel</button>
+                    <button type="submit" class="btn-primary" id="btn-submit-generate-report">
+                        Compile & Seal Report
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 
@@ -3053,6 +3641,23 @@
             appendConsoleLog('AUTH', 'User logged out; terminating active session token', 'warn');
             currentToken = null;
             sessionStorage.removeItem('crimenet_token');
+
+            // Secure session cleanup: purge active case, visited cases, and in-memory caches
+            sessionStorage.removeItem('crimenet_active_case_id');
+            localStorage.removeItem('crimenet_active_case_id');
+            if (typeof RECENT_VISITED_STORAGE_KEY !== 'undefined') {
+                localStorage.removeItem(RECENT_VISITED_STORAGE_KEY);
+            }
+            activeCaseId = null;
+            isDemoMode = false;
+            currentCases = [];
+            currentNetworkData = null;
+            if (typeof allEvidence !== 'undefined') allEvidence = [];
+            if (typeof allArtifacts !== 'undefined') allArtifacts = [];
+
+            const sel = document.getElementById('global-case-selector');
+            if (sel) sel.innerHTML = '';
+
             document.getElementById('login-overlay').style.display = 'flex';
         }
 
@@ -3753,7 +4358,23 @@ This will remove the case entity and all associated data.`);
                     });
                 } catch (_) {}
 
-                setCreationProgress(100, "Registration Complete!", "Forensic image linked and chain of custody sealed.");
+                // Auto-trigger forensic processing pipeline so artifacts appear immediately
+                try {
+                    fetch(`/api/v1/cases/${createdCaseId}/evidence/${evData.evidence_id}/process`, {
+                        method: 'POST',
+                        headers: { 'Authorization': 'Bearer ' + currentToken }
+                    }).then(async (res) => {
+                        if (res.ok) {
+                            const pdata = await res.json();
+                            if (pdata && pdata.job_id) {
+                                pollProcessingJob(pdata.job_id);
+                            }
+                        }
+                        appendConsoleLog('PROCESSING', `Auto-launched observation worker for ${evData.evidence_id}`, 'info');
+                    });
+                } catch (_) {}
+
+                setCreationProgress(100, "Registration Complete!", "Forensic image linked and processing launched.");
                 await new Promise(r => setTimeout(r, 400));
 
                 statusArea.innerHTML = `
@@ -3765,7 +4386,7 @@ This will remove the case entity and all associated data.`);
                     </div>
                     <div style="font-size:11.5px; color:var(--text-secondary); margin-bottom:16px;">
                         Case ID: <strong class="mono" style="color:var(--accent-cyan);">${createdCaseId}</strong> &bull; Evidence: <strong class="mono" style="color:#38bdf8;">${evData.evidence_id}</strong>
-                        <br><span style="color:#cbd5e1; font-size:11px;">Forensic observation engine is in standby. You can process E01 on demand in the workspace.</span>
+                        <br><span style="color:#6ee7b7; font-size:11px;">Forensic observation engine has auto-started artifact extraction. Artifacts will populate immediately.</span>
                     </div>
                     <button class="btn-primary" style="padding:8px 24px; font-size:12px;" onclick="closeModal('modal-new-case-flow'); openCaseFromPortal('${createdCaseId}')">
                         Enter Case Workspace &rarr;
@@ -3905,6 +4526,7 @@ This will remove the case entity and all associated data.`);
         }
 
         async function openCaseFromPortal(caseId) {
+            isDemoMode = false;
             activeCaseId = caseId;
             sessionStorage.setItem('crimenet_active_case_id', caseId);
             localStorage.setItem('crimenet_active_case_id', caseId);
@@ -3921,6 +4543,28 @@ This will remove the case entity and all associated data.`);
                 loadArtifacts(),
                 loadCytoscapeGraph()
             ]);
+
+            // Check if there is an active running/queued processing job for this case
+            try {
+                const resEv = await fetch(`/api/v1/cases/${caseId}/evidence`, {
+                    headers: { 'Authorization': 'Bearer ' + currentToken }
+                });
+                if (resEv.ok) {
+                    const evList = await resEv.json();
+                    for (const ev of evList) {
+                        const rj = await fetch(`/api/v1/cases/${caseId}/evidence/${ev.evidence_id}/jobs`, {
+                            headers: { 'Authorization': 'Bearer ' + currentToken }
+                        });
+                        if (rj.ok) {
+                            const jList = await rj.json();
+                            const activeJob = jList.find(j => j.status === 'RUNNING' || j.status === 'QUEUED');
+                            if (activeJob) {
+                                pollProcessingJob(activeJob.job_id);
+                            }
+                        }
+                    }
+                }
+            } catch (_) {}
         }
 
         async function initWorkspace() {
@@ -4019,6 +4663,8 @@ This will remove the case entity and all associated data.`);
                         cy.fit();
                         syncSvgTransform();
                     }, 120);
+                } else {
+                    loadCytoscapeGraph();
                 }
             } else if (feature === 'cases') {
                 if (sidebarTitle) sidebarTitle.innerText = 'Forensic Case Explorer';
@@ -4029,12 +4675,17 @@ This will remove the case entity and all associated data.`);
                 document.querySelectorAll('.view-pane').forEach(p => p.classList.remove('active'));
                 document.getElementById('view-cases').classList.add('active');
             } else if (feature === 'reports') {
-                if (sidebarTitle) sidebarTitle.innerText = 'Judicial Reports';
-                const casesView = document.getElementById('sidebar-view-cases');
-                if (casesView) casesView.classList.add('active');
+                if (sidebarTitle) sidebarTitle.innerText = 'Judicial Reports & Dossiers';
+                const repSidebar = document.getElementById('sidebar-view-reports');
+                if (repSidebar) repSidebar.classList.add('active');
                 document.querySelectorAll('.view-pane').forEach(p => p.classList.remove('active'));
-                document.getElementById('view-cases').classList.add('active');
-                appendConsoleLog('REPORTS', 'Navigated to Judicial Reports context', 'info');
+                document.getElementById('view-reports').classList.add('active');
+
+                const caseBreadcrumb = document.getElementById('report-sidebar-case-id');
+                if (caseBreadcrumb) caseBreadcrumb.innerText = activeCaseId;
+
+                loadCaseReports();
+                appendConsoleLog('REPORTS', `Navigated to Reports context for ${activeCaseId}`, 'info');
             } else if (feature === 'audit') {
                 if (sidebarTitle) sidebarTitle.innerText = 'Cryptographic Audit';
                 const p = document.getElementById('panel-console');
@@ -4088,6 +4739,10 @@ This will remove the case entity and all associated data.`);
                 // 3. First recently visited case in currentCases
                 // 4. First case in currentCases
                 const storedActiveId = sessionStorage.getItem('crimenet_active_case_id') || localStorage.getItem('crimenet_active_case_id');
+                if (storedActiveId && !currentCases.some(c => c.case_id === storedActiveId)) {
+                    sessionStorage.removeItem('crimenet_active_case_id');
+                    localStorage.removeItem('crimenet_active_case_id');
+                }
                 const visitedIds = getRecentlyVisitedCaseIds();
 
                 let active = null;
@@ -4131,6 +4786,7 @@ This will remove the case entity and all associated data.`);
 
         async function onCaseSelectorChange(caseId) {
             if (!caseId) return;
+            isDemoMode = false;
             activeCaseId = caseId;
             sessionStorage.setItem('crimenet_active_case_id', caseId);
             localStorage.setItem('crimenet_active_case_id', caseId);
@@ -4146,6 +4802,10 @@ This will remove the case entity and all associated data.`);
             // If selected from portal, seamlessly switch into workspace
             if (activeFeature === 'home') {
                 switchFeature('cases');
+            }
+
+            if (activeFeature === 'reports') {
+                loadCaseReports();
             }
 
             await Promise.all([
@@ -4172,6 +4832,8 @@ This will remove the case entity and all associated data.`);
             if (sStat) sStat.innerText = `Status: ${c.status}`;
             const netCase = document.getElementById('net-case-id');
             if (netCase) netCase.innerText = c.case_id;
+            const rCase = document.getElementById('report-sidebar-case-id');
+            if (rCase) rCase.innerText = c.case_id;
         }
 
         // =====================================================================
@@ -4338,6 +5000,7 @@ This will remove the case entity and all associated data.`);
                             appendConsoleLog('OBSERVATION', `Observation complete: ${srcEv.total_directories_discovered} dirs, ${srcEv.total_files_discovered} files, ${artCount} contract artifacts.`, 'success');
                         }
                         await loadArtifacts();
+                        await loadCytoscapeGraph();
                     } else if (job.status === 'FAILED') {
                         clearInterval(interval);
                         document.getElementById('job-badge').className = 'status-pill pill-failed';
@@ -4386,15 +5049,28 @@ This will remove the case entity and all associated data.`);
                 EMAIL: 0,
                 CDR: 0,
                 LOG: 0,
+                DELETED: 0,
                 RECOVERED: 0,
                 OTHER: 0
             };
 
             const docItems = [];
             const imgItems = [];
+            const delItems = [];
 
             artifacts.forEach(a => {
                 const cat = (a.category || 'OTHER').toUpperCase();
+                const isDel = (a.allocation_status === 'DELETED' || cat === 'DELETED' || cat === 'DELETED_FILE');
+
+                if (isDel) {
+                    counts['DELETED']++;
+                    delItems.push(a);
+                }
+
+                if (cat === 'RECOVERED_FILE' || a.recovery_status === 'RECOVERED' || a.recovery_status === 'CARVED') {
+                    counts['RECOVERED']++;
+                }
+
                 if (counts[cat] !== undefined) counts[cat]++;
                 else counts['OTHER']++;
 
@@ -4403,8 +5079,22 @@ This will remove the case entity and all associated data.`);
             });
 
             // Update compact badges
+            const badgeMap = {
+                DOCUMENT: 'tree-count-documents',
+                IMAGE: 'tree-count-images',
+                DATABASE: 'tree-count-databases',
+                SPREADSHEET: 'tree-count-spreadsheets',
+                EMAIL: 'tree-count-emails',
+                CDR: 'tree-count-cdr',
+                LOG: 'tree-count-logs',
+                DELETED: 'tree-count-deleted',
+                RECOVERED: 'tree-count-recovered',
+                OTHER: 'tree-count-other'
+            };
+
             for (const [k, v] of Object.entries(counts)) {
-                const badge = document.getElementById(`tree-count-${k.toLowerCase()}`);
+                const badgeId = badgeMap[k] || `tree-count-${k.toLowerCase()}`;
+                const badge = document.getElementById(badgeId);
                 if (badge) {
                     badge.innerText = v;
                     badge.className = v > 0 ? 'tree-count-badge has-items' : 'tree-count-badge';
@@ -4461,6 +5151,28 @@ This will remove the case entity and all associated data.`);
                 imgContainer.innerHTML = '';
                 imgContainer.appendChild(fragment);
             }
+
+            // Populate nested subtrees for Deleted Files using DocumentFragment
+            const delContainer = document.getElementById('items-deleted');
+            if (delContainer) {
+                const fragment = document.createDocumentFragment();
+                delItems.forEach(del => {
+                    const item = document.createElement('div');
+                    item.className = 'tree-sub-item';
+                    item.id = `tree-item-${del.artifact_id}`;
+                    item.innerHTML = `
+                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#f87171" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
+                        <span style="color:#fca5a5;">${del.filename}</span>
+                    `;
+                    item.onclick = (e) => {
+                        e.stopPropagation();
+                        selectArtifactItem(del, item);
+                    };
+                    fragment.appendChild(item);
+                });
+                delContainer.innerHTML = '';
+                delContainer.appendChild(fragment);
+            }
         }
 
         function toggleTreeBranch(branchId, triggerNode, category = null) {
@@ -4485,9 +5197,14 @@ This will remove the case entity and all associated data.`);
             appendConsoleLog('EXPLORER', `Filtered category: [${category || 'ALL'}]`, 'info');
         }
 
-        function filterArtifactsByCategory(cat, btnEl) {
+        function filterArtifactsByCategory(cat, btnEl = null) {
             activeFilterCategory = cat;
-            document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.cat-btn').forEach(b => {
+                b.classList.remove('active');
+                if (!btnEl && ((!cat && b.innerText === 'ALL') || (cat && b.innerText === cat))) {
+                    b.classList.add('active');
+                }
+            });
             if (btnEl) btnEl.classList.add('active');
 
             // Switch center to table view when specifically filtering categories
@@ -4526,14 +5243,22 @@ This will remove the case entity and all associated data.`);
                 return;
             }
 
-            tbody.innerHTML = list.map(a => `
+            tbody.innerHTML = list.map(a => {
+                const isDel = a.allocation_status === 'DELETED' || a.category === 'DELETED' || a.category === 'DELETED_FILE';
+                const statusPill = isDel 
+                    ? `<span class="status-pill" style="background:rgba(239,68,68,0.15); color:#f87171; border:1px solid rgba(239,68,68,0.3); font-weight:600;">DELETED</span>`
+                    : `<span class="status-pill pill-completed">${a.category}</span>`;
+                const allocText = a.allocation_status === 'DELETED'
+                    ? `<span style="color:#f87171; font-weight:600;">DELETED</span>`
+                    : a.allocation_status;
+                return `
                 <tr>
                     <td class="mono" style="color:var(--accent-cyan); font-weight:600;">${a.artifact_id}</td>
                     <td><strong>${a.filename}</strong></td>
-                    <td><span class="status-pill pill-completed">${a.category}</span></td>
+                    <td>${statusPill}</td>
                     <td class="mono">${a.mime_type || '--'}</td>
                     <td class="mono">${(a.size_bytes / 1024).toFixed(1)} KB</td>
-                    <td>${a.allocation_status}</td>
+                    <td>${allocText}</td>
                     <td>${a.recovery_status}</td>
                     <td class="mono" title="${a.sha256}">${(a.sha256 || '').substring(0, 14)}...</td>
                     <td>
@@ -4541,7 +5266,7 @@ This will remove the case entity and all associated data.`);
                         <button class="btn-action btn-green" onclick="openArtifactContentDirect('${a.artifact_id}')">View</button>
                     </td>
                 </tr>
-            `).join('');
+            `}).join('');
         }
 
         // =====================================================================
@@ -4582,15 +5307,23 @@ This will remove the case entity and all associated data.`);
             document.querySelectorAll('.view-pane').forEach(p => p.classList.remove('active'));
             document.getElementById('view-artifact-viewer').classList.add('active');
 
+            const isDel = artifact.allocation_status === 'DELETED' || artifact.category === 'DELETED' || artifact.category === 'DELETED_FILE';
+
             // Populate viewer header bar (Reference B)
             document.getElementById('viewer-filename').innerText = artifact.filename;
-            document.getElementById('viewer-category-badge').innerText = artifact.category;
-            const breadcrumbText = `Evidence > ${artifact.category ? artifact.category.charAt(0) + artifact.category.slice(1).toLowerCase() + 's' : 'Artifacts'} > ${artifact.filename}`;
+            if (isDel) {
+                document.getElementById('viewer-category-badge').innerHTML = `${artifact.category} <span style="background:rgba(239,68,68,0.2); color:#f87171; padding:1px 5px; border-radius:3px; font-size:9px; margin-left:4px; font-weight:700;">DELETED</span>`;
+            } else {
+                document.getElementById('viewer-category-badge').innerText = artifact.category;
+            }
+            const breadcrumbText = `Evidence > ${isDel ? 'Deleted Files' : (artifact.category ? artifact.category.charAt(0) + artifact.category.slice(1).toLowerCase() + 's' : 'Artifacts')} > ${artifact.filename}`;
             document.getElementById('viewer-breadcrumb').innerText = breadcrumbText;
 
             // Set file type icon
             const iconContainer = document.getElementById('viewer-type-icon');
-            if (artifact.category === 'DOCUMENT') {
+            if (isDel) {
+                iconContainer.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>`;
+            } else if (artifact.category === 'DOCUMENT') {
                 iconContainer.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>`;
             } else if (artifact.category === 'IMAGE') {
                 iconContainer.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2"><rect width="18" height="18" x="3" y="3" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>`;
@@ -4653,7 +5386,7 @@ This will remove the case entity and all associated data.`);
             body.innerHTML = '<span style="color:var(--text-muted);">Streaming forensic binary content...</span>';
 
             try {
-                const res = await fetch(`/api/v1/cases/${activeCaseId}/artifacts/${artifactId}/content`, {
+                const res = await fetch(`/api/v1/cases/${activeCaseId}/artifacts/${artifactId}/content?token=${currentToken}`, {
                     headers: { 'Authorization': 'Bearer ' + currentToken }
                 });
                 if (!res.ok) {
@@ -4661,25 +5394,41 @@ This will remove the case entity and all associated data.`);
                     return;
                 }
                 const blob = await res.blob();
-                const mime = res.headers.get('content-type') || mimeType || blob.type;
+                let mime = res.headers.get('content-type') || mimeType || blob.type || '';
+                const artifact = activeSelectedArtifact;
+                const fn = (artifact && artifact.filename ? artifact.filename : '').toLowerCase();
+
+                // Robust format detection for docs & photos
+                const isPdf = mime.includes('pdf') || fn.endsWith('.pdf') || (artifact && artifact.category === 'DOCUMENT' && fn.includes('pdf'));
+                const isImage = mime.includes('image') || /\.(png|jpe?g|gif|webp|bmp|svg)$/i.test(fn) || (artifact && artifact.category === 'IMAGE');
+
                 const objectUrl = URL.createObjectURL(blob);
 
                 // Render in center canvas
-                if (mime.includes('pdf')) {
-                    body.innerHTML = `<iframe src="${objectUrl}" style="width:100%; height:100%; min-height:450px; border:none; border-radius:6px; background:#fff;"></iframe>`;
-                } else if (mime.includes('image')) {
-                    body.innerHTML = `<img src="${objectUrl}" style="max-width:100%; max-height:450px; border-radius:6px; box-shadow:0 4px 20px rgba(0,0,0,0.6);">`;
-                } else if (mime.includes('text') || mime.includes('json') || mime.includes('csv')) {
+                if (isPdf) {
+                    body.innerHTML = `<iframe src="${objectUrl}#toolbar=1" style="width:100%; height:100%; min-height:550px; border:none; border-radius:6px; background:#fff;"></iframe>`;
+                } else if (isImage) {
+                    body.innerHTML = `
+                        <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; padding:16px; width:100%; height:100%; min-height:480px;">
+                            <img src="${objectUrl}" style="max-width:96%; max-height:500px; object-fit:contain; border-radius:6px; box-shadow:0 8px 30px rgba(0,0,0,0.8); border:1px solid rgba(56,189,248,0.3);">
+                            <div style="margin-top:12px; font-size:11.5px; color:var(--text-secondary); font-weight:500;">
+                                <span style="color:#38bdf8;">${artifact ? artifact.filename : ''}</span> 
+                                <span style="color:var(--text-muted); margin:0 6px;">|</span>
+                                <span>${(blob.size / 1024).toFixed(1)} KB</span>
+                            </div>
+                        </div>
+                    `;
+                } else if (mime.includes('text') || mime.includes('json') || mime.includes('csv') || fn.endsWith('.txt') || fn.endsWith('.log') || fn.endsWith('.json') || fn.endsWith('.csv')) {
                     const text = await blob.text();
-                    body.innerHTML = `<pre style="width:100%; max-height:450px; overflow:auto; background:#070e1f; padding:12px; border-radius:6px; font-family:'JetBrains Mono'; font-size:11px; color:#e2e8f0; white-space:pre-wrap;">${text}</pre>`;
+                    body.innerHTML = `<pre style="width:100%; max-height:500px; overflow:auto; background:#070e1f; padding:14px; border-radius:6px; font-family:'JetBrains Mono'; font-size:11px; color:#e2e8f0; white-space:pre-wrap;">${text}</pre>`;
                 } else {
                     body.innerHTML = `
                         <div style="text-align:center; padding:30px; font-size:12px; color:var(--text-secondary);">
                             <div style="font-size:28px; margin-bottom:8px;">🔒</div>
-                            <strong style="color:#fff;">Raw Forensic Binary Artifact</strong><br>
-                            Preserved intact in immutable forensic evidence store.<br>
+                            <strong style="color:#fff;">Raw Forensic Binary Artifact: ${artifact ? artifact.filename : ''}</strong><br>
+                            Preserved intact in immutable forensic evidence store (${(blob.size / 1024).toFixed(1)} KB).<br>
                             <div style="margin-top:12px;">
-                                <a href="${objectUrl}" download="${artifactId}.bin" class="btn-primary" style="text-decoration:none;">Download Binary Stream</a>
+                                <a href="${objectUrl}" download="${artifact ? artifact.filename : artifactId + '.bin'}" class="btn-primary" style="text-decoration:none; padding:6px 14px; border-radius:4px; display:inline-block;">Download Binary Stream</a>
                             </div>
                         </div>
                     `;
@@ -4690,7 +5439,7 @@ This will remove the case entity and all associated data.`);
                 document.getElementById('art-tab-hex-body').innerText = generateHexDump(buffer);
 
             } catch (err) {
-                body.innerHTML = '<span style="color:var(--layer-red);">Error fetching artifact content stream.</span>';
+                body.innerHTML = `<span style="color:var(--layer-red);">Error fetching artifact content stream: ${err}</span>`;
             }
         }
 
@@ -5162,7 +5911,7 @@ This will remove the case entity and all associated data.`);
                 });
             });
 
-            // Add Edges with distinct prominence for connections to anchor
+            // Add Single Consolidated Edges with dynamic prominence based on interaction volume
             (graphData.edges || []).forEach(e => {
                 const isDirect = (e.source === anchorId || e.target === anchorId);
                 const srcNode = elements.find(el => el.data.id === e.source);
@@ -5170,19 +5919,20 @@ This will remove the case entity and all associated data.`);
                 const srcLayer = srcNode ? srcNode.data.layer : 3;
                 const tgtLayer = tgtNode ? tgtNode.data.layer : 3;
                 const maxLayer = Math.max(srcLayer, tgtLayer);
+                const intCount = e.interaction_count || 1;
 
                 let edgeColor = '#10b981';
-                let edgeWidth = 1.4;
-                let edgeOpacity = 0.55;
+                let edgeWidth = Math.min(4.5, 1.5 + Math.log2(intCount) * 0.7);
+                let edgeOpacity = 0.65;
 
                 if (isDirect || maxLayer <= 1) {
                     edgeColor = '#ef4444';
-                    edgeWidth = 2.5;
-                    edgeOpacity = 0.85;
+                    edgeWidth = Math.min(5.5, 2.2 + Math.log2(intCount) * 0.8);
+                    edgeOpacity = 0.88;
                 } else if (maxLayer === 2) {
                     edgeColor = '#f59e0b';
-                    edgeWidth = 1.8;
-                    edgeOpacity = 0.7;
+                    edgeWidth = Math.min(4.8, 1.8 + Math.log2(intCount) * 0.75);
+                    edgeOpacity = 0.78;
                 }
 
                 elements.push({
@@ -5190,7 +5940,10 @@ This will remove the case entity and all associated data.`);
                         id: e.id,
                         source: e.source,
                         target: e.target,
-                        label: e.relationship || e.relationship_type || 'ASSOCIATED_WITH',
+                        label: e.relationship || e.relationship_type || 'COMMUNICATED_WITH',
+                        interaction_count: intCount,
+                        distinct_types: e.distinct_types || [e.relationship_type],
+                        is_consolidated: e.is_consolidated || intCount > 1,
                         color: edgeColor,
                         width: edgeWidth,
                         opacity: edgeOpacity,
@@ -5333,20 +6086,22 @@ This will remove the case entity and all associated data.`);
                             'line-color': 'data(color)',
                             'target-arrow-color': 'data(color)',
                             'target-arrow-shape': 'triangle',
-                            'arrow-scale': 0.8,
-                            'curve-style': 'bezier',
-                            'opacity': 'data(opacity)'
+                            'arrow-scale': 0.85,
+                            'curve-style': 'straight',
+                            'opacity': 'data(opacity)',
+                            'transition-property': 'line-color, target-arrow-color, width, opacity',
+                            'transition-duration': '0.2s'
                         }
                     },
                     {
                         selector: 'edge[isDirectToPrimary = 1]',
                         style: {
-                            'width': 2.5,
+                            'width': 'data(width)',
                             'line-color': '#ef4444',
                             'target-arrow-color': '#ef4444',
                             'target-arrow-shape': 'triangle',
-                            'arrow-scale': 0.9,
-                            'opacity': 0.85,
+                            'arrow-scale': 0.95,
+                            'opacity': 0.9,
                             'z-index': 95
                         }
                     },
@@ -5672,6 +6427,12 @@ This will remove the case entity and all associated data.`);
                 const roleBadge = d.role ? `<span style="font-size:9.5px; padding:1px 5px; border-radius:3px; background:#1e293b; color:#38bdf8; border:1px solid #0284c7;">${d.role}</span>` : '';
                 const anchorBadge = d.is_anchor ? `<span style="font-size:9.5px; padding:1px 5px; border-radius:3px; background:#4338ca; color:#fff;">CASE ANCHOR</span>` : '';
 
+                const p = d.provenance_chain || {};
+                const evIds = (d.source_evidence_ids || p.source_evidence_ids || []).join(', ') || '--';
+                const artIds = (d.source_artifacts || p.source_artifact_ids || []).join(', ') || '--';
+                const obsCount = (d.source_observations || p.source_observation_ids || []).length;
+                const caseScope = d.case_id || p.case_id || activeCaseId;
+
                 insp.innerHTML = `
                     <div style="margin-bottom:8px;">
                         <div style="display:flex; justify-content:space-between; align-items:flex-start;">
@@ -5685,6 +6446,13 @@ This will remove the case entity and all associated data.`);
                         <div>Method: <strong>${d.match_method}</strong></div>
                         <div style="grid-column:span 2;">Status: <span class="status-pill pill-queued" id="ver-badge-${id}">${d.human_verification_status || 'UNDER_REVIEW'}</span></div>
                         ${d.description ? `<div style="grid-column:span 2; font-size:10px; color:var(--text-secondary); margin-top:2px;">${d.description}</div>` : ''}
+                    </div>
+                    <div class="provenance-box" style="margin-bottom:8px;">
+                        <h5>Forensic Traceability</h5>
+                        <div class="prov-step"><span>Evidence IDs:</span> <strong class="mono" style="word-break:break-all;">${evIds}</strong></div>
+                        <div class="prov-step"><span>Artifacts:</span> <strong class="mono">${artIds}</strong></div>
+                        <div class="prov-step"><span>Observations:</span> <strong>${obsCount > 0 ? obsCount + ' linked observations' : '--'}</strong></div>
+                        <div class="prov-step"><span>Case Scope:</span> <strong class="mono">${caseScope}</strong></div>
                     </div>
                     <div style="font-size:9.5px; text-transform:uppercase; color:var(--text-muted); margin-bottom:4px;">Human Verification Decision</div>
                     <div style="display:flex; gap:4px; margin-bottom:8px;">
@@ -5708,29 +6476,89 @@ This will remove the case entity and all associated data.`);
                 const badge = document.getElementById('inspector-badge');
                 const insp = document.getElementById('inspector-content');
 
-                title.innerText = 'Relationship Inspector';
+                const intCount = d.interaction_count || 1;
+                const isConsolidated = d.is_consolidated || intCount > 1;
+
+                title.innerText = isConsolidated ? 'Consolidated Link' : 'Relationship Inspector';
                 badge.className = 'status-pill pill-completed';
-                badge.innerText = d.relationship_type;
+                badge.innerText = isConsolidated ? `${intCount} EVIDENCE LINKS` : (d.relationship_type || d.relationship || 'COMMUNICATED_WITH');
+
+                const p = d.provenance_chain || {};
+                const relId = p.relationship_id || d.rel_id || d.edge_id;
+                const srcSig = p.source_signal_id || d.source_entity || d.source;
+                const tgtSig = p.target_signal_id || d.target_entity || d.target;
+                const obsId = p.observation_id || d.observation_id || '--';
+                const artId = p.artifact_id || d.source_artifact || '--';
+                const evId = p.evidence_id || d.supporting_evidence_id || (d.supporting_evidence_ids || []).join(', ') || '--';
+                const srcLoc = p.source_location || d.source_location || 'Forensic Relational Database';
+                const caseScope = d.case_id || p.case_id || activeCaseId;
+
+                const iconMap = {
+                    'COMMUNICATED_WITH': '📞',
+                    'CALLED': '📞',
+                    'TRANSFERRED_TO': '💸',
+                    'USED_PHONE': '📱',
+                    'USED_EMAIL': '✉️',
+                    'USED_VEHICLE': '🚗',
+                    'LOCATED_AT': '📍',
+                    'VISITED': '📍',
+                    'MENTIONED_WITH': '🏢',
+                    'ASSOCIATED_WITH': '🔗',
+                    'MULTI_LINK': '⚡'
+                };
+
+                let breakdownHtml = '';
+                if (d.connections_breakdown && d.connections_breakdown.length > 0) {
+                    breakdownHtml = `
+                        <div style="margin-top:8px; margin-bottom:8px; border-top:1px solid rgba(255,255,255,0.08); padding-top:8px;">
+                            <div style="font-size:10px; font-weight:700; color:var(--accent-cyan); text-transform:uppercase; margin-bottom:6px; letter-spacing:0.5px;">
+                                Consolidated Events (${d.connections_breakdown.length})
+                            </div>
+                            <div style="display:flex; flex-direction:column; gap:4px; max-height:140px; overflow-y:auto;">
+                                ${d.connections_breakdown.map((b, idx) => `
+                                    <div style="background:rgba(15,23,42,0.6); border:1px solid rgba(255,255,255,0.06); padding:4px 6px; border-radius:4px; font-size:9.5px; display:flex; justify-content:space-between; align-items:center;">
+                                        <div style="display:flex; align-items:center; gap:5px;">
+                                            <span>${iconMap[b.relationship_type] || '🔗'}</span>
+                                            <strong style="color:#fff;">${b.relationship_type}</strong>
+                                        </div>
+                                        <span class="mono" style="color:var(--text-muted); font-size:9px;">${(b.confidence * 100).toFixed(0)}% conf</span>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `;
+                }
 
                 insp.innerHTML = `
                     <div style="margin-bottom:8px;">
-                        <strong style="color:#fff; font-size:12.5px;">${d.relationship_type}</strong>
-                        <div class="mono" style="color:var(--accent-cyan); font-size:10.5px;">CCC RING: ${d.ccc_ring}</div>
+                        <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                            <strong style="color:#fff; font-size:12.5px;">${d.relationship || d.relationship_type || 'COMMUNICATED_WITH'}</strong>
+                            <span class="status-pill ${d.ccc_ring === 'RED' ? 'pill-failed' : (d.ccc_ring === 'YELLOW' ? 'pill-queued' : 'pill-completed')}" style="font-size:9px;">
+                                CCC: ${d.ccc_score !== undefined ? d.ccc_score : '80'} (${d.ccc_ring || 'YELLOW'})
+                            </span>
+                        </div>
+                        <div class="mono" style="color:var(--accent-cyan); font-size:10px; margin-top:2px;">
+                            ${isConsolidated ? `⚡ Single Aggregated Vector Link (${intCount} Total Events)` : `Direct Link`}
+                        </div>
                     </div>
-                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:4px; font-size:10.5px; margin-bottom:8px;">
-                        <div>Source: <span class="mono">${d.source}</span></div>
-                        <div>Target: <span class="mono">${d.target}</span></div>
-                        <div>Confidence: <strong>${d.confidence || '0.95'}</strong></div>
-                        <div>CCC Score: <strong>${d.ccc_score || '85'}</strong></div>
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:4px; font-size:10px; margin-bottom:8px;">
+                        <div>Source: <span class="mono" style="color:#67e8f9;">${d.source || d.source_entity}</span></div>
+                        <div>Target: <span class="mono" style="color:#67e8f9;">${d.target || d.target_entity}</span></div>
+                        <div>Confidence: <strong>${d.confidence !== undefined ? d.confidence : '1.0'}</strong></div>
+                        <div>Priority: <strong style="color:${d.ccc_ring === 'RED' ? '#f87171' : '#fbbf24'};">${d.priority_label || 'High Priority'}</strong></div>
                     </div>
+                    ${breakdownHtml}
                     <div class="provenance-box">
-                        <h5>Evidence Traceability</h5>
-                        <div class="prov-step"><span>Artifact:</span> <strong>${d.source_artifact || 'Call_Records.xlsx'}</strong></div>
-                        <div class="prov-step"><span>Timestamp:</span> <strong>${d.timestamp || '2026-08-14 14:22:00'}</strong></div>
-                        <div class="prov-step"><span>Evidence IDs:</span> <strong>${(d.supporting_evidence_ids || []).join(', ')}</strong></div>
+                        <h5>Forensic Traceability</h5>
+                        <div class="prov-step"><span>Link Ref:</span> <strong class="mono" style="word-break:break-all;">${relId}</strong></div>
+                        <div class="prov-step"><span>Entities:</span> <span class="mono" style="font-size:9.5px; word-break:break-all;">${srcSig} &rarr; ${tgtSig}</span></div>
+                        <div class="prov-step"><span>Observation:</span> <strong class="mono">${obsId}</strong> <span style="font-size:9.5px; color:var(--text-muted);">(${srcLoc})</span></div>
+                        <div class="prov-step"><span>Artifact:</span> <strong class="mono">${artId}</strong></div>
+                        <div class="prov-step"><span>Evidence IDs:</span> <strong class="mono" style="word-break:break-all;">${evId}</strong></div>
+                        <div class="prov-step"><span>Case Scope:</span> <strong class="mono">${caseScope}</strong></div>
                     </div>
                 `;
-                appendConsoleLog('INSPECTOR', `Inspecting relationship: ${d.source} -> ${d.target} (${d.relationship_type})`, 'info');
+                appendConsoleLog('INSPECTOR', `Inspecting consolidated link: ${d.source || d.source_entity} -> ${d.target || d.target_entity} (${intCount} connections)`, 'info');
             } catch (e) {}
         }
 
@@ -5757,6 +6585,420 @@ This will remove the case entity and all associated data.`);
 
         function closeModal(id) {
             document.getElementById(id).style.display = 'none';
+        }
+
+        // =====================================================================
+        // JUDICIAL REPORTS & VERSIONED DOSSIER SUBSYSTEM (CLEAN WORKFLOW)
+        // =====================================================================
+        let currentReports = [];
+        let activeSelectedReport = null;
+        let reportThemeMode = 'dark';
+        let reportSearchQuery = '';
+
+        async function loadCaseReports(selectReportId = null) {
+            if (!currentToken) {
+                currentToken = sessionStorage.getItem('crimenet_token');
+            }
+            if (!currentToken || !activeCaseId) return;
+
+            const caseBreadcrumb = document.getElementById('report-sidebar-case-id');
+            if (caseBreadcrumb) caseBreadcrumb.innerText = activeCaseId;
+
+            appendConsoleLog('REPORTS', `Fetching analytical reports for case ${activeCaseId}...`, 'info');
+
+            try {
+                const res = await fetch(`/api/v1/cases/${activeCaseId}/reports`, {
+                    headers: { 'Authorization': 'Bearer ' + currentToken }
+                });
+
+                if (!res.ok) {
+                    appendConsoleLog('REPORTS', `Failed to load reports (HTTP ${res.status})`, 'error');
+                    renderReportsSidebar([]);
+                    renderEmptyReportsViewer();
+                    return;
+                }
+
+                currentReports = await res.json();
+                renderReportsSidebar(currentReports);
+
+                if (selectReportId) {
+                    await selectReportItemById(selectReportId);
+                } else if (currentReports.length > 0) {
+                    const currentVer = currentReports.find(r => r.is_current) || currentReports[0];
+                    await selectReportItemById(currentVer.report_id);
+                } else {
+                    activeSelectedReport = null;
+                    renderEmptyReportsViewer();
+                    renderEmptyReportInspector();
+                }
+            } catch (err) {
+                appendConsoleLog('REPORTS', `Error fetching reports: ${err}`, 'error');
+                renderReportsSidebar([]);
+                renderEmptyReportsViewer();
+            }
+        }
+
+        function onReportsSearch(query) {
+            reportSearchQuery = (query || '').toLowerCase().trim();
+            renderReportsSidebar(currentReports);
+        }
+
+        function renderReportsSidebar(reportsList = currentReports) {
+            const container = document.getElementById('reports-tree-container');
+            if (!container) return;
+
+            let filtered = reportsList;
+            if (reportSearchQuery) {
+                filtered = reportsList.filter(r => 
+                    (r.title || '').toLowerCase().includes(reportSearchQuery) ||
+                    (r.version || '').toLowerCase().includes(reportSearchQuery) ||
+                    (r.report_id || '').toLowerCase().includes(reportSearchQuery) ||
+                    (r.template_type || '').toLowerCase().includes(reportSearchQuery)
+                );
+            }
+
+            if (!filtered || filtered.length === 0) {
+                container.innerHTML = `
+                    <div style="background:rgba(15,23,42,0.6); border:1px solid rgba(255,255,255,0.06); border-radius:6px; padding:20px 14px; text-align:center; color:var(--text-muted); font-size:11px;">
+                        <div style="font-size:26px; margin-bottom:8px;">📋</div>
+                        <strong style="color:#ffffff; font-size:12px;">No reports generated yet</strong>
+                        <div style="margin-top:6px; font-size:10px; line-height:1.4; color:var(--text-secondary);">
+                            No analytical dossiers compiled for <span class="mono" style="color:var(--accent-cyan);">${activeCaseId}</span> yet.
+                        </div>
+                        <button class="btn-primary" style="margin-top:12px; padding:4px 12px; font-size:10px; font-weight:700;" onclick="openGenerateReportModal()">+ Compile Report</button>
+                    </div>
+                `;
+                return;
+            }
+
+            const currentVer = filtered.find(r => r.is_current) || filtered[0];
+            const pastVers = filtered.filter(r => r.report_id !== currentVer.report_id);
+
+            let html = '';
+
+            // 1. Current Active Version Section
+            html += `
+                <div class="report-tree-section">
+                    <div class="report-section-label">
+                        <span>Current Active Version</span>
+                        <span class="report-current-badge">LATEST</span>
+                    </div>
+                    <div class="report-tree-item ${activeSelectedReport && activeSelectedReport.report_id === currentVer.report_id ? 'active' : ''}" onclick="selectReportItemById('${currentVer.report_id}')" title="Click to open current version">
+                        <div class="report-item-left">
+                            <span style="font-size:15px;">⚖️</span>
+                            <div style="overflow:hidden;">
+                                <div class="report-item-title">${currentVer.title}</div>
+                                <div class="report-item-sub mono">${currentVer.version} &bull; ${currentVer.created_at_iso}</div>
+                            </div>
+                        </div>
+                        <span class="report-ver-badge">${currentVer.version}</span>
+                    </div>
+                </div>
+            `;
+
+            // 2. Historical Versions Archive Section
+            html += `
+                <div class="report-tree-section">
+                    <div class="report-section-label">
+                        <span>Historical Versions Archive (${pastVers.length})</span>
+                    </div>
+                    ${pastVers.length === 0 ? `
+                        <div style="font-size:10px; color:var(--text-muted); padding:6px 10px; background:rgba(15,23,42,0.3); border-radius:4px;">
+                            No prior versions. This is the initial version (v1.0).
+                        </div>
+                    ` : `
+                        <div style="display:flex; flex-direction:column; gap:4px; max-height:220px; overflow-y:auto;">
+                            ${pastVers.map(r => `
+                                <div class="report-tree-item ${activeSelectedReport && activeSelectedReport.report_id === r.report_id ? 'active' : ''}" onclick="selectReportItemById('${r.report_id}')" title="Click to view archived version ${r.version}">
+                                    <div class="report-item-left">
+                                        <span style="font-size:13px; color:var(--text-muted);">📄</span>
+                                        <div style="overflow:hidden;">
+                                            <div class="report-item-title" style="color:var(--text-secondary);">${r.title}</div>
+                                            <div class="report-item-sub mono">${r.version} &bull; ${r.created_at_iso}</div>
+                                        </div>
+                                    </div>
+                                    <span class="report-ver-badge" style="background:rgba(255,255,255,0.06); color:#94a3b8; border-color:rgba(255,255,255,0.1);">${r.version}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                    `}
+                </div>
+            `;
+
+            // 3. Template Overview
+            html += `
+                <div class="report-tree-section" style="margin-top:6px; border-top:1px solid rgba(255,255,255,0.06); padding-top:10px;">
+                    <div class="report-section-label">
+                        <span>Available Templates</span>
+                    </div>
+                    <div style="display:flex; flex-direction:column; gap:4px; font-size:10px;">
+                        <div style="padding:4px 8px; background:rgba(15,23,42,0.4); border-radius:4px; color:var(--text-secondary);">
+                            • Comprehensive Forensic Dossier
+                        </div>
+                        <div style="padding:4px 8px; background:rgba(15,23,42,0.4); border-radius:4px; color:var(--text-secondary);">
+                            • Executive Analytical Brief
+                        </div>
+                        <div style="padding:4px 8px; background:rgba(15,23,42,0.4); border-radius:4px; color:var(--text-secondary);">
+                            • Section 65B Examiner Review Draft
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            container.innerHTML = html;
+        }
+
+        async function selectReportItemById(reportId) {
+            try {
+                const res = await fetch(`/api/v1/cases/${activeCaseId}/reports/${reportId}`, {
+                    headers: { 'Authorization': 'Bearer ' + currentToken }
+                });
+                if (!res.ok) {
+                    appendConsoleLog('REPORTS', `Failed to fetch report ${reportId} (HTTP ${res.status})`, 'error');
+                    return;
+                }
+                const report = await res.json();
+                activeSelectedReport = report;
+
+                // Sync sidebar active styling
+                renderReportsSidebar(currentReports);
+
+                // Update center view header
+                document.getElementById('repview-title').innerText = report.title;
+                document.getElementById('repview-breadcrumbs').innerText = `Reports > ${report.case_id} > ${report.version}`;
+                document.getElementById('repview-version-badge').innerText = report.version;
+                document.getElementById('repview-status-badge').innerText = report.status;
+
+                // Update canvas body
+                const emptyEl = document.getElementById('repview-empty-state');
+                const sheetEl = document.getElementById('repview-sheet-container');
+                if (emptyEl) emptyEl.style.display = 'none';
+                if (sheetEl) {
+                    sheetEl.style.display = 'block';
+                    sheetEl.innerHTML = report.content_html;
+                    // Preserve theme mode
+                    if (reportThemeMode === 'light') {
+                        sheetEl.classList.add('court-light-theme');
+                    } else {
+                        sheetEl.classList.remove('court-light-theme');
+                    }
+                }
+
+                // Update Contextual Inspector
+                renderReportInspector(report);
+
+                appendConsoleLog('REPORTS', `Viewing report: ${report.title} (${report.version}) | SHA-256: ${report.sha256.substring(0, 16)}...`, 'info');
+            } catch (err) {
+                appendConsoleLog('REPORTS', `Error fetching report details: ${err}`, 'error');
+            }
+        }
+
+        function renderEmptyReportsViewer() {
+            const emptyEl = document.getElementById('repview-empty-state');
+            const sheetEl = document.getElementById('repview-sheet-container');
+            if (emptyEl) emptyEl.style.display = 'flex';
+            if (sheetEl) sheetEl.style.display = 'none';
+
+            document.getElementById('repview-title').innerText = 'Forensic Investigation Report';
+            document.getElementById('repview-breadcrumbs').innerText = `Reports > ${activeCaseId}`;
+            document.getElementById('repview-version-badge').innerText = '--';
+            document.getElementById('repview-status-badge').innerText = 'NONE';
+        }
+
+        function renderReportInspector(report) {
+            const title = document.getElementById('inspector-title');
+            const badge = document.getElementById('inspector-badge');
+            const insp = document.getElementById('inspector-content');
+
+            if (title) title.innerText = 'Report Inspector';
+            if (badge) {
+                badge.className = 'status-pill pill-completed';
+                badge.innerText = report.status;
+            }
+
+            const stats = report.stats || {};
+            const legal = report.legal_draft || {};
+
+            insp.innerHTML = `
+                <div style="margin-bottom:10px;">
+                    <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                        <strong style="color:#fff; font-size:12px; line-height:1.3;">${report.title}</strong>
+                        <span class="report-ver-badge">${report.version}</span>
+                    </div>
+                    <div class="mono" style="color:var(--accent-cyan); font-size:10px; margin-top:3px;">${report.report_id}</div>
+                </div>
+
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:4px; font-size:10px; margin-bottom:10px;">
+                    <div>Author: <strong>${report.author}</strong></div>
+                    <div>Case: <strong class="mono">${report.case_id}</strong></div>
+                    <div style="grid-column:span 2;">Generated: <span class="mono">${report.created_at_iso}</span></div>
+                    ${report.previous_version_id ? `<div style="grid-column:span 2; color:var(--text-muted);">Supersedes: <span class="mono">${report.previous_version_id}</span></div>` : ''}
+                </div>
+
+                <!-- CRYPTOGRAPHIC INTEGRITY CARD -->
+                <div class="provenance-box" style="margin-bottom:10px;">
+                    <h5>Cryptographic Verification</h5>
+                    <div class="prov-step"><span>Status:</span> <strong style="color:#34d399;">VERIFIED INTACT</strong></div>
+                    <div class="prov-step"><span>SHA-256 Digest:</span></div>
+                    <div class="mono" style="font-size:9px; color:#38bdf8; word-break:break-all; background:#040814; padding:4px 6px; border-radius:4px; border:1px solid rgba(56,189,248,0.2); margin-top:2px;" title="${report.sha256}">
+                        ${report.sha256}
+                    </div>
+                </div>
+
+                <!-- SCOPE & EVIDENCE COVERAGE -->
+                <div class="provenance-box" style="margin-bottom:10px;">
+                    <h5>Evidence Synthesis Scope</h5>
+                    <div class="prov-step"><span>Artifacts Synthesized:</span> <strong>${stats.total_artifacts || 0} items</strong></div>
+                    <div class="prov-step"><span>Entity Leads Identified:</span> <strong>${stats.total_entities || 0} leads</strong></div>
+                    <div class="prov-step"><span>Evidence-Backed Links:</span> <strong>${stats.total_relationships || 0} vectors</strong></div>
+                    <div class="prov-step"><span>Observations:</span> <strong>${stats.parsed_observations_count || 0}</strong></div>
+                </div>
+
+                <!-- SECTION 65B EXAMINER NOTICE -->
+                <div style="background:rgba(245,158,11,0.08); border:1px solid rgba(245,158,11,0.3); border-radius:4px; padding:8px; margin-bottom:10px; font-size:9.5px; color:#fef08a;">
+                    <strong style="color:#f59e0b;">Section 65B Review Draft:</strong>
+                    <div style="margin-top:2px; line-height:1.3; color:#cbd5e1;">
+                        Requires physical verification and signature by authorized digital forensic examiner before court filing.
+                    </div>
+                </div>
+
+                <!-- ACTION BUTTONS -->
+                <div style="display:flex; flex-direction:column; gap:4px;">
+                    <button class="btn-action" onclick="copyActiveReportMarkdown()" style="padding:4px; font-size:10px; justify-content:center;">Copy Markdown Content</button>
+                    <button class="btn-action btn-green" onclick="printActiveReport()" style="padding:4px; font-size:10px; justify-content:center;">Print Document / Export PDF</button>
+                </div>
+            `;
+        }
+
+        function renderEmptyReportInspector() {
+            const title = document.getElementById('inspector-title');
+            const badge = document.getElementById('inspector-badge');
+            const insp = document.getElementById('inspector-content');
+
+            if (title) title.innerText = 'Report Inspector';
+            if (badge) {
+                badge.className = 'status-pill pill-completed';
+                badge.innerText = 'READY';
+            }
+
+            insp.innerHTML = `
+                <div style="font-size:11px; color:var(--text-secondary); text-align:center; padding:24px 10px;">
+                    <div style="font-size:26px; margin-bottom:8px;">⚖️</div>
+                    <strong style="color:#fff; font-size:12px;">Judicial Reports &amp; Dossiers</strong><br>
+                    <div style="margin-top:6px; line-height:1.4;">
+                        Select an existing report from the left sidebar or click <strong>+ Generate Report</strong> to synthesize a versioned analytical dossier from live case evidence.
+                    </div>
+                </div>
+            `;
+        }
+
+        function openGenerateReportModal() {
+            const titleInput = document.getElementById('gen-rep-title');
+            if (titleInput) {
+                const activeCase = currentCases.find(c => c.case_id === activeCaseId);
+                const name = activeCase ? activeCase.case_name : activeCaseId;
+                titleInput.value = `Forensic Analytical Dossier — ${name}`;
+            }
+            const modal = document.getElementById('modal-generate-report');
+            if (modal) modal.style.display = 'flex';
+        }
+
+        async function handleGenerateReportSubmit(event) {
+            event.preventDefault();
+            const btn = document.getElementById('btn-submit-generate-report');
+            if (btn) { btn.disabled = true; btn.innerText = 'Compiling & Sealing...'; }
+
+            const templateType = document.getElementById('gen-rep-template').value;
+            const title = document.getElementById('gen-rep-title').value.trim();
+            const includeDeleted = document.getElementById('gen-rep-include-deleted').checked;
+            const includeUnverified = document.getElementById('gen-rep-include-unverified').checked;
+            const notes = document.getElementById('gen-rep-notes').value.trim();
+
+            appendConsoleLog('REPORTS', `Compiling new report for ${activeCaseId} using template [${templateType}]...`, 'info');
+
+            try {
+                const res = await fetch(`/api/v1/cases/${activeCaseId}/reports/generate`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + currentToken
+                    },
+                    body: JSON.stringify({
+                        template_type: templateType,
+                        title: title || undefined,
+                        notes: notes,
+                        include_deleted: includeDeleted,
+                        include_unverified: includeUnverified
+                    })
+                });
+
+                if (!res.ok) {
+                    const err = await res.json();
+                    alert(`Failed to generate report: ${err.detail || 'Internal Server Error'}`);
+                    appendConsoleLog('REPORTS', `Report generation failed: ${err.detail}`, 'error');
+                    if (btn) { btn.disabled = false; btn.innerText = 'Compile & Seal Report'; }
+                    return;
+                }
+
+                const newReport = await res.json();
+                closeModal('modal-generate-report');
+                appendConsoleLog('REPORTS', `Successfully generated & sealed report: ${newReport.title} (${newReport.version})`, 'success');
+
+                // Reload reports list and select this newly generated report
+                await loadCaseReports(newReport.report_id);
+            } catch (err) {
+                alert(`Error: ${err}`);
+                appendConsoleLog('REPORTS', `Network error generating report: ${err}`, 'error');
+            } finally {
+                if (btn) { btn.disabled = false; btn.innerText = 'Compile & Seal Report'; }
+            }
+        }
+
+        function toggleReportTheme() {
+            const sheet = document.getElementById('repview-sheet-container');
+            const label = document.getElementById('rep-theme-label');
+            if (!sheet) return;
+
+            if (sheet.classList.contains('court-light-theme')) {
+                sheet.classList.remove('court-light-theme');
+                reportThemeMode = 'dark';
+                if (label) label.innerText = 'Court Paper Mode';
+            } else {
+                sheet.classList.add('court-light-theme');
+                reportThemeMode = 'light';
+                if (label) label.innerText = 'Cyber Dark Mode';
+            }
+        }
+
+        function copyActiveReportMarkdown() {
+            if (!activeSelectedReport || !activeSelectedReport.content_markdown) {
+                alert('No report selected to copy.');
+                return;
+            }
+            navigator.clipboard.writeText(activeSelectedReport.content_markdown).then(() => {
+                appendConsoleLog('REPORTS', 'Report Markdown copied to clipboard', 'success');
+                alert('Report Markdown successfully copied to clipboard!');
+            }).catch(err => {
+                alert('Failed to copy: ' + err);
+            });
+        }
+
+        function downloadActiveReport(format) {
+            if (!activeSelectedReport) {
+                alert('No report selected to download.');
+                return;
+            }
+            const url = `/api/v1/cases/${activeCaseId}/reports/${activeSelectedReport.report_id}/download?format=${format}&token=${currentToken}`;
+            window.open(url, '_blank');
+            appendConsoleLog('REPORTS', `Triggered download for report ${activeSelectedReport.report_id} (${format})`, 'info');
+        }
+
+        function printActiveReport() {
+            if (!activeSelectedReport) {
+                alert('No report selected to print.');
+                return;
+            }
+            window.print();
         }
 
         window.onload = function() {

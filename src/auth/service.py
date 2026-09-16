@@ -125,10 +125,26 @@ class AuthService:
             import sqlite3
             import os
             import json
-            db_path = "DATA/cases.db"
+            db_path = getattr(self, "db_path", "DATA/cases.db")
             if os.path.exists(db_path):
                 conn = sqlite3.connect(db_path)
+                conn.execute("""
+                    CREATE TABLE IF NOT EXISTS user_case_authorizations (
+                        user_id TEXT NOT NULL,
+                        case_id TEXT NOT NULL,
+                        granted_at REAL NOT NULL,
+                        PRIMARY KEY (user_id, case_id)
+                    );
+                """)
                 cursor = conn.cursor()
+                # 1. Check explicit grants
+                cursor.execute("SELECT case_id FROM user_case_authorizations WHERE user_id = ?", (user.user_id,))
+                explicit_rows = cursor.fetchall()
+                for (cid,) in explicit_rows:
+                    if cid not in user.authorized_case_ids:
+                        user.authorized_case_ids.append(cid)
+
+                # 2. Check cases table
                 cursor.execute("SELECT case_id, created_by, assigned_investigators_json FROM cases")
                 rows = cursor.fetchall()
                 conn.close()
@@ -143,6 +159,50 @@ class AuthService:
                                     user.authorized_case_ids.append(cid)
                             except Exception:
                                 pass
+        except Exception:
+            pass
+
+    def authorize_user_for_case(self, user_id: str, case_id: str):
+        user = self._user_db.get(user_id)
+        if user and case_id not in user.authorized_case_ids:
+            user.authorized_case_ids.append(case_id)
+        try:
+            import sqlite3
+            import os
+            import time
+            db_path = getattr(self, "db_path", "DATA/cases.db")
+            if os.path.exists(os.path.dirname(db_path)) or "/" not in db_path:
+                conn = sqlite3.connect(db_path)
+                conn.execute("""
+                    CREATE TABLE IF NOT EXISTS user_case_authorizations (
+                        user_id TEXT NOT NULL,
+                        case_id TEXT NOT NULL,
+                        granted_at REAL NOT NULL,
+                        PRIMARY KEY (user_id, case_id)
+                    );
+                """)
+                conn.execute("""
+                    INSERT OR REPLACE INTO user_case_authorizations (user_id, case_id, granted_at)
+                    VALUES (?, ?, ?)
+                """, (user_id, case_id, time.time()))
+                conn.commit()
+                conn.close()
+        except Exception:
+            pass
+
+    def revoke_user_case(self, user_id: str, case_id: str):
+        user = self._user_db.get(user_id)
+        if user and case_id in user.authorized_case_ids:
+            user.authorized_case_ids.remove(case_id)
+        try:
+            import sqlite3
+            import os
+            db_path = getattr(self, "db_path", "DATA/cases.db")
+            if os.path.exists(db_path):
+                conn = sqlite3.connect(db_path)
+                conn.execute("DELETE FROM user_case_authorizations WHERE user_id = ? AND case_id = ?", (user_id, case_id))
+                conn.commit()
+                conn.close()
         except Exception:
             pass
 

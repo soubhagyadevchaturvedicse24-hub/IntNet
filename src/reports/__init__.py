@@ -1,0 +1,3 @@
+"""
+CRIMENET Reports Domain.
+"""

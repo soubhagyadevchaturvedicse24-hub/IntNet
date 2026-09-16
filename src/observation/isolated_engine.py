@@ -9,7 +9,7 @@ import os
 import subprocess
 import sys
 from pathlib import Path
-from typing import Tuple, Dict, Any, Optional
+from typing import Tuple, Dict, Any, Optional, List
 
 from src.processing.engine import ObservationEngine
 
@@ -23,14 +23,16 @@ class IsolatedObservationEngine(ObservationEngine):
 
     def __init__(
         self,
-        timeout_seconds: int = 60,
-        max_artifacts: int = 25,
-        max_file_size: int = 50 * 1024 * 1024,
-        python_executable: Optional[str] = None
+        timeout_seconds: int = 1800,
+        max_artifacts: int = 250,
+        max_file_size: int = 100 * 1024 * 1024,
+        python_executable: Optional[str] = None,
+        priority_targets: Optional[List[str]] = None,
     ):
         self.timeout_seconds = timeout_seconds
         self.max_artifacts = max_artifacts
         self.max_file_size = max_file_size
+        self.priority_targets = priority_targets if priority_targets is not None else ["autopsy.db"]
         self.python_executable = (
             python_executable
             or os.environ.get("CRIMENET_WORKER_PYTHON")
@@ -70,6 +72,9 @@ class IsolatedObservationEngine(ObservationEngine):
             "--max-artifacts", str(self.max_artifacts),
             "--max-file-size", str(self.max_file_size)
         ]
+        if self.priority_targets:
+            cmd.append("--priority-targets")
+            cmd.extend(self.priority_targets)
 
         # Execute worker in separate process with hard timeout
         try:
