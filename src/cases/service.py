@@ -30,64 +30,61 @@ class CaseService:
         self._seed_default_cases()
 
     def _seed_default_cases(self):
-        # Pre-seed baseline test cases matching Slice 1 auth tests
-        c1 = Case(
-            case_id="CASE-2026-001",
-            case_name="Operation Cyber Net",
-            description="Investigation into illicit cyber financial network.",
-            status=CaseStatus.ACTIVE,
-            created_by="USER-OFFICER-001",
-            created_at=time.time() - 86400,
-            updated_at=time.time() - 86400,
-            judicial_context=JudicialCaseContext(
-                court_judge_id="USER-JUDGE-001",
-                court_level="SPECIFIC_COURT",
-                court_reference="COURT-DL-001",
-                judicial_case_reference="CR-2026-9981"
-            ),
-            assigned_investigators=["USER-OFFICER-001"],
-            anchor=CaseAnchor(
-                anchor_id="ANC-2026-001",
-                canonical_name="Operation Cyber Net Target",
-                role=AnchorRole.INVESTIGATION_SUBJECT,
-                description="Primary target subject of cyber financial network inquiry."
+        existing_ids = {c.case_id for c in self.repository.list_all()}
+        if "CASE-2026-001" not in existing_ids:
+            c1 = Case(
+                case_id="CASE-2026-001",
+                case_name="Operation Dark Falcon",
+                description="Multi-jurisdictional ransomware and illicit asset transfer investigation.",
+                status=CaseStatus.ACTIVE,
+                created_by="USER-OFFICER-001",
+                created_at=time.time() - 86400,
+                updated_at=time.time() - 86400,
+                assigned_investigators=["USER-OFFICER-001"],
+                anchor=CaseAnchor(
+                    anchor_id="ANC-2026-001",
+                    canonical_name="Operation Cyber Net Target",
+                    role=AnchorRole.INVESTIGATION_SUBJECT,
+                    description="Primary target subject of cyber financial network inquiry."
+                )
             )
-        )
-        c2 = Case(
-            case_id="CASE-2026-002",
-            case_name="Operation Red Horizon",
-            description="Cross-border contraband trade investigation.",
-            status=CaseStatus.ACTIVE,
-            created_by="USER-OFFICER-002",
-            created_at=time.time() - 43200,
-            updated_at=time.time() - 43200,
-            assigned_investigators=["USER-OFFICER-002"],
-            anchor=CaseAnchor(
-                anchor_id="ANC-2026-002",
-                canonical_name="Operation Red Horizon Complainant",
-                role=AnchorRole.VICTIM,
-                description="Complainant in contraband smuggling case."
+            self.repository.save(c1)
+        if "CASE-2026-002" not in existing_ids:
+            c2 = Case(
+                case_id="CASE-2026-002",
+                case_name="Operation Red Horizon",
+                description="Cross-border contraband trade investigation.",
+                status=CaseStatus.ACTIVE,
+                created_by="USER-OFFICER-002",
+                created_at=time.time() - 43200,
+                updated_at=time.time() - 43200,
+                assigned_investigators=["USER-OFFICER-002"],
+                anchor=CaseAnchor(
+                    anchor_id="ANC-2026-002",
+                    canonical_name="Operation Red Horizon Complainant",
+                    role=AnchorRole.VICTIM,
+                    description="Complainant in contraband smuggling case."
+                )
             )
-        )
-        c3 = Case(
-            case_id="CASE-2026-003",
-            case_name="Operation Closed Vault",
-            description="Archived money laundering inquiry.",
-            status=CaseStatus.CLOSED,
-            created_by="USER-BOSS-001",
-            created_at=time.time() - 172800,
-            updated_at=time.time() - 172800,
-            assigned_investigators=["USER-BOSS-001"],
-            anchor=CaseAnchor(
-                anchor_id="ANC-2026-003",
-                canonical_name="Operation Closed Vault Lead",
-                role=AnchorRole.OTHER,
-                description="Archived reference subject."
+            self.repository.save(c2)
+        if "CASE-2026-003" not in existing_ids:
+            c3 = Case(
+                case_id="CASE-2026-003",
+                case_name="Operation Closed Vault",
+                description="Archived money laundering inquiry.",
+                status=CaseStatus.CLOSED,
+                created_by="USER-BOSS-001",
+                created_at=time.time() - 172800,
+                updated_at=time.time() - 172800,
+                assigned_investigators=["USER-BOSS-001"],
+                anchor=CaseAnchor(
+                    anchor_id="ANC-2026-003",
+                    canonical_name="Operation Closed Vault Lead",
+                    role=AnchorRole.OTHER,
+                    description="Archived reference subject."
+                )
             )
-        )
-        self.repository.save(c1)
-        self.repository.save(c2)
-        self.repository.save(c3)
+            self.repository.save(c3)
 
     def _verify_auth(
         self,

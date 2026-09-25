@@ -241,7 +241,7 @@ class AuthService:
                 username="officer1",
                 password_hash=self._hash_password("OfficerPass123!"),
                 role=UserRole.INVESTIGATION_OFFICER,
-                authorized_case_ids=["CASE-2026-001"]
+                authorized_case_ids=["CASE-2026-BBDD", "CASE-2026-001"]
             ),
             User(
                 user_id="USER-OFFICER-002",
@@ -255,7 +255,7 @@ class AuthService:
                 username="boss1",
                 password_hash=self._hash_password("HigherAuthPass789!"),
                 role=UserRole.HIGHER_AUTHORITY,
-                authorized_case_ids=["CASE-2026-001", "CASE-2026-002", "CASE-2026-003"]
+                authorized_case_ids=["CASE-2026-BBDD", "CASE-2026-001", "CASE-2026-002", "CASE-2026-003"]
             ),
             User(
                 user_id="USER-JUDGE-001",
@@ -267,7 +267,7 @@ class AuthService:
                     assigned_court_id="COURT-DL-001",
                     jurisdiction_code="DELHI_DISTRICT"
                 ),
-                authorized_case_ids=["CASE-2026-001"]
+                authorized_case_ids=["CASE-2026-BBDD", "CASE-2026-001"]
             ),
             User(
                 user_id="USER-JUDGE-002",

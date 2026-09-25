@@ -87,6 +87,20 @@ class ReportService:
         self._verify_auth(actor, action="READ_CASE", resource_id=case_id, target_case_id=case_id, resource_type="case")
         return self.repository.list_by_case(case_id)
 
+    def list_all_authorized_reports(self, actor: TokenPayload) -> List[ReportSummaryItem]:
+        """
+        Lists all reports across cases that the actor is authorized to read.
+        Strictly filters by authorized cases on the backend.
+        """
+        user = self.auth_service.get_user_by_id(actor.sub)
+        user_authorized_cases = user.authorized_case_ids if user else []
+        role_val = actor.role.value if hasattr(actor.role, "value") else str(actor.role)
+        if role_val == "ADMIN":
+            all_cases = self.case_service.list_cases(actor)
+            user_authorized_cases = [c.case_id for c in all_cases]
+
+        return self.repository.list_by_cases(user_authorized_cases)
+
     def get_report(self, actor: TokenPayload, case_id: str, report_id: str) -> Optional[ReportDetail]:
         """
         Retrieves a full report by ID, verifying case boundary.

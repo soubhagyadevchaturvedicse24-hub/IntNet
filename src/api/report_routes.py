@@ -189,3 +189,21 @@ def download_case_report(
         raise
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
+
+
+global_reports_router = APIRouter(prefix="/api/v1/reports", tags=["Global Reports"])
+
+
+@global_reports_router.get("", response_model=List[ReportSummaryItem])
+def list_global_reports(
+    current_user: TokenPayload = Depends(get_current_user)
+):
+    """
+    Lists all reports across all cases the user is authorized to access.
+    Enforces BOLA authorization strictly on the backend.
+    """
+    try:
+        return report_service.list_all_authorized_reports(current_user)
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
+

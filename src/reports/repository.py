@@ -147,6 +147,49 @@ class SQLiteReportRepository:
                 ))
             return items
 
+    def list_by_cases(self, case_ids: List[str]) -> List[ReportSummaryItem]:
+        if not case_ids:
+            return []
+        with self._lock:
+            cursor = self._conn.cursor()
+            placeholders = ",".join(["?"] * len(case_ids))
+            cursor.execute(f"""
+                SELECT report_id, case_id, version, version_number, previous_version_id,
+                       is_current, title, template_type, status, author,
+                       created_at, created_at_iso, sha256, summary, stats_json
+                FROM case_reports
+                WHERE case_id IN ({placeholders})
+                ORDER BY created_at DESC
+            """, tuple(case_ids))
+            rows = cursor.fetchall()
+            items: List[ReportSummaryItem] = []
+            for row in rows:
+                stats = {}
+                try:
+                    stats = json.loads(row["stats_json"]) if row["stats_json"] else {}
+                except Exception:
+                    pass
+                items.append(ReportSummaryItem(
+                    report_id=row["report_id"],
+                    case_id=row["case_id"],
+                    version=row["version"],
+                    version_number=row["version_number"],
+                    previous_version_id=row["previous_version_id"],
+                    is_current=bool(row["is_current"]),
+                    title=row["title"],
+                    template_type=row["template_type"],
+                    status=row["status"],
+                    author=row["author"],
+                    created_at=row["created_at"],
+                    created_at_iso=row["created_at_iso"],
+                    sha256=row["sha256"],
+                    summary=row["summary"],
+                    artifact_count=stats.get("total_artifacts", 0),
+                    entity_count=stats.get("total_entities", 0),
+                    relationship_count=stats.get("total_relationships", 0)
+                ))
+            return items
+
     def get_by_id(self, case_id: str, report_id: str) -> Optional[ReportDetail]:
         with self._lock:
             cursor = self._conn.cursor()

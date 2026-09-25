@@ -38,6 +38,16 @@ class CaseRepository(ABC):
         """Gets count of evidence assigned to case."""
         pass
 
+    @abstractmethod
+    def get_entity_count(self, case_id: str) -> int:
+        """Gets count of resolved entities in case."""
+        pass
+
+    @abstractmethod
+    def get_relationship_count(self, case_id: str) -> int:
+        """Gets count of resolved relationships in case."""
+        pass
+
 
 class InMemoryCaseRepository(CaseRepository):
     def __init__(self):
@@ -60,6 +70,12 @@ class InMemoryCaseRepository(CaseRepository):
         return False
 
     def get_evidence_count(self, case_id: str) -> int:
+        return 0
+
+    def get_entity_count(self, case_id: str) -> int:
+        return 0
+
+    def get_relationship_count(self, case_id: str) -> int:
         return 0
 
 
@@ -156,6 +172,30 @@ class SQLiteCaseRepository(CaseRepository):
                 cursor = self._conn.cursor()
                 cursor.execute("SELECT COUNT(*) FROM evidence WHERE case_id = ?", (case_id,))
                 row = cursor.fetchone()
+                ev_c = row[0] if row else 0
+                cursor.execute("SELECT COUNT(*) FROM artifacts WHERE case_id = ?", (case_id,))
+                art_row = cursor.fetchone()
+                art_c = art_row[0] if art_row else 0
+                return art_c if art_c > 0 else ev_c
+            except Exception:
+                return 0
+
+    def get_entity_count(self, case_id: str) -> int:
+        with self._lock:
+            try:
+                cursor = self._conn.cursor()
+                cursor.execute("SELECT COUNT(*) FROM graph_provenance_records WHERE case_id = ? AND resource_type = 'ENTITY'", (case_id,))
+                row = cursor.fetchone()
+                return row[0] if row else 0
+            except Exception:
+                return 0
+
+    def get_relationship_count(self, case_id: str) -> int:
+        with self._lock:
+            try:
+                cursor = self._conn.cursor()
+                cursor.execute("SELECT COUNT(*) FROM graph_provenance_records WHERE case_id = ? AND resource_type = 'RELATIONSHIP'", (case_id,))
+                row = cursor.fetchone()
                 return row[0] if row else 0
             except Exception:
                 return 0
@@ -173,6 +213,8 @@ class SQLiteCaseRepository(CaseRepository):
             anchor = CaseAnchor(**json.loads(row["anchor_json"]))
 
         ev_count = self.get_evidence_count(row["case_id"])
+        ent_count = self.get_entity_count(row["case_id"])
+        rel_count = self.get_relationship_count(row["case_id"])
 
         return Case(
             case_id=row["case_id"],
@@ -186,5 +228,7 @@ class SQLiteCaseRepository(CaseRepository):
             assigned_investigators=assigned_inv,
             integrity_audit_references=audit_refs,
             anchor=anchor,
-            evidence_count=ev_count
+            evidence_count=ev_count,
+            entity_count=ent_count,
+            relationship_count=rel_count
         )

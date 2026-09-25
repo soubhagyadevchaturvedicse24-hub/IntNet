@@ -44,7 +44,7 @@ class AutopsySqliteAdapter(ArtifactParser):
         super().__init__(max_file_size_bytes=max_file_size_bytes)
         self.batch_size = batch_size
         env_limit = os.getenv("MAX_AUTOPSY_COMMUNICATIONS")
-        self.max_communication_records = max_communication_records if max_communication_records is not None else (int(env_limit) if env_limit else 500)
+        self.max_communication_records = max_communication_records if max_communication_records is not None else (int(env_limit) if env_limit else None)
 
     def get_parser_type(self) -> ParserType:
         return ParserType.AUTOPSY_SQLITE

@@ -37,6 +37,20 @@ def get_token(username: str, password: str = "OfficerPass123!") -> str:
     return res.json()["access_token"]
 
 
+@pytest.fixture(autouse=True)
+def ensure_c3_closed():
+    import sqlite3
+    db = sqlite3.connect("DATA/cases.db")
+    db.execute("UPDATE cases SET status='CLOSED' WHERE case_id='CASE-2026-003'")
+    db.commit()
+    db.close()
+    yield
+    db = sqlite3.connect("DATA/cases.db")
+    db.execute("UPDATE cases SET status='CLOSED' WHERE case_id='CASE-2026-003'")
+    db.commit()
+    db.close()
+
+
 # ============================================================================
 # 1. CASE CREATION TESTS (AUTHENTICATED VS UNAUTHENTICATED)
 # ============================================================================

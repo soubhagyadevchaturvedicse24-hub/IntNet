@@ -55,4 +55,9 @@ BENCHMARKS/tmp_error_test/
 BENCHMARKS/output/
 BENCHMARKS/screenshots/
 BENCHMARKS/temp_csv_*
+BENCHMARKS/kuzu_resolved_graph_db_proc_*
 
+# Scratch & Test Artifacts
+scratch/
+test_*.png
+DATA/kuzu_db

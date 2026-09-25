@@ -10,6 +10,7 @@ from fastapi import FastAPI, Query, HTTPException
 from fastapi.responses import HTMLResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 from typing import Optional, List, Dict, Any
 
@@ -24,7 +25,8 @@ from src.api.processing_routes import router as processing_router
 from src.api.graph_resolution_routes import router as graph_res_router
 from src.api.artifact_routes import router as artifact_router
 from src.api.parsing_routes import router as parsing_router
-from src.api.report_routes import router as report_router
+from src.api.report_routes import router as report_router, global_reports_router
+from src.api.location_routes import router as location_router
 
 app = FastAPI(
     title="CRIMENET Investigator Graph Intelligence API",
@@ -50,6 +52,14 @@ app.include_router(graph_res_router)
 app.include_router(artifact_router)
 app.include_router(parsing_router)
 app.include_router(report_router)
+app.include_router(global_reports_router)
+app.include_router(location_router)
+
+# Serve brand/static assets (banners, illustrations, buttons)
+_STATIC_DIR = os.path.join(os.path.dirname(__file__), "static")
+os.makedirs(_STATIC_DIR, exist_ok=True)
+app.mount("/static", StaticFiles(directory=_STATIC_DIR), name="static")
+
 
 class VerificationRequest(BaseModel):
     entity_id: str
@@ -104,9 +114,16 @@ WORKSPACE_HTML_PATH = os.path.join(os.path.dirname(__file__), "workspace.html")
 
 @app.get("/", response_class=HTMLResponse)
 @app.get("/workspace", response_class=HTMLResponse)
+@app.get("/workspace.html", response_class=HTMLResponse)
 def get_investigator_ui():
-    """Serves the CRIMENET Investigator Workspace single-page interface."""
+    """Serves the CRIMENET Investigator Workspace single-page interface with no-cache headers."""
+    headers = {
+        "Cache-Control": "no-cache, no-store, must-revalidate",
+        "Pragma": "no-cache",
+        "Expires": "0"
+    }
     if os.path.exists(WORKSPACE_HTML_PATH):
         with open(WORKSPACE_HTML_PATH, "r", encoding="utf-8") as f:
-            return f.read()
-    return "<html><body><h3>CRIMENET Workspace file not found</h3></body></html>"
+            return HTMLResponse(content=f.read(), headers=headers)
+    return HTMLResponse(content="<html><body><h3>CRIMENET Workspace file not found</h3></body></html>", status_code=404, headers=headers)
+

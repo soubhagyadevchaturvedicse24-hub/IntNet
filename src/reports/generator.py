@@ -43,13 +43,13 @@ class ReportGenerator:
 
         # Default title based on template if not provided
         default_titles = {
-            ReportTemplateType.COMPREHENSIVE_DOSSIER: f"Comprehensive Forensic Analytical Dossier — {case_name}",
-            ReportTemplateType.EXECUTIVE_BRIEF: f"Executive Analytical Intelligence Brief — {case_name}",
-            ReportTemplateType.SECTION_65B_DRAFT: f"Section 65B Electronic Evidence Review Draft — {case_name}",
-            ReportTemplateType.NETWORK_LINKAGE: f"Contact Network & Analytical Linkage Report — {case_name}",
+            ReportTemplateType.COMPREHENSIVE_DOSSIER: f"Forensic Investigation Report — Human Review Required — {case_name}",
+            ReportTemplateType.EXECUTIVE_BRIEF: f"Executive Analytical Intelligence Brief (Human Review Required) — {case_name}",
+            ReportTemplateType.SECTION_65B_DRAFT: f"Section 65B Electronic Evidence Review Draft (Human Review Required) — {case_name}",
+            ReportTemplateType.NETWORK_LINKAGE: f"Contact Network & Analytical Linkage Report (Human Review Required) — {case_name}",
         }
         title = request.title.strip() if request.title and request.title.strip() else default_titles.get(
-            request.template_type, f"Forensic Investigation Report — {case_name}"
+            request.template_type, f"Forensic Investigation Report — Human Review Required — {case_name}"
         )
 
         def _val(obj: Any, key: str, default: Any = "") -> Any:

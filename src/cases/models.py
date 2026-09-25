@@ -48,6 +48,8 @@ class Case(BaseModel):
     integrity_audit_references: List[str] = Field(default_factory=list)
     anchor: Optional[CaseAnchor] = None
     evidence_count: int = 0
+    entity_count: int = 0
+    relationship_count: int = 0
 
 
 class CaseCreate(BaseModel):
@@ -78,3 +80,5 @@ class CaseResponse(BaseModel):
     integrity_audit_references: List[str]
     anchor: Optional[CaseAnchor] = None
     evidence_count: int = 0
+    entity_count: int = 0
+    relationship_count: int = 0

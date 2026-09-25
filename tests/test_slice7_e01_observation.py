@@ -41,8 +41,14 @@ from src.processing.service import ProcessingService
 client = TestClient(app)
 auth_service = AuthService()
 
-REAL_E01_PATH = Path(r"D:\Proto SIH\Images\Images_Set_1.E01")
-REAL_E02_PATH = Path(r"D:\Proto SIH\Images\Images_Set_1.E02")
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+REAL_E01_PATH = PROJECT_ROOT / "Images" / "Images_Set_1.E01"
+if not REAL_E01_PATH.exists():
+    for _fb in [Path(r"D:\Proto SIH\Chat gpt\Images\Images_Set_1.E01"), Path(r"D:\Proto SIH\Images\Images_Set_1.E01")]:
+        if _fb.exists():
+            REAL_E01_PATH = _fb
+            break
+REAL_E02_PATH = REAL_E01_PATH.with_name("Images_Set_1.E02")
 
 KNOWN_SHA256_E01 = "733948eee283af8e0dc9c6e389039569a41c4522172e8cdfcebf34e86f1cd21a"
 KNOWN_SHA256_E02 = "1da71529a72d2e10e060efe900616f098691c65787ada11c95cefed7f8e0f84d"
